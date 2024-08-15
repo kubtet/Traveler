@@ -1,3 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
-@import "primeng/resources/themes/md-light-deeppurple/theme.css";
+@import "primeng/resources/themes/lara-dark-indigo/theme.css";
 @import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+@import "../node_modules/primeflex/primeflex.scss";
+
+/* To think about it */
+html {
+  font-size: 14px; 
+}
+
+.p-inputtext,
+.p-button {
+  padding: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}

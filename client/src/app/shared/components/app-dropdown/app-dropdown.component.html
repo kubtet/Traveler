@@ -1,0 +1,15 @@
+<div class="p-fluid mt-3" style="padding: 0">
+  <label [for]="inputId" class="font-bold block mb-2">
+    {{ label }}<span *ngIf="required" style="color: red"> *</span></label
+  ><p-dropdown
+    *ngIf="control"
+    [formControl]="control"
+    [inputId]="inputId"
+    [optionLabel]="optionLabel"
+    [optionValue]="optionValue"
+    [options]="options"
+    [placeholder]="placeholder"
+    [required]="required"
+    [showClear]="showClear"
+  ></p-dropdown>
+</div>

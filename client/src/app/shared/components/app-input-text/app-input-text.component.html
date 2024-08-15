@@ -1,0 +1,49 @@
+<div class="p-fluid mt-3" style="padding: 0">
+  <label [for]="id" class="font-bold block mb-2">
+    {{ label }}<span *ngIf="required" style="color: red"> *</span></label
+  >
+  <ng-container *ngIf="control; else template">
+    <input
+      type="text"
+      [attr.disabled]="disabled"
+      [class]="inputClass"
+      [class.p-inputtext-lg]="size === 'large'"
+      [class.p-inputtext-sm]="size === 'small'"
+      [formControl]="control"
+      [id]="id"
+      [placeholder]="placeholder"
+      [pTooltip]="tooltip"
+      [readonly]="readonly"
+      [required]="required"
+      [style]="inputStyle"
+      [tooltipPosition]="tooltipPos"
+      (keydown.enter)="onEnterKey()"
+      (blur)="onBlurMethod($event)"
+      (focus)="onFocusMethod($event)"
+      pInputText
+    />
+  </ng-container>
+  <ng-template #template>
+    <input
+      type="text"
+      [class]="inputClass"
+      [class.p-inputtext-lg]="size === 'large'"
+      [class.p-inputtext-sm]="size === 'small'"
+      [disabled]="disabled"
+      [id]="id"
+      [placeholder]="placeholder"
+      [pTooltip]="tooltip"
+      [readonly]="readonly"
+      [required]="required"
+      [style]="inputStyle"
+      [tooltipPosition]="tooltipPos"
+      [(ngModel)]="value"
+      (blur)="onBlurMethod($event)"
+      (focus)="onFocusMethod($event)"
+      (keydown.enter)="onEnterKey()"
+      (change)="onChangeMethod($event)"
+      (ngModelChange)="valueChangeMethod($event)"
+      pInputText
+    />
+  </ng-template>
+</div>

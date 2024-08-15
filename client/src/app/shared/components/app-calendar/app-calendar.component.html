@@ -1,0 +1,21 @@
+<div class="p-fluid mt-3" style="padding: 0">
+  <label [for]="inputId" class="font-bold block mb-2">
+    {{ label }}<span *ngIf="required" style="color: red"> *</span></label
+  >
+  <p-calendar
+    *ngIf="control"
+    [dateFormat]="dateFormat"
+    [formControl]="control"
+    [inputStyle]="inputStyle"
+    [maxDate]="maxDate"
+    [minDate]="minDate"
+    [required]="required"
+    [selectionMode]="selectionMode"
+    [showButtonBar]="showButtonBar"
+    [showClear]="showClear"
+    [showIcon]="showIcon"
+    [showOnFocus]="showOnFocus"
+    [style]="style"
+    [styleClass]="styleClass"
+  />
+</div>
