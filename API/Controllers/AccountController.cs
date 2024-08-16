@@ -23,7 +23,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
         using var hmac = new HMACSHA512();
         var username = registerDto.Username.ToLower();
 
-        var user = new User
+        var user = new AppUser
         {
             UserName = StringFormatHelper.MakeFirstCapital(username),
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
