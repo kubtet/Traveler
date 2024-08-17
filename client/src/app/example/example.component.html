@@ -13,10 +13,7 @@
     ></app-input-text>
   </div>
   <div class="col-2">
-    <app-calendar
-      label="Test calendar"
-      [control]="date"
-    ></app-calendar>
+    <app-calendar label="Test calendar" [control]="date"></app-calendar>
   </div>
   <div class="col-2">
     <app-dropdown
@@ -26,5 +23,21 @@
       optionValue="value"
       [options]="options"
     ></app-dropdown>
+  </div>
+  <div class="col-1">
+    <app-checkbox
+      [control]="checkboxControl"
+      label="Test checkbox"
+      name="what"
+      value="Hello"
+    ></app-checkbox>
+  </div>
+  <div class="col-1">
+    <app-checkbox
+      [control]="checkboxControl"
+      label="Test checkbox2"
+      name="what"
+      value="Bye"
+    ></app-checkbox>
   </div>
 </div>

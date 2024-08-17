@@ -1,0 +1,13 @@
+<div class="p-fluid" style="padding: 0">
+  <p-checkbox
+    *ngIf="control"
+    [formControl]="control"
+    [inputId]="inputId"
+    [name]="name"
+    [required]="required"
+    [value]="value"
+  />
+  <label class="font-bold ml-2" [for]="inputId"
+    >{{ label }}<span *ngIf="required" style="color: red"> *</span></label
+  >
+</div>

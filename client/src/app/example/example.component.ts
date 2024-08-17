@@ -4,6 +4,8 @@ import { AppInputTextComponent } from '../shared/components/app-input-text/app-i
 import { AppCalendarComponent } from '../shared/components/app-calendar/app-calendar.component';
 import { AppDropdownComponent } from '../shared/components/app-dropdown/app-dropdown.component';
 import { FormControl } from '@angular/forms';
+import { AppCheckboxComponent } from '../shared/components/app-checkbox/app-checkbox.component';
+import { debounceTime } from 'rxjs';
 
 interface Country {
   name: string;
@@ -18,12 +20,14 @@ interface Country {
     AppInputTextComponent,
     AppCalendarComponent,
     AppDropdownComponent,
+    AppCheckboxComponent,
   ],
   templateUrl: './example.component.html',
   styleUrl: './example.component.css',
 })
 export class ExampleComponent implements OnInit {
   protected control: FormControl = new FormControl<string>('');
+  protected checkboxControl: FormControl = new FormControl();
   protected dropdownControl: FormControl = new FormControl();
   protected date: FormControl = new FormControl<Date | undefined>(undefined);
 
@@ -36,6 +40,10 @@ export class ExampleComponent implements OnInit {
 
   public ngOnInit() {
     this.control.valueChanges.subscribe((value) => {
+      console.log(value);
+    });
+
+    this.checkboxControl.valueChanges.subscribe((value) => {
       console.log(value);
     });
 
