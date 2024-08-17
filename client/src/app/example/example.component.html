@@ -1,0 +1,30 @@
+<div class="row" style="display: flex">
+  <div class="col-2">
+    <app-button
+      label="Test button"
+      [style]="{ width: '100%' }"
+      (click)="consoleLog()"
+    ></app-button>
+  </div>
+  <div class="col-2">
+    <app-input-text
+      label="Test input text"
+      [control]="control"
+    ></app-input-text>
+  </div>
+  <div class="col-2">
+    <app-calendar
+      label="Test calendar"
+      [control]="date"
+    ></app-calendar>
+  </div>
+  <div class="col-2">
+    <app-dropdown
+      label="Test dropdown"
+      [control]="dropdownControl"
+      optionLabel="name"
+      optionValue="value"
+      [options]="options"
+    ></app-dropdown>
+  </div>
+</div>
