@@ -11,6 +11,7 @@ public static class ApplicationServiceExtensions
         IConfiguration config)
     {
         services.AddControllers();
+        services.AddOpenApiDocument();
         services.AddDbContext<DataContext>(opt =>
         {
             opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
