@@ -9,4 +9,19 @@ public class RegisterDto
 
     [Required]
     public required string Password { get; set; }
+
+    [Required]
+    public required string Name { get; set; }
+
+    [Required]
+    public required string Surname { get; set; }
+
+    [Required]
+    public required string Email { get; set; }
+
+    [Required]
+    public required string Gender { get; set; }
+
+    [Required]
+    public required DateTime DateOfBirth { get; set; }
 }
