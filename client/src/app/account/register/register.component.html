@@ -1,0 +1,91 @@
+<p-toast></p-toast>
+<p-card header="SIGN UP TO START AN ADVENTURE">
+  <div class="row" style="display: flex">
+    <app-input-text
+      class="mr-2"
+      label="Username"
+      [control]="form.controls.username"
+    ></app-input-text>
+    <app-input-text
+      class="ml-2"
+      label="Email"
+      [control]="form.controls.email"
+    ></app-input-text>
+  </div>
+
+  <div class="row" style="display: flex">
+    <app-input-text
+      class="mr-2"
+      label="Name"
+      [control]="form.controls.name"
+    ></app-input-text>
+    <app-input-text
+      class="ml-2"
+      label="Surname"
+      [control]="form.controls.surname"
+    ></app-input-text>
+  </div>
+
+  <div class="row" style="display: flex">
+    <app-input-text
+      class="mr-2"
+      label="Password"
+      [isPassword]="true"
+      [control]="form.controls.password"
+    ></app-input-text>
+    <app-input-text
+      class="ml-2"
+      label="Confirm password"
+      [isPassword]="true"
+      [control]="form.controls.confirmPassword"
+    ></app-input-text>
+  </div>
+
+  <div class="row flex flex-wrap gap-3">
+    <label class="font-bold block"
+      >What's your gender?<span> (optional)</span></label
+    >
+    <div class="flex align-items-center">
+      <p-radioButton
+        name="gender"
+        [formControl]="form.controls.gender"
+        value="Female"
+        inputId="female"
+      />
+      <label for="female" class="ml-2"> Female </label>
+    </div>
+
+    <div class="flex align-items-center">
+      <p-radioButton
+        name="gender"
+        [formControl]="form.controls.gender"
+        value="Male"
+        inputId="male"
+      />
+      <label for="male" class="ml-2"> Male </label>
+    </div>
+  </div>
+
+  <div class="row" style="display: flex">
+    <app-calendar
+      class="mr-2"
+      label="Date of birth"
+      [control]="form.controls.dateOfBirth"
+    ></app-calendar>
+  </div>
+
+  <div class="row" style="display: flex">
+    <app-button
+      class="col-12 mt-2"
+      [style]="{ width: '100%' }"
+      [disabled]="form.invalid"
+      label="Sign up"
+      (onClick)="signUp()"
+    ></app-button>
+  </div>
+
+  <div class="row" style="display: flex">
+    <div class="haveAccount">Do you already have an account?</div>
+    <app-button label="Log in" [link]="true" (onClick)="goLogIn()"></app-button>
+  </div>
+</p-card>

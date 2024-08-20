@@ -85,17 +85,17 @@ export class AppButtonComponent {
   @Input() public type: string = 'button'; // check if necessary
 
   /** Callback to execute when button is clicked. */
-  @Output() public click: EventEmitter<MouseEvent> =
+  @Output() public onClick: EventEmitter<MouseEvent> =
     new EventEmitter<MouseEvent>();
 
   /** Method to execute when button is clicked. */
   public onClickMethod(event: MouseEvent): void {
-    event.stopPropagation();
-
     if (this.disabled) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
       return;
     }
 
-    this.click.emit(event);
+    this.onClick.emit(event);
   }
 }

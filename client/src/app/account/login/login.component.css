@@ -1,0 +1,13 @@
+p-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.haveAccount {
+  margin-top: 9px;
+  margin-right: 5px;
+}

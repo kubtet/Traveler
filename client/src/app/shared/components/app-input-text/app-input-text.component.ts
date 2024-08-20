@@ -15,6 +15,7 @@ import {
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { AppTooltipPosition } from '../../enums/AppTooltipPosition';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'app-input-text',
@@ -24,6 +25,7 @@ import { AppTooltipPosition } from '../../enums/AppTooltipPosition';
     InputTextModule,
     NgClass,
     NgIf,
+    PasswordModule,
     ReactiveFormsModule,
     TooltipModule,
   ],
@@ -33,46 +35,67 @@ import { AppTooltipPosition } from '../../enums/AppTooltipPosition';
 export class AppInputTextComponent implements OnChanges {
   /** Used to bind the component to a form control. */
   @Input() public control?: FormControl<string>;
+
   /** When present, it specifies that the element value cannot be altered. */
   @Input() public disabled: boolean = false;
+
   /** Identifier of the focus input to match a label defined for the component. */
   @Input() public id: string = '';
+
   /** Style class of the input. */
   @Input() public inputClass: string = '';
+
   /** Inline style of the input. */
   @Input() public inputStyle: any;
+
+  /** If enabled input behaves as the password input. */
+  @Input() public isPassword: boolean;
+
   /** Label of the component. */
   @Input() public label: string = '';
+
   /** Style class of the label. */
   @Input() public labelClass: string = '';
+
   /** Inline style of the label. */
   @Input() public labelStyle: any;
+
   /** Advisory information to display on input. */
   @Input() public placeholder: string = '';
+
   /** When present, it specifies that an input field is read-only. */
   @Input() public readonly: boolean = false;
+
   /** When present, it specifies that an input field must be filled out before submitting the form. */
   @Input() public required: boolean = false;
+
   /** Size of the component, valid values are "small" and "large". */
   @Input() public size: string = '';
+
   /** Tooltip text of the input text. */
   @Input() public tooltip: string = '';
+
   /** Position of the tooltip. */
   @Input() public tooltipPos: AppTooltipPosition = AppTooltipPosition.RIGHT;
+
   /** Value of the component. */
   @Input() public value?: string;
 
   /** Callback to invoke when the component loses focus. */
   @Output() public onBlur: EventEmitter<FocusEvent> =
     new EventEmitter<FocusEvent>();
+
   /** Callback to invoke when the component receives focus. */
   @Output() public onFocus: EventEmitter<FocusEvent> =
     new EventEmitter<FocusEvent>();
+
   /** Callback to invoke when a value is changed. */
   @Output() public onChange: EventEmitter<Event> = new EventEmitter<Event>();
+
   /** Callback to invoke when a value is changed. */
   @Output() public valueChange: EventEmitter<string> =
     new EventEmitter<string>();
+
   /** Callback to invoke when enter key is pressed. */
   @Output() public enterPressed = new EventEmitter<string>();
 
