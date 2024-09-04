@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
+import { AccountService } from '../services/account.service';
 
 @Component({
   selector: 'app-nav',
@@ -13,7 +14,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './nav.component.css',
 })
 export class NavComponent implements OnInit {
-  items: MenuItem[] | undefined;
+  protected accountService = inject(AccountService);
+  protected items: MenuItem[] = [];
+  protected loggedOutItems: MenuItem[] = [];
 
   public ngOnInit() {
     this.items = [
@@ -45,6 +48,7 @@ export class NavComponent implements OnInit {
           {
             label: 'Log out',
             icon: 'pi pi-sign-out',
+            command: () => this.accountService.logOut(),
           },
         ],
       },
@@ -52,6 +56,14 @@ export class NavComponent implements OnInit {
         label: 'Example',
         icon: 'pi pi-lightbulb',
         routerLink: '/example',
+      },
+    ];
+
+    this.loggedOutItems = [
+      {
+        label: 'Home',
+        icon: 'pi pi-home',
+        routerLink: '/',
       },
     ];
   }

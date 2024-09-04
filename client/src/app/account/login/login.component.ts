@@ -5,6 +5,7 @@ import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { AccountClient, LoginDto, UserDto } from '../../services/api';
+import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ import { AccountClient, LoginDto, UserDto } from '../../services/api';
 export class LoginComponent {
   private router = inject(Router);
   private accountClient = inject(AccountClient);
+  private accountService = inject(AccountService);
   protected username: FormControl<string> = new FormControl<string>('');
   protected password: FormControl<string> = new FormControl<string>('');
 
@@ -28,6 +30,11 @@ export class LoginComponent {
     const result: UserDto = await this.accountClient.login(input);
 
     console.log(result);
+
+    if (result) {
+      this.accountService.setUser(result);
+      this.router.navigateByUrl('/');
+    }
   }
 
   public goSignUp() {

@@ -14,7 +14,8 @@ import { AppCalendarComponent } from '../../shared/components/app-calendar/app-c
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { AccountClient, RegisterDto } from '../../services/api';
+import { AccountClient, RegisterDto, UserDto } from '../../services/api';
+import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-register',
@@ -35,6 +36,7 @@ import { AccountClient, RegisterDto } from '../../services/api';
 })
 export class RegisterComponent {
   private accountClient = inject(AccountClient);
+  private accountService = inject(AccountService);
   private messageService = inject(MessageService);
   private router = inject(Router);
   protected form = new FormGroup({
@@ -69,9 +71,13 @@ export class RegisterComponent {
       username: control.username.value,
     });
 
-    const result = await this.accountClient.register(input);
+    const result: UserDto = await this.accountClient.register(input);
 
     console.log(result);
+
+    if (result) {
+      this.accountService.setUser(result);
+    }
 
     this.messageService.add({
       severity: 'success',

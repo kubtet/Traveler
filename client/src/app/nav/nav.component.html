@@ -1,6 +1,13 @@
+@if(accountService.currentUser()) {
 <p-menubar [model]="items">
   <ng-template pTemplate="end">
-    <div class="flex align-items-center gap-2">
-    </div>
+    <div class="flex align-items-center gap-2"></div>
   </ng-template>
 </p-menubar>
+} @if(!accountService.currentUser()) {
+<p-menubar [model]="loggedOutItems">
+  <ng-template pTemplate="end">
+    <div class="flex align-items-center gap-2"></div>
+  </ng-template>
+</p-menubar>
+}
