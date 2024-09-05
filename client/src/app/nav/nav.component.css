@@ -1,0 +1,13 @@
+.logo {
+  height: 40px; /* or your desired height */
+  width: auto;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #622c2c; /* Light background color for the input */
+    border-radius: 20px; /* Rounded corners */
+    padding: 5px;
+  }
