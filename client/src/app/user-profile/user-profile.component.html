@@ -1,3 +1,56 @@
-<p>its user-profile component</p>
-  
-  
+<!-- Row 1: photo and username and settings -->
+<p-card class="user-profile-card">
+  <div class="card-header">
+    <!-- Photo of the user -->
+    <p-avatar
+      image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+      styleClass="profile-picture mr-2"
+      size="xlarge"
+      shape="circle"
+    />
+    <!-- Info about user (name, folllowers) -->
+    <!-- TODO -->
+    <div class="user-info">
+      <div class="username">{{ accountService.currentUser()?.username }}</div>
+      <div class="followers-info">
+        <div class="following">
+          <p>following</p>
+          <p>66</p>
+        </div>
+        <div>
+          <p>followers</p>
+          <p>61</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings  -->
+    <button
+      pButton
+      type="button"
+      icon="pi pi-cog"
+      label=" Settings"
+      class="settings-button"
+    >
+      .
+    </button>
+  </div>
+</p-card>
+
+ <!-- Tabs for main content -->
+ <div class="main-part">
+ <p-tabView class="tabs">
+    <p-tabPanel header="Feed">
+      <!-- Content for Your Board/Feed tab -->
+      <p>Content for Your Board/Feed</p>
+    </p-tabPanel>
+    <p-tabPanel header="Statistics">
+      <!-- Content for Statistics tab -->
+      <p>Content for Statistics</p>
+    </p-tabPanel>
+    <p-tabPanel header="Wishlist">
+      <!-- Content for Wishlist tab -->
+      <p>Content for Wishlist</p>
+    </p-tabPanel>
+  </p-tabView>
+</div>
