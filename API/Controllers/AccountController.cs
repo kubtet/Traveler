@@ -33,6 +33,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
             Email = registerDto.Email,
             Gender = registerDto.Gender,
             DateOfBirth = registerDto.DateOfBirth,
+            CreationDate = DateTime.Now,
         };
 
         context.Users.Add(user);

@@ -5,11 +5,13 @@ import { AccountService } from '../services/account.service';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
+import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
   imports: [
+    AppButtonComponent,
     AvatarModule,
     AvatarGroupModule,
     CardModule,
