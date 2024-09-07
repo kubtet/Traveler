@@ -1,0 +1,51 @@
+::ng-deep .profile-picture {
+  width: 12rem;
+  height: 12rem;
+  border: 2px solid rgb(79, 73, 73);
+}
+
+.user-profile-card {
+  width: 100%;
+  margin: 0 auto; /*center */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  gap: 1.8rem;
+  padding: 1.2rem;
+}
+
+.user-info {
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.followers-info {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.username {
+  font-size: 2.2em;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.settings-button {
+  align-self: flex-start; /* Wyrównanie przycisku do prawej strony */
+  margin-top: 0.6rem;
+}
+
+.main-part{
+    display: flex;
+    width: 100%;
+}
+
+.tabs {
+    width: 100%;
+}

@@ -21,30 +21,32 @@ export class NavComponent implements OnInit {
   public ngOnInit() {
     this.items = [
       {
-        label: 'Home',
+        label: '',
         icon: 'pi pi-home',
         routerLink: '/',
       },
       {
-        label: 'Your travelboard',
-        icon: 'pi pi-map',
+        label: '',
+        icon: 'pi pi-plus',
+        tooltip: 'Add new gallery',
       },
+    
       {
-        label: 'Chats',
+        label: '',
         icon: 'pi pi-comment',
+        tooltip: 'Chats',
       },
       {
-        label: 'Profile',
+        label: '',
+        icon: 'pi pi-bell',
+        tooltip: 'Notifications',
+      },
+      
+      {
+        label: '',
         icon: 'pi pi-user',
+        routerLink: '/user-profile',
         items: [
-          {
-            label: 'Edit profile',
-            icon: 'pi pi-cog',
-          },
-          {
-            label: 'Contact',
-            icon: 'pi pi-envelope',
-          },
           {
             label: 'Log out',
             icon: 'pi pi-sign-out',
