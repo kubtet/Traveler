@@ -11,7 +11,7 @@ import { AccountService } from './services/account.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
-  private accountService = inject(AccountService);
+  protected accountService = inject(AccountService);
 
   public ngOnInit() {
     this.setCurrentUser();

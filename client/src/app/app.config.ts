@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { AccountClient } from './services/api';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,5 +17,6 @@ export const appConfig: ApplicationConfig = {
       useFactory: () => new AccountClient(),
       deps: [HttpClient],
     },
+    MessageService,
   ],
 };
