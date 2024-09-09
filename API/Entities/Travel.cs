@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace API.Entities
 {
 
+
     public class Travel
     {
         public int Id { get; set; }
