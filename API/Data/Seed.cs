@@ -46,21 +46,48 @@ public class Seed
         await context.SaveChangesAsync();
 
     }
+    // public static async Task SeedFollows(DataContext context)
+    // {
+    //     if (await context.Follows.AnyAsync()) return;
+    //     var followsData = await File.ReadAllTextAsync("Data/FollowsSeedData.json");
+    //     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    //     var follows = JsonSerializer.Deserialize<List<Follow>>(followsData, options);
+    //     if (follows == null) return;
+
+    //     foreach (var follow in follows)
+    //     {
+    //         context.Follows.Add(follow);
+    //     }
+    //     await context.SaveChangesAsync();
+
+    // }
+
     public static async Task SeedFollows(DataContext context)
     {
-        if (await context.Follows.AnyAsync()) return;
+        if (await context.Follows.AnyAsync()) return; // Sprawdza, czy istnieją już jakieś rekordy
+
         var followsData = await File.ReadAllTextAsync("Data/FollowsSeedData.json");
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var follows = JsonSerializer.Deserialize<List<Follow>>(followsData, options);
+
         if (follows == null) return;
 
         foreach (var follow in follows)
         {
-            context.Follows.Add(follow);
+            // Upewnij się, że relacje są prawidłowo ustawione
+            var followingUser = await context.Users.FindAsync(follow.FollowingUserId);
+            var followedUser = await context.Users.FindAsync(follow.FollowedUserId);
+
+            if (followingUser != null && followedUser != null)
+            {
+                follow.FollowingUser = followingUser;
+                follow.FollowedUser = followedUser;
+                context.Follows.Add(follow);
+            }
         }
         await context.SaveChangesAsync();
-
     }
+
 
     public static async Task SeedTravelPlace(DataContext context)
     {
