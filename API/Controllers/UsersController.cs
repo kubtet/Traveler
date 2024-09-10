@@ -20,7 +20,7 @@ namespace API.Controllers
 
         [AllowAnonymous] //TODO
         [HttpGet("{id}")]
-        public async Task<ActionResult<Member>> GetUserById(int id)
+        public async Task<ActionResult<User>> GetUserById(int id)
         {
             var user = await userRepository.GetUserByIdAsync(id);
 
