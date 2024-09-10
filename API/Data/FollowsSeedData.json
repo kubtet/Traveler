@@ -1,0 +1,62 @@
+[
+  {
+    "FollowingUserId": 1,
+    "FollowedUserId": 2,
+    "CreatedAt": "2024-09-09T10:00:00Z"
+  },
+  {
+    "FollowingUserId": 2,
+    "FollowedUserId": 3,
+    "CreatedAt": "2024-09-09T11:00:00Z"
+  },
+  {
+    "FollowingUserId": 3,
+    "FollowedUserId": 4,
+    "CreatedAt": "2024-09-09T12:00:00Z"
+  },
+  {
+    "FollowingUserId": 4,
+    "FollowedUserId": 5,
+    "CreatedAt": "2024-09-09T13:00:00Z"
+  },
+  {
+    "FollowingUserId": 5,
+    "FollowedUserId": 6,
+    "CreatedAt": "2024-09-09T14:00:00Z"
+  },
+  {
+    "FollowingUserId": 6,
+    "FollowedUserId": 7,
+    "CreatedAt": "2024-09-09T15:00:00Z"
+  },
+  {
+    "FollowingUserId": 7,
+    "FollowedUserId": 8,
+    "CreatedAt": "2024-09-09T16:00:00Z"
+  },
+  {
+    "FollowingUserId": 8,
+    "FollowedUserId": 9,
+    "CreatedAt": "2024-09-09T17:00:00Z"
+  },
+  {
+    "FollowingUserId": 9,
+    "FollowedUserId": 10,
+    "CreatedAt": "2024-09-09T18:00:00Z"
+  },
+  {
+    "FollowingUserId": 10,
+    "FollowedUserId": 11,
+    "CreatedAt": "2024-09-09T19:00:00Z"
+  },
+  {
+    "FollowingUserId": 11,
+    "FollowedUserId": 12,
+    "CreatedAt": "2024-09-09T20:00:00Z"
+  },
+  {
+    "FollowingUserId": 12,
+    "FollowedUserId": 1,
+    "CreatedAt": "2024-09-09T21:00:00Z"
+  }
+]
