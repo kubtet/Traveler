@@ -1,5 +1,9 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace API.Entities
 {
+
+
     public class Travel
     {
         public int Id { get; set; }
@@ -9,5 +13,12 @@ namespace API.Entities
         public required DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public required DateTime CreatedAt { get; set; }
+
+        //relation to user
+        public User User { get; set; } = null!;
+
+        // relationship many to many with places
+        public List<TravelPlace> TravelPlaces { get; set; } = new List<TravelPlace>();
+        public List<Photo> Photos {get; set;} = []; // Photo is navigation property inside travel class
     }
 }

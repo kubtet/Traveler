@@ -1,0 +1,56 @@
+[
+  {
+    "Id": 1,
+    "Name": "Blue",
+    "Latitude": -24.441311,
+    "Longitude": -36.812374
+  },
+  {
+    "Id": 2,
+    "Name": "Kanauga",
+    "Latitude": -21.186204,
+    "Longitude": -23.40069
+  },
+  {
+    "Id": 3,
+    "Name": "Joes",
+    "Latitude": 78.506775,
+    "Longitude": 63.394983
+  },
+  {
+    "Id": 4,
+    "Name": "Dodge",
+    "Latitude": 76.125441,
+    "Longitude": 59.576579
+  },
+  {
+    "Id": 5,
+    "Name": "Darrtown",
+    "Latitude": 4.630474,
+    "Longitude": -100.18956
+  },
+  {
+    "Id": 6,
+    "Name": "Tolu",
+    "Latitude": 20.721269,
+    "Longitude": -176.287067
+  },
+  {
+    "Id": 7,
+    "Name": "Clara",
+    "Latitude": -7.66361,
+    "Longitude": 153.791754
+  },
+  {
+    "Id": 8,
+    "Name": "Alderpoint",
+    "Latitude": 9.361662,
+    "Longitude": -48.972879
+  },
+  {
+    "Id": 9,
+    "Name": "Nutrioso",
+    "Latitude": -59.193179,
+    "Longitude": 144.273773
+  }
+]
