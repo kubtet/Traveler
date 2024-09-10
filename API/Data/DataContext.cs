@@ -19,10 +19,10 @@ public class DataContext(DbContextOptions options) : DbContext(options)
             .HasKey(f => new { f.FollowingUserId, f.FollowedUserId });
 
         modelBuilder.Entity<Follow>()
-                       .HasOne(f => f.FollowingUser)
-                       .WithMany(u => u.Following)
-                       .HasForeignKey(f => f.FollowingUserId)
-                       .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(f => f.FollowingUser)
+            .WithMany(u => u.Following)
+            .HasForeignKey(f => f.FollowingUserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Follow>()
             .HasOne(f => f.FollowedUser)

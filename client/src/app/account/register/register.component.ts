@@ -32,7 +32,6 @@ import { AccountService } from '../../services/account.service';
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
-  providers: [MessageService],
 })
 export class RegisterComponent {
   private accountClient = inject(AccountClient);

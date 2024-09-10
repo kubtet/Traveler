@@ -29,10 +29,10 @@ public class UserRepository(DataContext context) : IUserRepository
         .Include(u => u.Following)
             .ThenInclude(f => f.FollowedUser)
         .Include(u => u.Travels)
-        .ThenInclude(t => t.Photos)
-    .Include(u => u.Travels)
-        .ThenInclude(t => t.TravelPlaces)
-            .ThenInclude(tp => tp.Place)
+            .ThenInclude(t => t.Photos)
+        .Include(u => u.Travels)
+            .ThenInclude(t => t.TravelPlaces)
+                .ThenInclude(tp => tp.Place)
         .ToListAsync();
     }
 

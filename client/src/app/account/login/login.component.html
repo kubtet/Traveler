@@ -4,12 +4,14 @@
       class="mr-2"
       [control]="username"
       label="Username"
+      (enterPressed)="login()"
     ></app-input-text>
     <app-input-text
       class="ml-2"
       [isPassword]="true"
       [control]="password"
       label="Password"
+      (enterPressed)="login()"
     ></app-input-text>
   </div>
 
@@ -25,6 +27,10 @@
 
   <div class="row" style="display: flex">
     <div class="haveAccount">Don't you have an account yet?</div>
-    <app-button label="Sign up" [link]="true" (onClick)="goSignUp()"></app-button>
+    <app-button
+      label="Sign up"
+      [link]="true"
+      (onClick)="goSignUp()"
+    ></app-button>
   </div>
 </p-card>
