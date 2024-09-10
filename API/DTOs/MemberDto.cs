@@ -1,3 +1,6 @@
+using API.DTOs;
+using API.Entities;
+
 namespace API;
 
 
@@ -17,6 +20,6 @@ public class MemberDto
 
     // relationships
     public List<TravelDto>? Travels { get; set; }
-    public List<FollowDto>? Followers { get; set; }
-    public List<FollowDto>? Following { get; set; }
+    public List<FollowerDto>? Followers { get; set; }
+    public List<FollowerDto>? Followees { get; set; }
 }

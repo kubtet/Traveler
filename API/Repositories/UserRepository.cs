@@ -24,9 +24,15 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
         return await context.Users
-        .Include(x => x.Travels)
-        //  .Include(x => x.Followers)
-        //   .Include(x => x.Following)
+        .Include(u => u.Followers)
+        .ThenInclude(f => f.FollowingUser)
+        .Include(u => u.Following)
+            .ThenInclude(f => f.FollowedUser)
+        .Include(u => u.Travels)
+        .ThenInclude(t => t.Photos)
+    .Include(u => u.Travels)
+        .ThenInclude(t => t.TravelPlaces)
+            .ThenInclude(tp => tp.Place)
         .ToListAsync();
     }
 
