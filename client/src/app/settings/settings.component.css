@@ -1,0 +1,35 @@
+
+.edit-profile-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+  width: auto;
+
+}
+::ng-deep .round-image img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  }
+
+  .profile-picture-section{
+    display: flex;
+    padding: 0.3rem;
+  }
+
+  .button-container.buttons-photo-edit{
+    display: flex;
+    flex-direction: column;
+    padding-left: 1.2rem;
+    gap: 1rem;
+  }
+  .button-container.buttons-decision{
+    display: flex;
+    flex-direction: row;
+    padding-top: 1.2rem;
+    gap: 1rem;
+  }
+

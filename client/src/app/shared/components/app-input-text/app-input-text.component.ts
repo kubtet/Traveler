@@ -33,6 +33,7 @@ import { PasswordModule } from 'primeng/password';
   styleUrl: './app-input-text.component.css',
 })
 export class AppInputTextComponent implements OnChanges {
+  @Input() public maxLength: number = 100; // Default maxLength
   /** Used to bind the component to a form control. */
   @Input() public control?: FormControl<string>;
 
@@ -102,6 +103,7 @@ export class AppInputTextComponent implements OnChanges {
   /**  Method to handle the changes. */
   public ngOnChanges(): void {
     if (this.control) {
+      this.control.setValidators([Validators.maxLength(this.maxLength)]);
       this.required = this.control.hasValidator(Validators.required);
     }
 

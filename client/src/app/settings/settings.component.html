@@ -1,0 +1,67 @@
+<div class="edit-profile-container">
+  <h2>Edit profile</h2>
+
+  <div class="profile-picture-section">
+    <p-image
+      src="{{ user.profilePicture }}"
+      alt="Image"
+      width="150"
+      class="round-image"
+      [preview]="true"
+    />
+    <div class="button-container buttons-photo-edit">
+      <app-button
+        label="Modify"
+        [rounded]="true"
+        size="small"
+        [outlined]="true"
+        [style]="{ padding: '10px 20px' }"
+      />
+      <app-button
+        label="Delete"
+        [rounded]="true"
+        size="small"
+        [outlined]="true"
+        [style]="{ padding: '10px 20px' }"
+      />
+    </div>
+  </div>
+  <!-- Username input -->
+  <app-input-text
+    [control]="usernameControl"
+    [label]="'Username'"
+    [placeholder]="'Enter your username...'"
+    [value]="user.username || ''"
+    [required]="true"
+  ></app-input-text>
+  <!-- Bio Input -->
+
+
+  
+  <app-input-text
+    [control]="bioControl"
+    [label]="'Bio'"
+    placeholder="'Create your profile bio...'"
+    [value]="user.bio || ''"
+    size="large"
+  />
+
+  <div class="button-container buttons-decision">
+    <app-button
+      label="Save"
+      [rounded]="true"
+      size="large"
+      severity="contrast"
+      [style]="{ padding: '10px 20px' }"
+    />
+    <app-button
+      label="Cancel"
+      [rounded]="true"
+      size="large"
+      severity="contrast"
+      [outlined]="true"
+      [style]="{ padding: '10px 20px' }"
+      (onClick)="cancel()"
+    />
+  </div>
+</div>

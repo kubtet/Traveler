@@ -9,488 +9,657 @@
 // ReSharper disable InconsistentNaming
 
 export class AccountClient {
-  private http: {
-    fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
-  };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
-  }
-
-  register(registerDto: RegisterDto): Promise<UserDto> {
-    let url_ = this.baseUrl + '/api/Account/register';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(registerDto);
-
-    let options_: RequestInit = {
-      body: content_,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    };
-
-    return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processRegister(_response);
-    });
-  }
-
-  protected processRegister(response: Response): Promise<UserDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
-    if (status === 200) {
-      return response.text().then((_responseText) => {
-        let result200: any = null;
-        let resultData200 =
-          _responseText === ''
-            ? null
-            : JSON.parse(_responseText, this.jsonParseReviver);
-        result200 = UserDto.fromJS(resultData200);
-        return result200;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then((_responseText) => {
-        return throwException(
-          'An unexpected server error occurred.',
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    register(registerDto: RegisterDto): Promise<UserDto> {
+        let url_ = this.baseUrl + "/api/Account/register";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(registerDto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRegister(_response);
+        });
     }
-    return Promise.resolve<UserDto>(null as any);
-  }
 
-  login(loginDto: LoginDto): Promise<UserDto> {
-    let url_ = this.baseUrl + '/api/Account/login';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(loginDto);
-
-    let options_: RequestInit = {
-      body: content_,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    };
-
-    return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processLogin(_response);
-    });
-  }
-
-  protected processLogin(response: Response): Promise<UserDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processRegister(response: Response): Promise<UserDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserDto>(null as any);
     }
-    if (status === 200) {
-      return response.text().then((_responseText) => {
-        let result200: any = null;
-        let resultData200 =
-          _responseText === ''
-            ? null
-            : JSON.parse(_responseText, this.jsonParseReviver);
-        result200 = UserDto.fromJS(resultData200);
-        return result200;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then((_responseText) => {
-        return throwException(
-          'An unexpected server error occurred.',
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    login(loginDto: LoginDto): Promise<UserDto> {
+        let url_ = this.baseUrl + "/api/Account/login";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(loginDto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processLogin(_response);
+        });
     }
-    return Promise.resolve<UserDto>(null as any);
-  }
+
+    protected processLogin(response: Response): Promise<UserDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserDto>(null as any);
+    }
 }
 
 export class UsersClient {
-  private http: {
-    fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
-  };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
-  }
-
-  getUsers(): Promise<User[]> {
-    let url_ = this.baseUrl + '/api/Users';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: RequestInit = {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    };
-
-    return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processGetUsers(_response);
-    });
-  }
-
-  protected processGetUsers(response: Response): Promise<User[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
-    if (status === 200) {
-      return response.text().then((_responseText) => {
-        let result200: any = null;
-        let resultData200 =
-          _responseText === ''
-            ? null
-            : JSON.parse(_responseText, this.jsonParseReviver);
-        if (Array.isArray(resultData200)) {
-          result200 = [] as any;
-          for (let item of resultData200) result200!.push(User.fromJS(item));
-        } else {
-          result200 = <any>null;
+
+    getUsers(): Promise<MemberDto[]> {
+        let url_ = this.baseUrl + "/api/Users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUsers(_response);
+        });
+    }
+
+    protected processGetUsers(response: Response): Promise<MemberDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MemberDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
         }
-        return result200;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then((_responseText) => {
-        return throwException(
-          'An unexpected server error occurred.',
-          status,
-          _responseText,
-          _headers
-        );
-      });
+        return Promise.resolve<MemberDto[]>(null as any);
     }
-    return Promise.resolve<User[]>(null as any);
-  }
 
-  getUser(id: number): Promise<User> {
-    let url_ = this.baseUrl + '/api/Users/{id}';
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    url_ = url_.replace(/[?&]$/, '');
+    getUserById(id: number): Promise<MemberDto> {
+        let url_ = this.baseUrl + "/api/Users/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
 
-    let options_: RequestInit = {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    };
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
 
-    return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processGetUser(_response);
-    });
-  }
-
-  protected processGetUser(response: Response): Promise<User> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUserById(_response);
+        });
     }
-    if (status === 200) {
-      return response.text().then((_responseText) => {
-        let result200: any = null;
-        let resultData200 =
-          _responseText === ''
-            ? null
-            : JSON.parse(_responseText, this.jsonParseReviver);
-        result200 = User.fromJS(resultData200);
-        return result200;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then((_responseText) => {
-        return throwException(
-          'An unexpected server error occurred.',
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    protected processGetUserById(response: Response): Promise<MemberDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MemberDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<MemberDto>(null as any);
     }
-    return Promise.resolve<User>(null as any);
-  }
+
+    getUserByUsername(username: string): Promise<MemberDto> {
+        let url_ = this.baseUrl + "/api/Users/username/{username}";
+        if (username === undefined || username === null)
+            throw new Error("The parameter 'username' must be defined.");
+        url_ = url_.replace("{username}", encodeURIComponent("" + username));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUserByUsername(_response);
+        });
+    }
+
+    protected processGetUserByUsername(response: Response): Promise<MemberDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MemberDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<MemberDto>(null as any);
+    }
 }
 
 export class UserDto implements IUserDto {
-  username?: string;
-  token?: string;
+    username?: string;
+    token?: string;
 
-  constructor(data?: IUserDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.username = _data['username'];
-      this.token = _data['token'];
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data["username"];
+            this.token = _data["token"];
+        }
     }
-  }
 
-  static fromJS(data: any): UserDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new UserDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): UserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['username'] = this.username;
-    data['token'] = this.token;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["username"] = this.username;
+        data["token"] = this.token;
+        return data;
+    }
 }
 
 export interface IUserDto {
-  username?: string;
-  token?: string;
+    username?: string;
+    token?: string;
 }
 
 export class RegisterDto implements IRegisterDto {
-  username!: string;
-  password!: string;
-  name!: string;
-  surname!: string;
-  email!: string;
-  gender!: string;
-  dateOfBirth!: Date;
+    username!: string;
+    password!: string;
+    name!: string;
+    surname!: string;
+    email!: string;
+    gender!: string;
+    dateOfBirth!: Date;
 
-  constructor(data?: IRegisterDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IRegisterDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.username = _data['username'];
-      this.password = _data['password'];
-      this.name = _data['name'];
-      this.surname = _data['surname'];
-      this.email = _data['email'];
-      this.gender = _data['gender'];
-      this.dateOfBirth = _data['dateOfBirth']
-        ? new Date(_data['dateOfBirth'].toString())
-        : <any>undefined;
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data["username"];
+            this.password = _data["password"];
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.email = _data["email"];
+            this.gender = _data["gender"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+        }
     }
-  }
 
-  static fromJS(data: any): RegisterDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new RegisterDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): RegisterDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RegisterDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['username'] = this.username;
-    data['password'] = this.password;
-    data['name'] = this.name;
-    data['surname'] = this.surname;
-    data['email'] = this.email;
-    data['gender'] = this.gender;
-    data['dateOfBirth'] = this.dateOfBirth
-      ? this.dateOfBirth.toISOString()
-      : <any>undefined;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["username"] = this.username;
+        data["password"] = this.password;
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["email"] = this.email;
+        data["gender"] = this.gender;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        return data;
+    }
 }
 
 export interface IRegisterDto {
-  username: string;
-  password: string;
-  name: string;
-  surname: string;
-  email: string;
-  gender: string;
-  dateOfBirth: Date;
+    username: string;
+    password: string;
+    name: string;
+    surname: string;
+    email: string;
+    gender: string;
+    dateOfBirth: Date;
 }
 
 export class LoginDto implements ILoginDto {
-  username?: string;
-  password?: string;
+    username?: string;
+    password?: string;
 
-  constructor(data?: ILoginDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ILoginDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.username = _data['username'];
-      this.password = _data['password'];
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data["username"];
+            this.password = _data["password"];
+        }
     }
-  }
 
-  static fromJS(data: any): LoginDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new LoginDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): LoginDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LoginDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['username'] = this.username;
-    data['password'] = this.password;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["username"] = this.username;
+        data["password"] = this.password;
+        return data;
+    }
 }
 
 export interface ILoginDto {
-  username?: string;
-  password?: string;
+    username?: string;
+    password?: string;
 }
 
-export class User implements IUser {
-  id?: number;
-  userName?: string;
-  passwordHash?: string;
-  passwordSalt?: string;
-  name?: string;
-  surname?: string;
-  email?: string;
-  dateOfBirth?: Date;
-  gender?: string;
+export class MemberDto implements IMemberDto {
+    id?: number;
+    username?: string | undefined;
+    name?: string | undefined;
+    surname?: string | undefined;
+    email?: string | undefined;
+    gender?: string | undefined;
+    bio?: string | undefined;
+    profilePicture?: string | undefined;
+    dateOfBirth?: Date;
+    creationDate?: Date;
+    travels?: TravelDto[] | undefined;
+    followers?: FollowerDto[] | undefined;
+    followees?: FollowerDto[] | undefined;
 
-  constructor(data?: IUser) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IMemberDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.id = _data['id'];
-      this.userName = _data['userName'];
-      this.passwordHash = _data['passwordHash'];
-      this.passwordSalt = _data['passwordSalt'];
-      this.name = _data['name'];
-      this.surname = _data['surname'];
-      this.email = _data['email'];
-      this.dateOfBirth = _data['dateOfBirth']
-        ? new Date(_data['dateOfBirth'].toString())
-        : <any>undefined;
-      this.gender = _data['gender'];
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.username = _data["username"];
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.email = _data["email"];
+            this.gender = _data["gender"];
+            this.bio = _data["bio"];
+            this.profilePicture = _data["profilePicture"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
+            if (Array.isArray(_data["travels"])) {
+                this.travels = [] as any;
+                for (let item of _data["travels"])
+                    this.travels!.push(TravelDto.fromJS(item));
+            }
+            if (Array.isArray(_data["followers"])) {
+                this.followers = [] as any;
+                for (let item of _data["followers"])
+                    this.followers!.push(FollowerDto.fromJS(item));
+            }
+            if (Array.isArray(_data["followees"])) {
+                this.followees = [] as any;
+                for (let item of _data["followees"])
+                    this.followees!.push(FollowerDto.fromJS(item));
+            }
+        }
     }
-  }
 
-  static fromJS(data: any): User {
-    data = typeof data === 'object' ? data : {};
-    let result = new User();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): MemberDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['id'] = this.id;
-    data['userName'] = this.userName;
-    data['passwordHash'] = this.passwordHash;
-    data['passwordSalt'] = this.passwordSalt;
-    data['name'] = this.name;
-    data['surname'] = this.surname;
-    data['email'] = this.email;
-    data['dateOfBirth'] = this.dateOfBirth
-      ? this.dateOfBirth.toISOString()
-      : <any>undefined;
-    data['gender'] = this.gender;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["username"] = this.username;
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["email"] = this.email;
+        data["gender"] = this.gender;
+        data["bio"] = this.bio;
+        data["profilePicture"] = this.profilePicture;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        if (Array.isArray(this.travels)) {
+            data["travels"] = [];
+            for (let item of this.travels)
+                data["travels"].push(item.toJSON());
+        }
+        if (Array.isArray(this.followers)) {
+            data["followers"] = [];
+            for (let item of this.followers)
+                data["followers"].push(item.toJSON());
+        }
+        if (Array.isArray(this.followees)) {
+            data["followees"] = [];
+            for (let item of this.followees)
+                data["followees"].push(item.toJSON());
+        }
+        return data;
+    }
 }
 
-export interface IUser {
-  id?: number;
-  userName?: string;
-  passwordHash?: string;
-  passwordSalt?: string;
-  name?: string;
-  surname?: string;
-  email?: string;
-  dateOfBirth?: Date;
-  gender?: string;
+export interface IMemberDto {
+    id?: number;
+    username?: string | undefined;
+    name?: string | undefined;
+    surname?: string | undefined;
+    email?: string | undefined;
+    gender?: string | undefined;
+    bio?: string | undefined;
+    profilePicture?: string | undefined;
+    dateOfBirth?: Date;
+    creationDate?: Date;
+    travels?: TravelDto[] | undefined;
+    followers?: FollowerDto[] | undefined;
+    followees?: FollowerDto[] | undefined;
+}
+
+export class TravelDto implements ITravelDto {
+    id?: number;
+    title?: string | undefined;
+    startDate?: Date;
+    endDate?: Date;
+    photosUrl?: string[] | undefined;
+    placesNames?: PlaceDto[] | undefined;
+
+    constructor(data?: ITravelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+            if (Array.isArray(_data["photosUrl"])) {
+                this.photosUrl = [] as any;
+                for (let item of _data["photosUrl"])
+                    this.photosUrl!.push(item);
+            }
+            if (Array.isArray(_data["placesNames"])) {
+                this.placesNames = [] as any;
+                for (let item of _data["placesNames"])
+                    this.placesNames!.push(PlaceDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TravelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TravelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        if (Array.isArray(this.photosUrl)) {
+            data["photosUrl"] = [];
+            for (let item of this.photosUrl)
+                data["photosUrl"].push(item);
+        }
+        if (Array.isArray(this.placesNames)) {
+            data["placesNames"] = [];
+            for (let item of this.placesNames)
+                data["placesNames"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ITravelDto {
+    id?: number;
+    title?: string | undefined;
+    startDate?: Date;
+    endDate?: Date;
+    photosUrl?: string[] | undefined;
+    placesNames?: PlaceDto[] | undefined;
+}
+
+export class PlaceDto implements IPlaceDto {
+    id?: number;
+    name?: string | undefined;
+    latitude?: number;
+    longitude?: number;
+
+    constructor(data?: IPlaceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.latitude = _data["latitude"];
+            this.longitude = _data["longitude"];
+        }
+    }
+
+    static fromJS(data: any): PlaceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlaceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["latitude"] = this.latitude;
+        data["longitude"] = this.longitude;
+        return data;
+    }
+}
+
+export interface IPlaceDto {
+    id?: number;
+    name?: string | undefined;
+    latitude?: number;
+    longitude?: number;
+}
+
+export class FollowerDto implements IFollowerDto {
+    id?: number;
+    username?: string | undefined;
+    profilePicture?: string | undefined;
+
+    constructor(data?: IFollowerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.username = _data["username"];
+            this.profilePicture = _data["profilePicture"];
+        }
+    }
+
+    static fromJS(data: any): FollowerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FollowerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["username"] = this.username;
+        data["profilePicture"] = this.profilePicture;
+        return data;
+    }
+}
+
+export interface IFollowerDto {
+    id?: number;
+    username?: string | undefined;
+    profilePicture?: string | undefined;
 }
 
 export class ApiException extends Error {
-  override message: string;
-  status: number;
-  response: string;
-  headers: { [key: string]: any };
-  result: any;
+    override message: string;
+    status: number;
+    response: string;
+    headers: { [key: string]: any; };
+    result: any;
 
-  constructor(
-    message: string,
-    status: number,
-    response: string,
-    headers: { [key: string]: any },
-    result: any
-  ) {
-    super();
+    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
+        super();
 
-    this.message = message;
-    this.status = status;
-    this.response = response;
-    this.headers = headers;
-    this.result = result;
-  }
+        this.message = message;
+        this.status = status;
+        this.response = response;
+        this.headers = headers;
+        this.result = result;
+    }
 
-  protected isApiException = true;
+    protected isApiException = true;
 
-  static isApiException(obj: any): obj is ApiException {
-    return obj.isApiException === true;
-  }
+    static isApiException(obj: any): obj is ApiException {
+        return obj.isApiException === true;
+    }
 }
 
-function throwException(
-  message: string,
-  status: number,
-  response: string,
-  headers: { [key: string]: any },
-  result?: any
-): any {
-  if (result !== null && result !== undefined) throw result;
-  else throw new ApiException(message, status, response, headers, null);
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
+    if (result !== null && result !== undefined)
+        throw result;
+    else
+        throw new ApiException(message, status, response, headers, null);
 }
