@@ -1,12 +1,16 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ImageModule } from 'primeng/image';
-import { UsersClient } from '../services/api';
+import { MemberDto, UsersClient } from '../services/api';
 import { AccountService } from '../services/account.service';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { Router } from '@angular/router';
+import { MessagesModule } from 'primeng/messages';
+import { Message } from 'primeng/api';
+import { DividerModule } from 'primeng/divider';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-settings',
@@ -16,6 +20,9 @@ import { Router } from '@angular/router';
     ImageModule,
     AppButtonComponent,
     AppInputTextComponent,
+    MessagesModule,
+    DividerModule,
+    FormsModule,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
@@ -25,24 +32,56 @@ export class SettingsComponent implements OnInit {
   private accountService = inject(AccountService);
   private usersClient = inject(UsersClient);
 
-  protected user: any;
+  protected user: MemberDto;
 
-  usernameControl: FormControl;
-  bioControl: FormControl;
+  protected form = new FormGroup({
+    username: new FormControl<string>('', [
+      Validators.required,
+      Validators.maxLength(20),
+    ]),
+    bio: new FormControl<string>('', [
+      Validators.required,
+      Validators.maxLength(200),
+    ]),
+  });
+
+  unsavedChangesMessages: Message[] = [];
 
   async ngOnInit() {
-    // TODO get updateuserdto instead of userdto !!!
-    this.user = await this.usersClient.getUserByUsername(
-      this.accountService.currentUser().username
-    );
-    this.usernameControl = new FormControl(this.user.username || '', [
-      Validators.required,
-      Validators.maxLength(15),
-    ]);
+    await this.loadUser();
+    this.unsavedChangesMessages = [];
 
-    this.bioControl = new FormControl(this.user.bio || '', [
-      Validators.maxLength(100),
-    ]);
+    // this.form.controls.username.valueChanges.subscribe(()=> this.onInputChange())
+    this.onInputChange();
+  }
+
+  public async loadUser() {
+    const currentUserName = this.accountService.currentUser().username;
+    if (!currentUserName) return;
+
+    const userTemp = await this.usersClient.getUserByUsername(currentUserName);
+    this.user = userTemp;
+    this.form.controls.username.setValue(userTemp.username);
+    this.form.controls.bio.setValue(userTemp.bio);
+  }
+
+  public onInputChange() {
+    this.form.valueChanges.subscribe(() => {
+      if (
+        this.form.controls.username.value !== this.user.username ||
+        this.form.controls.bio.value !== this.user.bio
+      ) {
+        this.unsavedChangesMessages = [
+          {
+            severity: 'warn', // Poziom ważności
+            summary: 'Niezapisane zmiany', // Nagłówek
+            detail: 'Dokonałeś zmian, które jeszcze nie zostały zapisane.', // Szczegóły
+          },
+        ];
+      } else {
+        this.unsavedChangesMessages = [];
+      }
+    });
   }
 
   public updateProfilePicture() {

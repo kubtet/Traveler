@@ -51,7 +51,7 @@ export class RegisterComponent {
 
   public async signUp() {
     const control = this.form.controls;
-
+    
     if (control.password.value !== control.confirmPassword.value) {
       this.messageService.add({
         severity: 'danger',

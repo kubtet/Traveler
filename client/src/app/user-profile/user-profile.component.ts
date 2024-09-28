@@ -40,4 +40,8 @@ export class UserProfileComponent implements OnInit {
   public goToSettings() {
     this.router.navigateByUrl('/settings');
   }
+
+  protected logOut() {
+    this.accountService.logOut();
+  }
 }

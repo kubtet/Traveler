@@ -1,51 +1,67 @@
+@if (user) {
 <div class="edit-profile-container">
-  <h2>Edit profile</h2>
+  <!-- name + alert -->
+  <div class="header" style="display: flex; width: 80%">
+    <div class="col-4">
+      <h1>Hello {{ user.username }}!</h1>
+      <h2>Edit your profile</h2>
+    </div>
+    <div class="col-8">
+      <p>hello its second column with alert</p>
+      <p-messages
+        [(value)]="unsavedChangesMessages"
+        [closable]="true"
+        severity="info"
+        [showTransitionOptions]="'0ms'"
+        [hideTransitionOptions]="'0ms'"
+      ></p-messages>
+    </div>
+  </div>
 
-  <div class="profile-picture-section">
-    <p-image
-      src="{{ user.profilePicture }}"
-      alt="Image"
-      width="150"
-      class="round-image"
-      [preview]="true"
-    />
-    <div class="button-container buttons-photo-edit">
-      <app-button
-        label="Modify"
-        [rounded]="true"
-        size="small"
-        [outlined]="true"
-        [style]="{ padding: '10px 20px' }"
+  <!-- photo + input section 50 - 50 -->
+  <div class="edit-elements-container">
+    <div class="profile-picture-section">
+      <p-image
+        src="{{ user.profilePicture }}"
+        alt="Image"
+        width="150"
+        class="round-image"
+        [preview]="true"
       />
-      <app-button
-        label="Delete"
-        [rounded]="true"
-        size="small"
-        [outlined]="true"
-        [style]="{ padding: '10px 20px' }"
+      <div class="button-container buttons-photo-edit">
+        <app-button
+          label="Modify"
+          [rounded]="true"
+          size="small"
+          [outlined]="true"
+          [style]="{ padding: '10px 20px' }"
+        />
+        <app-button
+          label="Delete"
+          [rounded]="true"
+          size="small"
+          [outlined]="true"
+          [style]="{ padding: '10px 20px' }"
+        />
+      </div>
+    </div>
+    <p-divider layout="vertical" />
+    <div class="input-container">
+      <!-- Username input -->
+      <app-input-text
+        [control]="form.controls.username"
+        [label]="'Username'"
+        [placeholder]="'Enter your username...'"
+      ></app-input-text>
+      <!-- Bio Input -->
+      <app-input-text
+        [control]="form.controls.bio"
+        [label]="'Bio'"
+        [placeholder]="'Create your profile bio...'"
+        size="large"
       />
     </div>
   </div>
-  <!-- Username input -->
-  <app-input-text
-    [control]="usernameControl"
-    [label]="'Username'"
-    [placeholder]="'Enter your username...'"
-    [value]="user.username || ''"
-    [required]="true"
-  ></app-input-text>
-  <!-- Bio Input -->
-
-
-  
-  <app-input-text
-    [control]="bioControl"
-    [label]="'Bio'"
-    placeholder="'Create your profile bio...'"
-    [value]="user.bio || ''"
-    size="large"
-  />
-
   <div class="button-container buttons-decision">
     <app-button
       label="Save"
@@ -65,3 +81,5 @@
     />
   </div>
 </div>
+
+}

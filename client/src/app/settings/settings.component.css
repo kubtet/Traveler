@@ -8,24 +8,44 @@
   width: auto;
 
 }
+
+.edit-elements-container {
+  display: flex;
+  width: 80%; 
+  align-items: stretch; 
+  gap: 1rem; 
+}
+
 ::ng-deep .round-image img {
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
   }
 
   .profile-picture-section{
-    display: flex;
-    padding: 0.3rem;
+    display: flex;   
+    flex: 0 0 30%;
   }
+
+  .input-container{
+    display: flex;
+    flex: 0 0 70%;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
 
   .button-container.buttons-photo-edit{
     display: flex;
     flex-direction: column;
     padding-left: 1.2rem;
+    align-items: center;
+    justify-content: center;
     gap: 1rem;
   }
+
+
   .button-container.buttons-decision{
     display: flex;
     flex-direction: row;
