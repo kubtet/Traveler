@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { AccountClient, LoginDto, UserDto } from '../../services/api';
 import { AccountService } from '../../services/account.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,9 @@ export class LoginComponent {
       password: this.password.value,
     });
 
-    const result: UserDto = await this.accountClient.login(input);
+    const result: UserDto = await firstValueFrom(
+      this.accountClient.login(input)
+    );
 
     console.log(result);
 
