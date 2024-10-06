@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "generate-api": "nswag openapi2tsclient /input:https://localhost:5001/swagger/v1/swagger.json /output:../client/src/app/services/api.ts"
+    "generate-api": "nswag openapi2tsclient /input:https://localhost:5001/swagger/v1/swagger.json /output:../client/src/app/services/api.ts --client 'Angular'"
   },
   "private": true,
   "dependencies": {
@@ -37,6 +37,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "nswag": "^14.1.0",
     "typescript": "~5.4.2"
   }
 }

@@ -30,7 +30,7 @@ export class NavComponent implements OnInit {
         icon: 'pi pi-plus',
         tooltip: 'Add new gallery',
       },
-    
+
       {
         label: '',
         icon: 'pi pi-comment',
@@ -41,7 +41,12 @@ export class NavComponent implements OnInit {
         icon: 'pi pi-bell',
         tooltip: 'Notifications',
       },
-      
+      {
+        label: '',
+        icon: 'pi pi-hammer',
+        tooltip: 'Errors',
+        routerLink: '/errors',
+      },
       {
         label: '',
         icon: 'pi pi-user',
