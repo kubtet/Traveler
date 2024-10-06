@@ -7,7 +7,7 @@ public class DataContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Follow> Follows { get; set; }
     public DbSet<Like> Likes { get; set; }
-    public DbSet<Photo> Photos { get; set; }
+    public DbSet<Photo> Photos { get; set; } // Maybe unnecessary
     public DbSet<Place> Places { get; set; }
     public DbSet<Travel> Travels { get; set; }
     public DbSet<TravelPlace> TravelPlaces { get; set; }
