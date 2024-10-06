@@ -1,9 +1,8 @@
-using API.Data;
-using API.Entities;
+using API.DTOs;
+using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -31,7 +30,6 @@ namespace API.Controllers
             }
 
             return mapper.Map<MemberDto>(user);
-;
         }
 
         [AllowAnonymous]
@@ -45,7 +43,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<MemberDto>(user);;
+            return mapper.Map<MemberDto>(user);
         }
     }
 }
