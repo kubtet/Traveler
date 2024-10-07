@@ -6,6 +6,7 @@ import { RegisterComponent } from './account/register/register.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { authGuard } from './guards/auth.guard';
 import { SettingsComponent } from './settings/settings.component';
+import { preventUnsavedChangesGuard } from './guards/prevent-unsaved-changes.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -16,7 +17,11 @@ export const routes: Routes = [
     children: [
       { path: 'example', component: ExampleComponent },
       { path: 'user-profile', component: UserProfileComponent },
-      { path: 'settings', component: SettingsComponent}
+      {
+        path: 'settings',
+        component: SettingsComponent,
+        canDeactivate: [preventUnsavedChangesGuard],
+      },
     ],
   },
   { path: 'login', component: LoginComponent },

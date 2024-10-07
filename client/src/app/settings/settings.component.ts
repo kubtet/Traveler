@@ -1,16 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { ImageModule } from 'primeng/image';
 import { MemberDto, UsersClient } from '../services/api';
 import { AccountService } from '../services/account.service';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { Router } from '@angular/router';
 import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api';
 import { DividerModule } from 'primeng/divider';
 import { FormsModule } from '@angular/forms';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-settings',
@@ -28,13 +29,20 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './settings.component.css',
 })
 export class SettingsComponent implements OnInit {
+  @HostListener('window:beforeunload', ['$event'])
+  notify($event: any) {
+    if (this.form.dirty) {
+      $event.returnValue = true;
+    }
+  }
+  // private toastr = inject(ToastrService);
   private router = inject(Router);
   private accountService = inject(AccountService);
   private usersClient = inject(UsersClient);
 
   protected user: MemberDto;
 
-  protected form = new FormGroup({
+  public form = new FormGroup({
     username: new FormControl<string>('', [
       Validators.required,
       Validators.maxLength(20),
@@ -73,9 +81,9 @@ export class SettingsComponent implements OnInit {
       ) {
         this.unsavedChangesMessages = [
           {
-            severity: 'warn', // Poziom ważności
-            summary: 'Niezapisane zmiany', // Nagłówek
-            detail: 'Dokonałeś zmian, które jeszcze nie zostały zapisane.', // Szczegóły
+            severity: 'warn',
+            summary: 'Unsaved changes',
+            detail: "You've made some changes that haven't been saved.",
           },
         ];
       } else {
@@ -92,11 +100,18 @@ export class SettingsComponent implements OnInit {
     //TODO
   }
 
-  public save() {
+  public onSaveChanges() {
     //TODO
+    console.log(this.user);
+    // this.toastr.success('Profile updated successfully!');
+    this.form.reset({
+      username: this.user.username,
+      bio: this.user.bio
+    });
+    this.unsavedChangesMessages = [];
   }
 
-  public cancel() {
+  public onDiscardChanges() {
     this.router.navigateByUrl('/user-profile');
   }
 }

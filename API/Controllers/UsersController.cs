@@ -1,4 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using API.Data;
+using API.DTOs;
 using API.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +34,7 @@ namespace API.Controllers
             }
 
             return mapper.Map<MemberDto>(user);
-;
+            ;
         }
 
         [AllowAnonymous]
@@ -45,7 +48,20 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<MemberDto>(user);;
+            return mapper.Map<MemberDto>(user); ;
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(UpdateUserDto updateUserDto, IMapper mapper)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (username == null) return BadRequest("No username found in token.");
+            var user = await userRepository.GetUserByUsernameAsync(username);
+            if (user == null) return BadRequest("Could not find a user");
+            mapper.Map(updateUserDto, user);
+            if (await userRepository.SaveAllAsync()) return NoContent();
+            return BadRequest("Failed to save changes.");
         }
     }
 }

@@ -53,7 +53,40 @@
         [label]="'Username'"
         [placeholder]="'Enter your username...'"
       ></app-input-text>
+     
+      <!-- username input validation -->
+      @if(form.controls.username.invalid ||
+      form.controls.username.touched){
+      <div>
+        @if(form.controls.bio.validator?.['required']){
+        <small class="error"> Bio is required. </small>
+        }
+        @if(form.controls.bio.errors?.['maxlength']){
+        <small class="error"> Bio cannot be longer than 20 characters. </small>
+        }
+      </div>
+      }
       <!-- Bio Input -->
+      <!-- <label for="bio">My Name</label>
+      <textarea
+        id="bio"
+        rows="5"
+        cols="30"
+        pInputTextarea
+        [(ngModel)]="user.bio"
+      >
+        class="ng-invalid"
+      ></textarea
+      >
+      @if(form.controls.bio.invalid && form.controls.bio.touched){
+      <div>
+        @if(form.controls.bio.errors?.['required']){
+        <small class="error"> Bio is required. </small>
+        } @if(form.controls.bio.errors?.['maxlength']){
+        <small class="error"> Bio cannot be longer than 200 characters. </small>
+        }
+      </div>
+      } -->
       <app-input-text
         [control]="form.controls.bio"
         [label]="'Bio'"
@@ -64,11 +97,13 @@
   </div>
   <div class="button-container buttons-decision">
     <app-button
+      [disabled]="!form.dirty"
       label="Save"
       [rounded]="true"
       size="large"
       severity="contrast"
       [style]="{ padding: '10px 20px' }"
+      (onClick)="onSaveChanges()"
     />
     <app-button
       label="Cancel"
@@ -77,7 +112,7 @@
       severity="contrast"
       [outlined]="true"
       [style]="{ padding: '10px 20px' }"
-      (onClick)="cancel()"
+      (onClick)="onDiscardChanges()"
     />
   </div>
 </div>
