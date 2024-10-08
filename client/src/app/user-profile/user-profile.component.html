@@ -25,7 +25,18 @@
     </div>
 
     <!-- Settings  -->
-    <app-button icon="pi pi-cog" label="Settings" class="settings-button" />
+    <app-button
+      icon="pi pi-cog"
+      label="Edit profile"
+      class="settings-button"
+      (onClick)="goToSettings()"
+    />
+    <app-button
+      icon="pi pi-sign-out"
+      label="Log out"
+      class="settings-button"
+      (onClick)="logOut()"
+    />
   </div>
 </p-card>
 
