@@ -12,10 +12,10 @@ import {
 } from '@angular/forms';
 import { AppCalendarComponent } from '../../shared/components/app-calendar/app-calendar.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AccountClient, RegisterDto, UserDto } from '../../services/api';
 import { AccountService } from '../../services/account.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -28,7 +28,6 @@ import { AccountService } from '../../services/account.service';
     RadioButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    ToastModule,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
@@ -70,7 +69,9 @@ export class RegisterComponent {
       username: control.username.value,
     });
 
-    const result: UserDto = await this.accountClient.register(input);
+    const result: UserDto = await firstValueFrom(
+      this.accountClient.register(input)
+    );
 
     console.log(result);
 

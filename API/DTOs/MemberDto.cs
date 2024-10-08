@@ -1,7 +1,4 @@
-using API.DTOs;
-using API.Entities;
-
-namespace API;
+namespace API.DTOs;
 
 
 public class MemberDto

@@ -41,7 +41,12 @@ export class NavComponent implements OnInit {
         icon: 'pi pi-bell',
         tooltip: 'Notifications',
       },
-
+      {
+        label: '',
+        icon: 'pi pi-hammer',
+        tooltip: 'Errors',
+        routerLink: '/errors',
+      },
       {
         label: '',
         icon: 'pi pi-user',
