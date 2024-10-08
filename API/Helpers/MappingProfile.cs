@@ -23,7 +23,7 @@ public class MappingProfiles : Profile
                 }).ToList()));
         CreateMap<Travel, TravelDto>()
             .ForMember(d => d.PhotosUrl, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()))
-            .ForMember(d => d.PlacesNames, o => o.MapFrom(s => s.TravelPlaces.Select(tp => tp.Place).ToList()));
+            .ForMember(d => d.PlacesNames, o => o.MapFrom(s => s.TravelPlaces.Select(tp => tp.Place.Name).ToList()));
 
 
         CreateMap<Photo, PhotoDto>();

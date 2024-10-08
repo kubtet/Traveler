@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
+import { TravelsComponent } from "../travels/travels.component";
 
 @Component({
   selector: 'app-user-profile',
@@ -17,7 +18,8 @@ import { AppButtonComponent } from '../shared/components/app-button/app-button.c
     CardModule,
     ButtonModule,
     TabViewModule,
-  ],
+    TravelsComponent
+],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
 })

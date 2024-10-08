@@ -349,6 +349,80 @@ export class BuggyClient implements IBuggyClient {
     }
 }
 
+export interface ITravelClient {
+    getTravelsById(id: number): Observable<TravelDto[]>;
+}
+
+@Injectable()
+export class TravelClient implements ITravelClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    getTravelsById(id: number): Observable<TravelDto[]> {
+        let url_ = this.baseUrl + "/api/Travel/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTravelsById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTravelsById(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TravelDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TravelDto[]>;
+        }));
+    }
+
+    protected processGetTravelsById(response: HttpResponseBase): Observable<TravelDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TravelDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IUsersClient {
     getUsers(): Observable<MemberDto[]>;
     getUserById(id: number): Observable<MemberDto>;
@@ -1080,6 +1154,82 @@ export interface IFollow {
     createdAt?: Date;
 }
 
+export class TravelDto implements ITravelDto {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    startDate?: Date;
+    endDate?: Date | undefined;
+    photosUrl?: string[] | undefined;
+    placesNames?: string[] | undefined;
+
+    constructor(data?: ITravelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+            if (Array.isArray(_data["photosUrl"])) {
+                this.photosUrl = [] as any;
+                for (let item of _data["photosUrl"])
+                    this.photosUrl!.push(item);
+            }
+            if (Array.isArray(_data["placesNames"])) {
+                this.placesNames = [] as any;
+                for (let item of _data["placesNames"])
+                    this.placesNames!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): TravelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TravelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        if (Array.isArray(this.photosUrl)) {
+            data["photosUrl"] = [];
+            for (let item of this.photosUrl)
+                data["photosUrl"].push(item);
+        }
+        if (Array.isArray(this.placesNames)) {
+            data["placesNames"] = [];
+            for (let item of this.placesNames)
+                data["placesNames"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ITravelDto {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    startDate?: Date;
+    endDate?: Date | undefined;
+    photosUrl?: string[] | undefined;
+    placesNames?: string[] | undefined;
+}
+
 export class MemberDto implements IMemberDto {
     id?: number;
     username?: string | undefined;
@@ -1186,126 +1336,6 @@ export interface IMemberDto {
     travels?: TravelDto[] | undefined;
     followers?: FollowerDto[] | undefined;
     followees?: FollowerDto[] | undefined;
-}
-
-export class TravelDto implements ITravelDto {
-    id?: number;
-    title?: string | undefined;
-    startDate?: Date;
-    endDate?: Date;
-    photosUrl?: string[] | undefined;
-    placesNames?: PlaceDto[] | undefined;
-
-    constructor(data?: ITravelDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.title = _data["title"];
-            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
-            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
-            if (Array.isArray(_data["photosUrl"])) {
-                this.photosUrl = [] as any;
-                for (let item of _data["photosUrl"])
-                    this.photosUrl!.push(item);
-            }
-            if (Array.isArray(_data["placesNames"])) {
-                this.placesNames = [] as any;
-                for (let item of _data["placesNames"])
-                    this.placesNames!.push(PlaceDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): TravelDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TravelDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["title"] = this.title;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        if (Array.isArray(this.photosUrl)) {
-            data["photosUrl"] = [];
-            for (let item of this.photosUrl)
-                data["photosUrl"].push(item);
-        }
-        if (Array.isArray(this.placesNames)) {
-            data["placesNames"] = [];
-            for (let item of this.placesNames)
-                data["placesNames"].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface ITravelDto {
-    id?: number;
-    title?: string | undefined;
-    startDate?: Date;
-    endDate?: Date;
-    photosUrl?: string[] | undefined;
-    placesNames?: PlaceDto[] | undefined;
-}
-
-export class PlaceDto implements IPlaceDto {
-    id?: number;
-    name?: string | undefined;
-    latitude?: number;
-    longitude?: number;
-
-    constructor(data?: IPlaceDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.latitude = _data["latitude"];
-            this.longitude = _data["longitude"];
-        }
-    }
-
-    static fromJS(data: any): PlaceDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PlaceDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["latitude"] = this.latitude;
-        data["longitude"] = this.longitude;
-        return data;
-    }
-}
-
-export interface IPlaceDto {
-    id?: number;
-    name?: string | undefined;
-    latitude?: number;
-    longitude?: number;
 }
 
 export class FollowerDto implements IFollowerDto {

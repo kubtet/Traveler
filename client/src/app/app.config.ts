@@ -8,7 +8,12 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { AccountClient, BuggyClient } from './services/api';
+import {
+  AccountClient,
+  BuggyClient,
+  TravelClient,
+  UsersClient,
+} from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
 
@@ -26,6 +31,16 @@ export const appConfig: ApplicationConfig = {
     {
       provide: BuggyClient,
       useFactory: (http: HttpClient) => new BuggyClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: TravelClient,
+      useFactory: (http: HttpClient) => new TravelClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: UsersClient,
+      useFactory: (http: HttpClient) => new UsersClient(http),
       deps: [HttpClient],
     },
   ],
