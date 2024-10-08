@@ -51,13 +51,6 @@ export class NavComponent implements OnInit {
         label: '',
         icon: 'pi pi-user',
         routerLink: '/user-profile',
-        items: [
-          {
-            label: 'Log out',
-            icon: 'pi pi-sign-out',
-            command: () => this.accountService.logOut(),
-          },
-        ],
       },
       {
         label: 'Example',

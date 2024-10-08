@@ -1,3 +1,4 @@
+
 using API.DTOs;
 using API.Interfaces;
 using AutoMapper;
@@ -30,6 +31,7 @@ namespace API.Controllers
             }
 
             return mapper.Map<MemberDto>(user);
+            ;
         }
 
         [AllowAnonymous]
