@@ -5,6 +5,8 @@ import { LoginComponent } from './account/login/login.component';
 import { RegisterComponent } from './account/register/register.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { authGuard } from './guards/auth.guard';
+import { SettingsComponent } from './settings/settings.component';
+import { preventUnsavedChangesGuard } from './guards/prevent-unsaved-changes.guard';
 import { TestErrorsComponent } from './errors/test-errors/test-errors.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
@@ -18,6 +20,11 @@ export const routes: Routes = [
     children: [
       { path: 'example', component: ExampleComponent },
       { path: 'user-profile', component: UserProfileComponent },
+      {
+        path: 'settings',
+        component: SettingsComponent,
+        canDeactivate: [preventUnsavedChangesGuard],
+      },
     ],
   },
   { path: 'errors', component: TestErrorsComponent },
