@@ -11,12 +11,13 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { AccountClient, UsersClient, BuggyClient } from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
+import { jwtInterceptor } from './interceptors/jwt.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
     provideRouter(routes),
-    provideHttpClient(withInterceptors([errorInterceptor])),
+    provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor])),
     provideAnimations(),
     {
       provide: AccountClient,
