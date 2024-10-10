@@ -1,4 +1,5 @@
 
+using System.Security.Claims;
 using API.DTOs;
 using API.Interfaces;
 using AutoMapper;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class UsersController(IUserRepository userRepository, IMapper mapper) : BaseApiController
+    public class UsersController(IUserRepository userRepository, IMapper mapper, ITokenService tokenService) : BaseApiController
     {
         [AllowAnonymous]
         [HttpGet]
@@ -46,6 +47,26 @@ namespace API.Controllers
             }
 
             return mapper.Map<MemberDto>(user);
+        }
+
+
+        [HttpPut("update")]
+        public async Task<ActionResult> UpdateUser(UpdateUserDto updateUserDto)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (username == null) return BadRequest("No username found in token.");
+            var user = await userRepository.GetUserByUsernameAsync(username);
+            if (user == null) return BadRequest("Could not find a user");
+            mapper.Map(updateUserDto, user);
+
+            if (await userRepository.SaveAllAsync())
+            {
+                tokenService.CreateToken(user);
+                return NoContent();
+            }
+
+
+            return BadRequest("Failed to save changes.");
         }
     }
 }

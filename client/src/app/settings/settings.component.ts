@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { ImageModule } from 'primeng/image';
-import { MemberDto, UsersClient } from '../services/api';
+import { MemberDto, UpdateUserDto, UsersClient } from '../services/api';
 import { AccountService } from '../services/account.service';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
@@ -11,7 +11,7 @@ import { Message } from 'primeng/api';
 import { DividerModule } from 'primeng/divider';
 import { FormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ToastrService } from 'ngx-toastr';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -67,7 +67,9 @@ export class SettingsComponent implements OnInit {
     const currentUserName = this.accountService.currentUser().username;
     if (!currentUserName) return;
 
-    const userTemp = await this.usersClient.getUserByUsername(currentUserName);
+    const userTemp = await firstValueFrom(
+      this.usersClient.getUserByUsername(currentUserName)
+    );
     this.user = userTemp;
     this.form.controls.username.setValue(userTemp.username);
     this.form.controls.bio.setValue(userTemp.bio);
@@ -101,12 +103,16 @@ export class SettingsComponent implements OnInit {
   }
 
   public onSaveChanges() {
-    //TODO
-    console.log(this.user);
+    const updateUserDto: UpdateUserDto = new UpdateUserDto({
+      username: this.form.controls.username.value,
+      bio: this.form.controls.bio.value,
+    });
+    console.log('hello');
+    firstValueFrom(this.usersClient.updateUser(updateUserDto));
     // this.toastr.success('Profile updated successfully!');
     this.form.reset({
       username: this.user.username,
-      bio: this.user.bio
+      bio: this.user.bio,
     });
     this.unsavedChangesMessages = [];
   }
