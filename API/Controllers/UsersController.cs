@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class UsersController(IUserRepository userRepository, IMapper mapper, ITokenService tokenService) : BaseApiController
+    public class UsersController(IUserRepository userRepository, IMapper mapper, ITokenService tokenService, IPhotoService photoService) : BaseApiController
     {
         [AllowAnonymous]
         [HttpGet]
@@ -68,5 +68,6 @@ namespace API.Controllers
 
             return BadRequest("Failed to save changes.");
         }
+
     }
 }
