@@ -21,9 +21,16 @@ public class MappingProfiles : Profile
                     Username = f.FollowedUser.UserName,
                     ProfilePicture = f.FollowedUser.ProfilePicture
                 }).ToList()));
+
         CreateMap<Travel, TravelDto>()
-            .ForMember(d => d.PhotosUrl, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()))
-            .ForMember(d => d.PlacesNames, o => o.MapFrom(s => s.TravelPlaces.Select(tp => tp.Place).ToList()));
+            .ForMember(d => d.PhotoUrls, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()));
+
+        CreateMap<Travel, TravelDetailDto>()
+            .ForMember(d => d.Username, opt => opt.MapFrom(src => src.User.UserName))
+            .ForMember(d => d.DateOfBirth, opt => opt.MapFrom(src => src.User.DateOfBirth))
+            .ForMember(d => d.ProfilePicture, opt => opt.MapFrom(src => src.User.ProfilePicture))
+            .ForMember(d => d.PhotoUrls, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()))
+            .ForMember(d => d.PlaceNames, o => o.MapFrom(s => s.TravelPlaces.Select(tp => tp.Place.Name).ToList()));
 
 
         CreateMap<Photo, PhotoDto>();

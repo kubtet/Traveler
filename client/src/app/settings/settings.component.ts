@@ -11,7 +11,7 @@ import { Message } from 'primeng/api';
 import { DividerModule } from 'primeng/divider';
 import { FormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ToastrService } from 'ngx-toastr';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -67,7 +67,9 @@ export class SettingsComponent implements OnInit {
     const currentUserName = this.accountService.currentUser().username;
     if (!currentUserName) return;
 
-    const userTemp = await this.usersClient.getUserByUsername(currentUserName);
+    const userTemp = await firstValueFrom(
+      this.usersClient.getUserByUsername(currentUserName)
+    );
     this.user = userTemp;
     this.form.controls.username.setValue(userTemp.username);
     this.form.controls.bio.setValue(userTemp.bio);
@@ -106,7 +108,7 @@ export class SettingsComponent implements OnInit {
     // this.toastr.success('Profile updated successfully!');
     this.form.reset({
       username: this.user.username,
-      bio: this.user.bio
+      bio: this.user.bio,
     });
     this.unsavedChangesMessages = [];
   }
