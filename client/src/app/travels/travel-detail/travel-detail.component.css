@@ -1,0 +1,12 @@
+.card {
+  width: 75%;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.galleria-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}

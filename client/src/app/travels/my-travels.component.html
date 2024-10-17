@@ -1,0 +1,12 @@
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
+<h3>My travels</h3>
+@if ((isLoading | async) === false) {
+<div class="row">
+  @for (travel of travels; track travel) {
+  <app-travel-card
+    [travel]="travel"
+    (click)="navigateToTravelDetails(travel?.id)"
+  ></app-travel-card>
+  }
+</div>
+}

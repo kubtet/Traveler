@@ -16,10 +16,12 @@ import {
 } from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
+import { PhotoService } from './services/photo.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
+    PhotoService,
     provideRouter(routes),
     provideHttpClient(withInterceptors([errorInterceptor])),
     provideAnimations(),

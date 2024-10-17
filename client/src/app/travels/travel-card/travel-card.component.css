@@ -1,0 +1,21 @@
+p {
+  height: 60px;
+  line-height: 20px;
+  overflow: hidden;
+}
+
+.photo {
+  overflow: hidden;
+}
+
+::ng-deep .photo:hover img {
+  transform: scale(1.2, 1.2);
+  transition-duration: 500ms;
+  transition-timing-function: ease-out;
+}
+
+::ng-deep .photo img {
+  transform: scale(1, 1);
+  transition-duration: 500ms;
+  transition-timing-function: ease-out;
+}

@@ -6,10 +6,6 @@ public class TravelDto
     public string? Description { get; set; }
 
     public DateTime StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
     // Lista URLi zdjęć
-    public List<string>? PhotosUrl { get; set; }
-
-    // Lista nazw miejsc
-    public List<string>? PlacesNames { get; set; }
+    public List<string>? PhotoUrls { get; set; }
 }

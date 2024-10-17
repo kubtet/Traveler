@@ -7,6 +7,16 @@ namespace API.Repositories
 {
     public class TravelRepository(DataContext context) : ITravelRepository
     {
+        public async Task<Travel?> GetTravelDetailAsync(int travelId)
+        {
+            return await context.Travels
+                .Include(t => t.User)
+                .Include(t => t.Photos)
+                .Include(t => t.TravelPlaces)
+                .ThenInclude(tp => tp.Place)
+                .SingleOrDefaultAsync(t => t.Id == travelId);
+        }
+
         async Task<IEnumerable<Travel>> ITravelRepository.GetTravelsAsync(int userId)
         {
             return await context.Travels

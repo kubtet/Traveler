@@ -1,22 +1,32 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AccountService } from '../services/account.service';
 import { TravelClient, TravelDto, UsersClient } from '../services/api';
-import { firstValueFrom } from 'rxjs';
-import { CardModule } from 'primeng/card';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { TravelCardComponent } from './travel-card/travel-card.component';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { Router } from '@angular/router';
+import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-travels',
   standalone: true,
-  imports: [CardModule, AppButtonComponent, DatePipe, NgIf, NgFor],
-  templateUrl: './travels.component.html',
-  styleUrl: './travels.component.css',
+  imports: [
+    TravelCardComponent,
+    AppButtonComponent,
+    AppLoadingComponent,
+    AsyncPipe,
+  ],
+  templateUrl: './my-travels.component.html',
+  styleUrl: './my-travels.component.css',
 })
-export class TravelsComponent implements OnInit {
+export class MyTravelsComponent implements OnInit {
   private accountService = inject(AccountService);
+  private router = inject(Router);
   private travelClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
+
+  protected isLoading = new BehaviorSubject(false);
 
   protected travels: TravelDto[] = [];
   protected username: string = '';
@@ -24,22 +34,19 @@ export class TravelsComponent implements OnInit {
   protected maxPhotos: number = 5;
 
   async ngOnInit() {
+    this.isLoading.next(true);
     this.username = this.accountService.currentUser().username;
     const user = await firstValueFrom(
       this.usersClient.getUserByUsername(this.username)
     );
     const travels = await firstValueFrom(
-      this.travelClient.getTravelsById(user.id)
+      this.travelClient.getTravelsByUserId(user.id)
     );
     this.travels = travels;
-    console.log(travels);
-
-    this.travels[0].photosUrl.pop();
-    this.travels[0].photosUrl.pop();
-    this.travels[0].photosUrl.push('https://picsum.photos/seed/picsum/200/300');
+    this.isLoading.next(false);
   }
 
-  protected displayedPhotos(travel: TravelDto): string[] {
-    return travel.photosUrl.slice(0, this.maxPhotos);
+  protected navigateToTravelDetails(travelId: number) {
+    this.router.navigateByUrl('/travel/' + travelId);
   }
 }

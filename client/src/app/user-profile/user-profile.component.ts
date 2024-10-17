@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { AccountService } from '../services/account.service';
@@ -7,9 +7,8 @@ import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { UsersClient } from '../services/api';
-import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
-import { TravelsComponent } from "../travels/travels.component";
+import { MyTravelsComponent } from '../travels/my-travels.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -21,7 +20,7 @@ import { TravelsComponent } from "../travels/travels.component";
     CardModule,
     ButtonModule,
     TabViewModule,
-    TravelsComponent,
+    MyTravelsComponent,
   ],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
