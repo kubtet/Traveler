@@ -11,6 +11,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   AccountClient,
   BuggyClient,
+  CountryClient,
   TravelClient,
   UsersClient,
 } from './services/api';
@@ -33,6 +34,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: BuggyClient,
       useFactory: (http: HttpClient) => new BuggyClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: CountryClient,
+      useFactory: (http: HttpClient) => new CountryClient(http),
       deps: [HttpClient],
     },
     {

@@ -41,3 +41,24 @@
     ></app-checkbox>
   </div>
 </div>
+<div class="row" style="display: flex">
+  <div class="col-2">
+    <p-dropdown
+      label="Test all countries"
+      optionLabel="name"
+      optionValue="id"
+      [options]="countries"
+      >
+      <ng-template let-country pTemplate="item">
+        <div class="flex align-items-center gap-2">
+          <img
+            src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+            [class]="'flag flag-' + country.iso2.toLowerCase()"
+            style="width: 18px"
+          />
+          <div>{{ country.name }}</div>
+        </div>
+      </ng-template></p-dropdown
+    >
+  </div>
+</div>

@@ -105,4 +105,18 @@ public class Seed
 
     }
 
+    public static async Task SeedCountries(DataContext context)
+    {
+        if (await context.Countries.AnyAsync()) return;
+        var countriesData = await File.ReadAllTextAsync("Data/CountriesSeedData.json");
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var countries = JsonSerializer.Deserialize<List<Country>>(countriesData, options);
+        if (countries == null) return;
+        foreach (var country in countries)
+        {
+            context.Countries.Add(country);
+        }
+        await context.SaveChangesAsync();
+    }
+
 }
