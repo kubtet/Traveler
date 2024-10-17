@@ -8,14 +8,21 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { AccountClient, UsersClient, BuggyClient } from './services/api';
+import {
+  AccountClient,
+  BuggyClient,
+  TravelClient,
+  UsersClient,
+} from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';
+import { PhotoService } from './services/photo.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
+    PhotoService,
     provideRouter(routes),
     provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor])),
     provideAnimations(),
@@ -30,10 +37,14 @@ export const appConfig: ApplicationConfig = {
       deps: [HttpClient],
     },
     {
+      provide: TravelClient,
+      useFactory: (http: HttpClient) => new TravelClient(http),
+      deps: [HttpClient],
+    },
+    {
       provide: UsersClient,
       useFactory: (http: HttpClient) => new UsersClient(http),
       deps: [HttpClient],
     },
-    MessageService,
   ],
 };

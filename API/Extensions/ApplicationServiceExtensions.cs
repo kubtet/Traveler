@@ -20,6 +20,7 @@ public static class ApplicationServiceExtensions
         });
         services.AddCors();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ITravelRepository, TravelRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPhotoService, PhotoService>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
