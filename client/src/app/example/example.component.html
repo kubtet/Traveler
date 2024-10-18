@@ -1,4 +1,4 @@
-<div class="row" style="display: flex">
+<div class="row">
   <div class="col-2">
     <app-button
       label="Test button"
@@ -44,21 +44,37 @@
 <div class="row" style="display: flex">
   <div class="col-2">
     <p-dropdown
-      label="Test all countries"
-      optionLabel="name"
-      optionValue="id"
       [options]="countries"
-      >
+      [(ngModel)]="selectedCountry"
+      optionLabel="name"
+      [showClear]="true"
+      placeholder="Select a Country"
+    >
+      <ng-template pTemplate="selectedItem">
+        <div class="flex align-items-center gap-2" *ngIf="selectedCountry">
+          <img
+            src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+            [class]="'flag flag-' + selectedCountry?.iso2.toLowerCase()"
+            style="width: 18px"
+          />
+          <div>{{ selectedCountry.name }}</div>
+        </div>
+      </ng-template>
       <ng-template let-country pTemplate="item">
         <div class="flex align-items-center gap-2">
           <img
             src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
-            [class]="'flag flag-' + country.iso2.toLowerCase()"
+            [class]="'flag flag-' + country?.iso2.toLowerCase()"
             style="width: 18px"
           />
           <div>{{ country.name }}</div>
         </div>
-      </ng-template></p-dropdown
-    >
+      </ng-template>
+    </p-dropdown>
+    <img
+      src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+      [class]="'m-3 flag flag-br'"
+      style="width: 18px"
+    />
   </div>
 </div>

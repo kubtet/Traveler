@@ -15,11 +15,12 @@ export class CountryService {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'X-CSCAPI-KEY': 'API_KEY',
+        'X-CSCAPI-KEY':
+          'UWVTeklqY21Dc2RhNnE2Q0szM3dtUVV0RnRSQlhhS3JrZUpGM1M0Tg==',
       }),
     };
 
     const result = await firstValueFrom(this.http.get(this.url, options));
-    console.log(result);
+    return result;
   }
 }

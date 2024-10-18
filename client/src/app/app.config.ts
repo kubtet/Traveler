@@ -18,9 +18,11 @@ import {
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
 import { PhotoService } from './services/photo.service';
+import { CountryService } from './services/country.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    CountryService,
     MessageService,
     PhotoService,
     provideRouter(routes),

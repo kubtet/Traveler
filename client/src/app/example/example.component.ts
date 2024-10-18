@@ -3,12 +3,13 @@ import { AppButtonComponent } from '../shared/components/app-button/app-button.c
 import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
 import { AppCalendarComponent } from '../shared/components/app-calendar/app-calendar.component';
 import { AppDropdownComponent } from '../shared/components/app-dropdown/app-dropdown.component';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { AppCheckboxComponent } from '../shared/components/app-checkbox/app-checkbox.component';
 import { Country, CountryClient } from '../services/api';
 import { firstValueFrom } from 'rxjs';
 import { NgIf } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
+import { CountryService } from '../services/country.service';
 
 interface CountryPrimeNg {
   name: string;
@@ -26,17 +27,20 @@ interface CountryPrimeNg {
     AppCheckboxComponent,
     NgIf,
     DropdownModule,
+    FormsModule,
   ],
   templateUrl: './example.component.html',
   styleUrl: './example.component.css',
 })
 export class ExampleComponent implements OnInit {
   private countryClient = inject(CountryClient);
+  private countryService = inject(CountryService);
   protected control: FormControl = new FormControl<string>('');
   protected checkboxControl: FormControl = new FormControl();
   protected dropdownControl: FormControl = new FormControl();
   protected date: FormControl = new FormControl<Date | undefined>(undefined);
   protected countries: Country[] = [];
+  protected selectedCountry: Country;
 
   protected options: CountryPrimeNg[] = [
     { name: 'Argentina', value: 1 },
@@ -66,6 +70,8 @@ export class ExampleComponent implements OnInit {
       this.countryClient.getAllCountries()
     );
     this.countries = countries;
+
+    this.countryService.getAllCountries();
   }
 
   public consoleLog() {
