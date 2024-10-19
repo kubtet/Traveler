@@ -4,10 +4,12 @@
   >
   <ng-container *ngIf="control; else template">
     <textarea
+      [ngClass]="!resizable ? 'unresizable' : ''"
       [autoResize]="autoResize"
       [cols]="cols"
       [formControl]="control"
       [id]="id"
+      [placeholder]="placeholder"
       [required]="required"
       [rows]="rows"
       pInputTextarea
@@ -15,10 +17,12 @@
   </ng-container>
   <ng-template #template>
     <textarea
+      [ngClass]="!resizable ? 'unresizable' : ''"
       [autoResize]="autoResize"
       [cols]="cols"
       [disabled]="disabled"
       [id]="id"
+      [placeholder]="placeholder"
       [required]="required"
       [rows]="rows"
       [(ngModel)]="value"

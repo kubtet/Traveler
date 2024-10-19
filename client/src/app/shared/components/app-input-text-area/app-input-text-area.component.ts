@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
 import {
   FormControl,
@@ -11,7 +11,13 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 @Component({
   selector: 'app-input-text-area',
   standalone: true,
-  imports: [InputTextareaModule, NgIf, FormsModule, ReactiveFormsModule],
+  imports: [
+    InputTextareaModule,
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    NgClass,
+  ],
   templateUrl: './app-input-text-area.component.html',
   styleUrl: './app-input-text-area.component.css',
 })
@@ -33,6 +39,12 @@ export class AppInputTextAreaComponent implements OnChanges {
 
   /** Label of the component. */
   @Input() public label: string = '';
+
+  /** Advisory information to display on input. */
+  @Input() public placeholder: string = '';
+
+  /** When present, it specifies that the size of an input textarea can be manually modified. */
+  @Input() public resizable: boolean = false;
 
   /** When present, it specifies that an input field must be filled out before submitting the form. */
   @Input() public required: boolean = false;

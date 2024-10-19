@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
 import { AppDropdownComponent } from '../../shared/components/app-dropdown/app-dropdown.component';
@@ -9,17 +9,27 @@ import { City } from '../../models/city';
 import { BehaviorSubject } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AppInputTextAreaComponent } from '../../shared/components/app-input-text-area/app-input-text-area.component';
-
+import { FileUploadModule } from 'primeng/fileupload';
+import { ChipModule } from 'primeng/chip';
+import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
+import { AppInputTextComponent } from '../../shared/components/app-input-text/app-input-text.component';
+import { AppCalendarComponent } from '../../shared/components/app-calendar/app-calendar.component';
 @Component({
   selector: 'app-travel-add',
   standalone: true,
   imports: [
+    AppButtonComponent,
+    AppCalendarComponent,
     AppDropdownComponent,
+    AppInputTextComponent,
     AppInputTextAreaComponent,
     AppLoadingComponent,
     AsyncPipe,
+    ChipModule,
+    FileUploadModule,
     FormsModule,
     NgIf,
+    NgFor,
   ],
   templateUrl: './travel-add.component.html',
   styleUrl: './travel-add.component.css',
@@ -32,6 +42,8 @@ export class TravelAddComponent implements OnInit {
   protected countries: Country[] = [];
   protected cities: City[] = [];
   protected travelDescription = new FormControl<string>('');
+  protected travelDates = new FormControl<Date | Date[]>(undefined);
+  protected uploadedImages: any[] = [];
   protected isLoading = new BehaviorSubject(false);
 
   public async ngOnInit() {
