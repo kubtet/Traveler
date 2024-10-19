@@ -3,6 +3,7 @@
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 @import "../node_modules/primeflex/primeflex.scss";
+@import "./flags.css";
 
 /* To think about it */
 html {

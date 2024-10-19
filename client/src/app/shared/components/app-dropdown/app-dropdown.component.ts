@@ -14,8 +14,17 @@ export class AppDropdownComponent implements OnChanges {
   /** Used to bind the component to a form control. */
   @Input() public control?: FormControl<any>;
 
+  /** When enabled, a flag for specified country is displayed along with name. */
+  @Input() public countries: boolean = false;
+
   /** Identifier of the accessible input element. */
   @Input() public inputId: string = '';
+
+  /** When specified, displays an input field to filter the items on keyup. */
+  @Input() public filter: boolean = false;
+
+  /** When filtering is enabled, filterBy decides which field or fields (comma separated) to search against. */
+  @Input() public filterBy: string = '';
 
   /** Label of the component. */
   @Input() public label: string = '';
