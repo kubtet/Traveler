@@ -5,6 +5,8 @@
     *ngIf="control"
     [formControl]="control"
     [inputId]="inputId"
+    [filter]="filter"
+    [filterBy]="filterBy"
     [optionLabel]="optionLabel"
     [optionValue]="optionValue"
     [options]="options"
@@ -17,10 +19,10 @@
       <div class="flex align-items-center gap-2" *ngIf="control.value">
         <img
           src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
-          [class]="'flag flag-' + control.value?.iso2?.toLowerCase()"
+          [class]="'flag flag-' + control.value?.code?.toLowerCase()"
           style="width: 18px"
         />
-        <div>{{ control.value }}</div>
+        <div>{{ control.value?.name }}</div>
       </div>
     </ng-template>
     <ng-template let-country pTemplate="item">

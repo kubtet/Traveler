@@ -1,45 +1,26 @@
-<div class="row">
-  <div class="col-3">
-    <p-dropdown
-      [options]="countriesNg"
-      [(ngModel)]="selectedCountry"
-      optionLabel="name"
-      [showClear]="true"
-      placeholder="Select a Country"
-    >
-      <ng-template pTemplate="selectedItem">
-        <div class="flex align-items-center gap-2" *ngIf="selectedCountry">
-          <img
-            src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
-            [class]="'flag flag-' + selectedCountry.code.toLowerCase()"
-            style="width: 18px"
-          />
-          <div>{{ selectedCountry.name }}</div>
-        </div>
-      </ng-template>
-      <ng-template let-country pTemplate="item">
-        <div class="flex align-items-center gap-2">
-          <img
-            src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
-            [class]="'flag flag-' + country.code.toLowerCase()"
-            style="width: 18px"
-          />
-          <div>{{ country.name }}</div>
-        </div>
-      </ng-template>
-    </p-dropdown>
-  </div>
-</div>
-
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
 <div class="row">
   <div class="col-2">
     <app-dropdown
       label="Select visited country"
       [control]="visitedCountry"
       optionLabel="name"
-      optionValue="name"
       [options]="countries"
+      [filter]="true"
+      filterBy="name"
       [countries]="true"
+    ></app-dropdown>
+  </div>
+</div>
+<div class="row">
+  <div class="col-2">
+    <app-dropdown
+      label="Select the city"
+      [control]="visitedCity"
+      optionLabel="name"
+      [options]="cities"
+      [filter]="true"
+      filterBy="name"
     ></app-dropdown>
   </div>
 </div>
