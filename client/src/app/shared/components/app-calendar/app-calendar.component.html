@@ -1,5 +1,5 @@
 <div class="p-fluid" style="padding: 0">
-  <label [for]="inputId" class="font-bold block mb-2">
+  <label *ngIf="label" [for]="inputId" class="font-bold block mb-2">
     {{ label }}<span *ngIf="required" style="color: red"> *</span></label
   >
   <p-calendar
@@ -9,6 +9,7 @@
     [inputStyle]="inputStyle"
     [maxDate]="maxDate"
     [minDate]="minDate"
+    [placeholder]="placeholder"
     [required]="required"
     [selectionMode]="selectionMode"
     [showButtonBar]="showButtonBar"

@@ -5,26 +5,32 @@
     <div class="grid">
       <div class="col-12 lg:col-8">
         <p-fileUpload
+          class="fileUpload"
           name="demo[]"
+          url="https://www.primefaces.org/cdn/api/upload.php"
           [multiple]="true"
           accept="image/*"
           maxFileSize="1000000"
+          (onUpload)="onImageUpload($event)"
         >
           <ng-template pTemplate="content">
-            <ul *ngIf="uploadedImages.length">
+            <ul *ngIf="uploadedImages.length > 0">
               <li *ngFor="let file of uploadedImages">
-                {{ file.name }} - {{ file.size }} bytes
+                {{ file.name }}
               </li>
             </ul>
           </ng-template>
         </p-fileUpload>
         <div class="flex flex-column p-fluid">
           <div class="mt-3">
-            <app-input-text placeholder="Title"></app-input-text>
+            <app-input-text
+              [control]="form.controls.travelTitel"
+              placeholder="Title"
+            ></app-input-text>
           </div>
           <div class="mt-3">
             <app-input-text-area
-              [control]="travelDescription"
+              [control]="form.controls.travelDescription"
               placeholder="Description"
               [rows]="6"
             ></app-input-text-area>
@@ -35,11 +41,21 @@
         <div class="border-1 surface-border border-round mb-4">
           <span
             class="text-900 font-bold block border-bottom-1 surface-border p-3"
-            >Location</span
+            >Visited places</span
           >
           <div class="p-3">
+            {{visitedCountry?.value?.name}}: {{visitedCity?.value?.name}}
+          </div>
+        </div>
+        <div class="border-1 surface-border border-round mb-4">
+          <span
+            class="text-900 font-bold border-bottom-1 surface-border p-3 flex-container"
+            >Add the place you visited
+            <app-button icon="pi pi-plus"></app-button
+          ></span>
+          <div class="p-3">
             <app-dropdown
-              label="Select visited country"
+              placeholder="Select visited country"
               [control]="visitedCountry"
               optionLabel="name"
               [options]="countries"
@@ -50,7 +66,7 @@
           </div>
           <div class="p-3">
             <app-dropdown
-              label="Select city"
+              placeholder="Select visited city"
               [control]="visitedCity"
               optionLabel="name"
               [options]="cities"
@@ -66,8 +82,8 @@
           >
           <div class="p-3">
             <app-calendar
-              [control]="travelDates"
-              label="Select when your travel had a place"
+              [control]="form.controls.travelDates"
+              placeholder="Select when your travel had a place"
               selectionMode="range"
             ></app-calendar>
           </div>
@@ -113,6 +129,7 @@
             icon="pi pi-trash"
             severity="danger"
             [outlined]="true"
+            (onClick)="clearForm()"
           ></app-button>
           <app-button
             [style]="{ width: '100%' }"

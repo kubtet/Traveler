@@ -32,6 +32,9 @@ export class AppCalendarComponent implements OnChanges {
   /** The minimum selectable date. */
   @Input() public minDate?: Date;
 
+  /** Default text to display when no option is selected. */
+  @Input() public placeholder: string = '';
+
   /** When present, it specifies that an input field must be filled out before submitting the form. */
   @Input() public required: boolean = false;
 
