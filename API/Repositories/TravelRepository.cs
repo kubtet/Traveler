@@ -26,5 +26,11 @@ namespace API.Repositories
                 .ThenInclude(tp => tp.Place)
                 .ToListAsync();
         }
+
+        public async Task<bool> SaveAllAsync()
+        {
+            return await context.SaveChangesAsync() > 0;
+        }
+
     }
 }

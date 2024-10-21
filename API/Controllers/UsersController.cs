@@ -5,14 +5,16 @@ using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
+using API.Services;
 using AutoMapper;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Authorize]
-public class UsersController(IUserRepository userRepository, IMapper mapper, ITokenService tokenService) : BaseApiController
+public class UsersController(IUserRepository userRepository, IMapper mapper, ITokenService tokenService, IPhotoService photoService) : BaseApiController
 {
     [AllowAnonymous]
     [HttpGet]
@@ -72,25 +74,50 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, ITo
         return BadRequest("Failed to save changes.");
     }
 
-    // [HttpPut("modify-photo")]
-    // public async Task<ActionResult<PhotoDto>> ModifyProfilePicture(IFormFile file)
-    // {
-    //     var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
-    //     if (user == null) return BadRequest("Cannot update user");
+    [HttpPut("modify-profile-photo")]
+    public async Task<ActionResult<PhotoDto>> ModifyProfilePicture(IFormFile file)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Cannot update user");
 
-    //     var result = await photoService.AddPhotoAsync(file);
+        var result = await photoService.AddPhotoAsync(file);
 
-    //     if (result.Error != null) return BadRequest(result.Error.Message);
+        if (result.Error != null) return BadRequest(result.Error.Message);
 
-    //     var photo = new Photo
-    //     {
-    //         Url = result.SecureUrl.AbsoluteUri,
-    //         PublicId = result.PublicId
-    //     };
+        var photo = new Photo
+        {
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId,
+            UserId = user.Id,
+            IsProfilePicture = true
+        };
 
-    //     //TODO 
-    //     return photo
-    // }
+        user.ProfilePhoto = photo;
+
+        if (await userRepository.SaveAllAsync()) return Ok(mapper.Map<PhotoDto>(photo));
+
+        return BadRequest("Not able to modify profile picture.");
+    }
+
+    [HttpDelete("delete-profile-photo")]
+    public async Task<ActionResult> DeleteProfilePhoto()
+    {
+        // get current user
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("No user found in token.");
+        if (user.ProfilePhoto.Url == null) return BadRequest("No profile picture exist.");
+
+        var result = await photoService.DeletePhotoAsync(user.ProfilePhoto.PublicId);
+        if (result.Error != null) return BadRequest(result.Error.Message);
+        user.ProfilePhoto = null;
+
+        if (await userRepository.SaveAllAsync())
+        {
+            return Ok("Profile picture deleted.");
+        }
+        return BadRequest("Not able to delete profile picture.");
+
+    }
 
 
 }

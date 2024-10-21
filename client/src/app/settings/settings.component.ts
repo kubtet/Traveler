@@ -1,6 +1,11 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { ImageModule } from 'primeng/image';
-import { MemberDto, UpdateUserDto, UsersClient } from '../services/api';
+import {
+  FileParameter,
+  MemberDto,
+  UpdateUserDto,
+  UsersClient,
+} from '../services/api';
 import { AccountService } from '../services/account.service';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
@@ -76,6 +81,8 @@ export class SettingsComponent implements OnInit {
   }
 
   public onInputChange() {
+    console.log('link:');
+    console.log(this.user.profilePhotoUrl);
     this.form.valueChanges.subscribe(() => {
       if (
         this.form.controls.username.value !== this.user.username ||
@@ -96,25 +103,67 @@ export class SettingsComponent implements OnInit {
 
   public updateProfilePicture() {
     //TODO
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        this.uploadProfilePhoto(file);
+      }
+    };
+    fileInput.click();
   }
 
-  public deleteProfilePicture() {
+  public async uploadProfilePhoto(file: File) {
+    const fileParam: FileParameter = {
+      data: file,
+      fileName: file.name,
+    };
+    console.log('trying');
+    try {
+      const response = await firstValueFrom(
+        this.usersClient.modifyProfilePicture(fileParam)
+      );
+
+      if (response) {
+        this.user.profilePhotoUrl = response.url;
+      }
+    } catch (error) {
+      console.error('Error updating profile picture:', error);
+    }
+  }
+
+  public async deleteProfilePicture() {
     //TODO
+    try {
+      await firstValueFrom(this.usersClient.deleteProfilePhoto());
+    } catch (e) {
+      console.log('Error deleting photo:', e);
+    }
   }
 
-  public onSaveChanges() {
+  public async onSaveChanges() {
     const updateUserDto: UpdateUserDto = new UpdateUserDto({
       username: this.form.controls.username.value,
       bio: this.form.controls.bio.value,
     });
-    console.log('hello');
-    firstValueFrom(this.usersClient.updateUser(updateUserDto));
-    // this.toastr.success('Profile updated successfully!');
-    this.form.reset({
-      username: this.user.username,
-      bio: this.user.bio,
-    });
-    this.unsavedChangesMessages = [];
+    try {
+      await firstValueFrom(this.usersClient.updateUser(updateUserDto));
+      this.user.username = updateUserDto.username;
+      this.user.bio = updateUserDto.bio;
+
+      this.form.reset({
+        username: this.user.username,
+        bio: this.user.bio,
+      });
+      this.form.markAsPristine();
+      this.unsavedChangesMessages = [];
+
+      console.log('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    }
   }
 
   public onDiscardChanges() {

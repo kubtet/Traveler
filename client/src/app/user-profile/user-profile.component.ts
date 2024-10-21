@@ -9,6 +9,7 @@ import { AppButtonComponent } from '../shared/components/app-button/app-button.c
 import { UsersClient } from '../services/api';
 import { Router } from '@angular/router';
 import { MyTravelsComponent } from '../travels/my-travels.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -31,10 +32,11 @@ export class UserProfileComponent implements OnInit {
   private usersClient = inject(UsersClient);
 
   async ngOnInit() {
-    const user = await this.usersClient.getUserByUsername(
+    const user = await firstValueFrom(this.usersClient.getUserByUsername(
       this.accountService.currentUser().username
-    );
+    ));
     console.log(user);
+    
   }
 
   public goToSettings() {

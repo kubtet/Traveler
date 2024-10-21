@@ -16,6 +16,7 @@ public class UserRepository(DataContext context) : IUserRepository
     {
         return await context.Users
             .Include(x => x.Travels)
+            .Include(u => u.ProfilePhoto)
             //.Include(x => x.Followers)
             //.Include(x => x.Following)
             .SingleOrDefaultAsync(x => x.UserName == username);
@@ -24,6 +25,7 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
         return await context.Users
+            .Include(u => u.ProfilePhoto)
             .Include(u => u.Followers)
             .ThenInclude(f => f.FollowingUser)
             .Include(u => u.Following)
