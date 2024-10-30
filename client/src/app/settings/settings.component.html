@@ -1,3 +1,4 @@
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true" />
 @if (user) {
 <div class="edit-profile-container">
   <!-- name + alert -->
@@ -21,8 +22,8 @@
   <div class="edit-elements-container">
     <div class="profile-picture-section">
       <p-image
-        src="{{ user.profilePhotoUrl }}"
-        alt="Image"
+        src="{{ previewProfilePhotoUrl }}"
+        [alt]="'../../assets/defaultProfilePicture.jfif'"
         width="150"
         class="round-image"
         [preview]="true"

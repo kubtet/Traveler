@@ -6,7 +6,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
-import { UsersClient } from '../services/api';
+import { MemberDto, UsersClient } from '../services/api';
 import { Router } from '@angular/router';
 import { MyTravelsComponent } from '../travels/my-travels.component';
 import { firstValueFrom } from 'rxjs';
@@ -30,13 +30,14 @@ export class UserProfileComponent implements OnInit {
   private router = inject(Router);
   protected accountService = inject(AccountService);
   private usersClient = inject(UsersClient);
+  protected user: MemberDto;
 
   async ngOnInit() {
-    const user = await firstValueFrom(this.usersClient.getUserByUsername(
+    this.user = await firstValueFrom(this.usersClient.getUserByUsername(
       this.accountService.currentUser().username
     ));
-    console.log(user);
-    
+    console.log(this.user?.profilePhotoUrl);
+
   }
 
   public goToSettings() {

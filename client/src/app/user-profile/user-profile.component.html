@@ -1,9 +1,10 @@
 <!-- Row 1: photo and username and settings -->
+@if (user) {
 <p-card class="user-profile-card">
   <div class="card-header">
     <!-- Photo of the user -->
     <p-avatar
-      image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+      [image]="this.user.profilePhotoUrl"
       styleClass="profile-picture mr-2"
       size="xlarge"
       shape="circle"
@@ -57,3 +58,4 @@
     </p-tabPanel>
   </p-tabView>
 </div>
+}
