@@ -1,20 +1,16 @@
-
-using System.Diagnostics.Tracing;
 using System.Security.Claims;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
-using API.Services;
 using AutoMapper;
-using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Authorize]
-public class UsersController(IUserRepository userRepository, IMapper mapper, ITokenService tokenService, IPhotoService photoService) : BaseApiController
+public class UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService) : BaseApiController
 {
     [AllowAnonymous]
     [HttpGet]
@@ -58,16 +54,28 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, ITo
     [HttpPut("update")]
     public async Task<ActionResult> UpdateUser(UpdateUserDto updateUserDto)
     {
-        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (username == null) return BadRequest("No username found in token.");
-        var user = await userRepository.GetUserByUsernameAsync(username);
-        if (user == null) return BadRequest("Could not find a user");
-        mapper.Map(updateUserDto, user);
+        var idUserString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (idUserString == null) return BadRequest("No id found in token.");
 
-        if (await userRepository.SaveAllAsync())
+        if (int.TryParse(idUserString, out int userId))
         {
-            tokenService.CreateToken(user);
-            return NoContent();
+            Console.WriteLine($"User ID: {userId}");
+
+            var user = await userRepository.GetUserByIdAsync(userId);
+            Console.WriteLine(user);
+            Console.WriteLine(userId);
+
+            if (user == null) return BadRequest("Could not find a user");
+            mapper.Map(updateUserDto, user);
+            if (await userRepository.SaveAllAsync())
+            {
+                // tokenService.CreateToken(user);
+                return NoContent();
+            }
+        }
+        else
+        {
+            Console.WriteLine("Cannot convert NameIdentifier to Int.");
         }
 
 
@@ -77,7 +85,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, ITo
     [HttpPut("modify-profile-photo")]
     public async Task<ActionResult<PhotoDto>> ModifyProfilePicture(IFormFile file)
     {
-        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Cannot update user");
 
         var result = await photoService.AddPhotoAsync(file);
@@ -103,9 +111,9 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, ITo
     public async Task<ActionResult> DeleteProfilePhoto()
     {
         // get current user
-        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("No user found in token.");
-        if (user.ProfilePhoto.Url == null) return BadRequest("No profile picture exist.");
+        if (user.ProfilePhoto?.Url == null) return BadRequest("No profile picture exist.");
 
         var result = await photoService.DeletePhotoAsync(user.ProfilePhoto.PublicId);
         if (result.Error != null) return BadRequest(result.Error.Message);
@@ -116,8 +124,5 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, ITo
             return Ok("Profile picture deleted.");
         }
         return BadRequest("Not able to delete profile picture.");
-
     }
-
-
 }

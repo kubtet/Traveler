@@ -14,7 +14,6 @@ export class AccountService {
   public setUser(user: UserDto) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
-    this.router.navigateByUrl('/');
   }
 
   public logOut() {

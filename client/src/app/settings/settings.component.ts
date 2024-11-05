@@ -4,6 +4,7 @@ import {
   FileParameter,
   MemberDto,
   UpdateUserDto,
+  UserDto,
   UsersClient,
 } from '../services/api';
 import { AccountService } from '../services/account.service';
@@ -44,7 +45,6 @@ export class SettingsComponent implements OnInit {
       $event.returnValue = true;
     }
   }
-  // private toastr = inject(ToastrService);
 
   private router = inject(Router);
   private accountService = inject(AccountService);
@@ -54,6 +54,8 @@ export class SettingsComponent implements OnInit {
   protected isLoading = new BehaviorSubject(false);
   protected previewProfilePhotoUrl: string | null = null;
   protected fileToUpload: File | null = null;
+  protected isDeleteDisabled: boolean = true;
+  protected unsavedChangesMessages: Message[] = [];
 
   public form = new FormGroup({
     username: new FormControl<string>('', [
@@ -65,8 +67,6 @@ export class SettingsComponent implements OnInit {
       Validators.maxLength(200),
     ]),
   });
-
-  unsavedChangesMessages: Message[] = [];
 
   async ngOnInit() {
     await this.loadUser();
@@ -82,7 +82,10 @@ export class SettingsComponent implements OnInit {
       this.usersClient.getUserByUsername(currentUserName)
     );
     this.user = userTemp;
-    this.previewProfilePhotoUrl = userTemp.profilePhotoUrl;
+    this.previewProfilePhotoUrl = userTemp.profilePhotoUrl
+      ? userTemp.profilePhotoUrl
+      : '../../assets/defaultProfilePicture.jfif';
+    this.isDeleteDisabled = !userTemp.profilePhotoUrl;
     this.form.controls.username.setValue(userTemp.username);
     this.form.controls.bio.setValue(userTemp.bio);
   }
@@ -106,14 +109,7 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  // public getProfilePhotoUrl(): string {
-  //   return this.fileToUpload
-  //     ? URL.createObjectURL(this.fileToUpload)
-  //     : this.user.profilePhotoUrl;
-  // }
-
   public updateProfilePicture() {
-    //TODO
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
@@ -153,6 +149,8 @@ export class SettingsComponent implements OnInit {
         this.user.profilePhotoUrl = response.url;
         this.previewProfilePhotoUrl = response.url;
       }
+
+      this.isDeleteDisabled = false;
     } catch (error) {
       console.error('Error updating profile picture:', error);
     }
@@ -169,51 +167,62 @@ export class SettingsComponent implements OnInit {
         detail: "You've made some changes that haven't been saved.",
       },
     ];
+    this.isDeleteDisabled = true;
   }
 
   public async onSaveChanges() {
-    const updateUserDto: UpdateUserDto = new UpdateUserDto({
-      username: this.form.controls.username.value,
-      bio: this.form.controls.bio.value,
-    });
-    // the whole block to update user
-    try {
-      await firstValueFrom(this.usersClient.updateUser(updateUserDto));
-      // updated photo
-      console.log('preview photo utl:');
-      console.log(this.previewProfilePhotoUrl);
-      console.log('profile photo url');
-      console.log(this.user.profilePhotoUrl);
+    // new values from the form
+    const newUsername = this.form.controls.username.value;
+    const newBio = this.form.controls.bio.value;
+    const profilePhotoChanged =
+      this.previewProfilePhotoUrl !==
+      (this.user.profilePhotoUrl || '../../assets/defaultProfilePicture.jfif');
 
-      if (this.previewProfilePhotoUrl != this.user.profilePhotoUrl) {
+    if (this.user.username !== newUsername || this.user.bio !== newBio) {
+      const updateUserDto: UpdateUserDto = new UpdateUserDto({
+        username: newUsername,
+        bio: newBio,
+      });
+
+      try {
+        await firstValueFrom(this.usersClient.updateUser(updateUserDto));
+        this.user.username = updateUserDto.username;
+        this.user.bio = updateUserDto.bio;
+      } catch (error) {
+        error.log('Error updating username and bio:', error);
+      }
+    }
+
+    if (profilePhotoChanged) {
+      try {
         if (
-          this.previewProfilePhotoUrl !=
+          this.previewProfilePhotoUrl !==
           '../../assets/defaultProfilePicture.jfif'
         ) {
           await this.uploadProfilePhoto(this.fileToUpload);
         } else {
-          try {
-            await firstValueFrom(this.usersClient.deleteProfilePhoto());
-          } catch (e) {
-            console.log('Error deleting photo:', e);
-          }
+          await firstValueFrom(this.usersClient.deleteProfilePhoto());
         }
+      } catch (e) {
+        console.error('Error updating or deleting profile photo:', e);
       }
-
-      this.user.username = updateUserDto.username;
-      this.user.bio = updateUserDto.bio;
-
-      this.form.reset({
-        username: this.user.username,
-        bio: this.user.bio,
-      });
-
-      this.form.markAsPristine();
-      this.unsavedChangesMessages = [];
-      console.log('Profile updated successfully!');
-    } catch (error) {
-      console.error('Error saving changes:', error);
     }
+
+    // Reset the form state
+    this.form.reset({
+      username: this.user.username,
+      bio: this.user.bio,
+    });
+
+    this.form.markAsPristine();
+    this.unsavedChangesMessages = [];
+
+    const updatedUser: UserDto = new UserDto({
+      username: this.user.username,
+      token: this.accountService.currentUser().token,
+    });
+
+    this.accountService.setUser(updatedUser);
   }
 
   public onDiscardChanges() {

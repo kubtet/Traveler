@@ -33,11 +33,13 @@ export class UserProfileComponent implements OnInit {
   protected user: MemberDto;
 
   async ngOnInit() {
-    this.user = await firstValueFrom(this.usersClient.getUserByUsername(
-      this.accountService.currentUser().username
-    ));
+    console.log(this.accountService.currentUser().username);
+    this.user = await firstValueFrom(
+      this.usersClient.getUserByUsername(
+        this.accountService.currentUser().username
+      )
+    );
     console.log(this.user?.profilePhotoUrl);
-
   }
 
   public goToSettings() {
