@@ -33,6 +33,7 @@ try
     await Seed.SeedPlaces(context);
     await Seed.SeedFollows(context);
     await Seed.SeedTravelPlace(context);
+    await Seed.SeedCountries(context);
 
 }
 catch (Exception ex)

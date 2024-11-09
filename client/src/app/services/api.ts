@@ -349,6 +349,77 @@ export class BuggyClient implements IBuggyClient {
     }
 }
 
+export interface ICountryClient {
+    getAllCountries(): Observable<Country[]>;
+}
+
+@Injectable()
+export class CountryClient implements ICountryClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    getAllCountries(): Observable<Country[]> {
+        let url_ = this.baseUrl + "/api/Country/countries";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllCountries(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllCountries(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<Country[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<Country[]>;
+        }));
+    }
+
+    protected processGetAllCountries(response: HttpResponseBase): Observable<Country[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Country.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface ITravelClient {
     getTravelsByUserId(id: number): Observable<TravelDto[]>;
     getTravelDetails(id: number): Observable<TravelDetailDto>;
@@ -1437,6 +1508,50 @@ export interface IFollow {
     followedUserId?: number;
     followedUser?: User;
     createdAt?: Date;
+}
+
+export class Country implements ICountry {
+    id?: number;
+    name?: string;
+    iso2?: string;
+
+    constructor(data?: ICountry) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.iso2 = _data["iso2"];
+        }
+    }
+
+    static fromJS(data: any): Country {
+        data = typeof data === 'object' ? data : {};
+        let result = new Country();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["iso2"] = this.iso2;
+        return data;
+    }
+}
+
+export interface ICountry {
+    id?: number;
+    name?: string;
+    iso2?: string;
 }
 
 export class TravelDto implements ITravelDto {

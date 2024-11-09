@@ -5,6 +5,7 @@ namespace API.Data;
 
 public class DataContext(DbContextOptions options) : DbContext(options)
 {
+    public DbSet<Country> Countries { get; set; }
     public DbSet<Follow> Follows { get; set; }
     public DbSet<Like> Likes { get; set; }
     public DbSet<Photo> Photos { get; set; } // Maybe unnecessary
@@ -29,7 +30,7 @@ public class DataContext(DbContextOptions options) : DbContext(options)
             .WithMany(u => u.Followers)
             .HasForeignKey(f => f.FollowedUserId)
             .OnDelete(DeleteBehavior.Cascade);
-            
+
         modelBuilder.Entity<Like>()
             .HasKey(l => new { l.UserId, l.TravelId });
 

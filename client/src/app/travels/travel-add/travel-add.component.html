@@ -1,0 +1,26 @@
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
+<div class="row">
+  <div class="col-2">
+    <app-dropdown
+      label="Select visited country"
+      [control]="visitedCountry"
+      optionLabel="name"
+      [options]="countries"
+      [filter]="true"
+      filterBy="name"
+      [countries]="true"
+    ></app-dropdown>
+  </div>
+</div>
+<div class="row">
+  <div class="col-2">
+    <app-dropdown
+      label="Select the city"
+      [control]="visitedCity"
+      optionLabel="name"
+      [options]="cities"
+      [filter]="true"
+      filterBy="name"
+    ></app-dropdown>
+  </div>
+</div>

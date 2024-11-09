@@ -19,6 +19,7 @@ public static class ApplicationServiceExtensions
             opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
         });
         services.AddCors();
+        services.AddScoped<ICountryRepository, CountryRepository>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ITravelRepository, TravelRepository>();
         services.AddScoped<IUserRepository, UserRepository>();

@@ -11,6 +11,7 @@ import { TestErrorsComponent } from './errors/test-errors/test-errors.component'
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { TravelDetailComponent } from './travels/travel-detail/travel-detail.component';
+import { TravelAddComponent } from './travels/travel-add/travel-add.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -26,6 +27,7 @@ export const routes: Routes = [
         component: SettingsComponent,
         canDeactivate: [preventUnsavedChangesGuard],
       },
+      { path: 'travel/add', component: TravelAddComponent },
       { path: 'travel/:id', component: TravelDetailComponent },
     ],
   },

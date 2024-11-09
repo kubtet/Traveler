@@ -29,6 +29,7 @@ export class NavComponent implements OnInit {
         label: '',
         icon: 'pi pi-plus',
         tooltip: 'Add new gallery',
+        routerLink: 'travel/add',
       },
 
       {
