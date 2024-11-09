@@ -11,7 +11,7 @@ public class MemberDto
     public string? Email { get; set; }
     public string? Gender { get; set; }
     public string? Bio { get; set; }
-    public string? ProfilePicture { get; set; }
+    public string? ProfilePhotoUrl { get; set; }
     public required DateTime DateOfBirth { get; set; }
     public required DateTime CreationDate { get; set; }
 

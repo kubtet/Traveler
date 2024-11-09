@@ -6,5 +6,6 @@ namespace API.Interfaces
     {
         Task<IEnumerable<Travel>> GetTravelsAsync(int userId);
         Task<Travel?> GetTravelDetailAsync(int travelId);
+        Task<bool> SaveAllAsync();
     }
 }

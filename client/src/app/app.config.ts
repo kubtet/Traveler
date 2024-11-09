@@ -17,6 +17,7 @@ import {
 } from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
+import { jwtInterceptor } from './interceptors/jwt.interceptor';
 import { PhotoService } from './services/photo.service';
 import { CountryService } from './services/country.service';
 import { CityService } from './services/city.service';
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     PhotoService,
     provideRouter(routes),
-    provideHttpClient(withInterceptors([errorInterceptor])),
+    provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor])),
     provideAnimations(),
     {
       provide: AccountClient,

@@ -10,3 +10,31 @@
   justify-content: center;
   margin: 20px;
 }
+
+/* Domyślnie układ na dwa kolumny */
+.two-column-layout {
+  display: flex;
+  gap: 3rem;
+  margin-right: -3rem;
+}
+
+.two-column-layout .left-column {
+  flex: 0 0 25%;
+}
+
+.two-column-layout .right-column {
+  flex: 0 0 75%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Przełączenie na jedną kolumnę przy mniejszych ekranach */
+@media (max-width: 768px) {
+  .two-column-layout {
+    flex-direction: column;
+  }
+  .two-column-layout .left-column,
+  .two-column-layout .right-column {
+    flex: 0 0 100%;
+  }
+}
