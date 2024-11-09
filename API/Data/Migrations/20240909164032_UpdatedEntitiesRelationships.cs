@@ -45,9 +45,9 @@ namespace API.Data.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Follows_Users_FollowingUserId",
+                name: "FK_Follows_Users_SourceUserId",
                 table: "Follows",
-                column: "FollowingUserId",
+                column: "SourceUserId",
                 principalTable: "Users",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
@@ -93,7 +93,7 @@ namespace API.Data.Migrations
                 table: "Follows");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Follows_Users_FollowingUserId",
+                name: "FK_Follows_Users_SourceUserId",
                 table: "Follows");
 
             migrationBuilder.DropForeignKey(

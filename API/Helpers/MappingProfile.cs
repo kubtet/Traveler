@@ -13,9 +13,9 @@ public class MappingProfiles : Profile
         src.ProfilePhoto != null && src.ProfilePhoto.IsProfilePicture ? src.ProfilePhoto.Url : null))
             .ForMember(dest => dest.Followers, opt => opt.MapFrom(src => src.Followers.Select(f => new FollowerDto
             {
-                Id = f.FollowingUser.Id,
-                Username = f.FollowingUser.UserName,
-                ProfilePhoto = f.FollowingUser.ProfilePhoto != null ? f.FollowingUser.ProfilePhoto.Url : null,
+                Id = f.SourceUser.Id,
+                Username = f.SourceUser.UserName,
+                ProfilePhoto = f.SourceUser.ProfilePhoto != null ? f.SourceUser.ProfilePhoto.Url : null,
             }).ToList()))
                 .ForMember(dest => dest.Followees, opt => opt.MapFrom(src => src.Following.Select(f => new FollowerDto
                 {

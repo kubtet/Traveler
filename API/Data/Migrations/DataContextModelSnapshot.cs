@@ -19,7 +19,7 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Follow", b =>
                 {
-                    b.Property<int>("FollowingUserId")
+                    b.Property<int>("SourceUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("FollowedUserId")
@@ -28,24 +28,11 @@ namespace API.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("FollowingUserId", "FollowedUserId");
+                    b.HasKey("SourceUserId", "FollowedUserId");
 
                     b.HasIndex("FollowedUserId");
 
                     b.ToTable("Follows");
-                });
-
-            modelBuilder.Entity("API.Entities.Like", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TravelId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("UserId", "TravelId");
-
-                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("API.Entities.Photo", b =>
@@ -58,6 +45,7 @@ namespace API.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PublicId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("TravelId")
@@ -196,6 +184,21 @@ namespace API.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TravelLike", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TravelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "TravelId");
+
+                    b.HasIndex("TravelId");
+
+                    b.ToTable("TravelLike");
+                });
+
             modelBuilder.Entity("API.Entities.Follow", b =>
                 {
                     b.HasOne("API.Entities.User", "FollowedUser")
@@ -204,15 +207,15 @@ namespace API.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Entities.User", "FollowingUser")
+                    b.HasOne("API.Entities.User", "SourceUser")
                         .WithMany("Following")
-                        .HasForeignKey("FollowingUserId")
+                        .HasForeignKey("SourceUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FollowedUser");
 
-                    b.Navigation("FollowingUser");
+                    b.Navigation("SourceUser");
                 });
 
             modelBuilder.Entity("API.Entities.Photo", b =>
@@ -260,6 +263,25 @@ namespace API.Data.Migrations
                     b.Navigation("Travel");
                 });
 
+            modelBuilder.Entity("TravelLike", b =>
+                {
+                    b.HasOne("API.Entities.Travel", "Travel")
+                        .WithMany("Likes")
+                        .HasForeignKey("TravelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.User", "User")
+                        .WithMany("LikedTravels")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Travel");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("API.Entities.Place", b =>
                 {
                     b.Navigation("TravelPlaces");
@@ -267,6 +289,8 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Travel", b =>
                 {
+                    b.Navigation("Likes");
+
                     b.Navigation("Photos");
 
                     b.Navigation("TravelPlaces");
@@ -277,6 +301,8 @@ namespace API.Data.Migrations
                     b.Navigation("Followers");
 
                     b.Navigation("Following");
+
+                    b.Navigation("LikedTravels");
 
                     b.Navigation("ProfilePhoto");
 

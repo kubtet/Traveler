@@ -75,12 +75,12 @@ public class Seed
         foreach (var follow in follows)
         {
             // Upewnij się, że relacje są prawidłowo ustawione
-            var followingUser = await context.Users.FindAsync(follow.FollowingUserId);
+            var SourceUser = await context.Users.FindAsync(follow.SourceUserId);
             var followedUser = await context.Users.FindAsync(follow.FollowedUserId);
 
-            if (followingUser != null && followedUser != null)
+            if (SourceUser != null && followedUser != null)
             {
-                follow.FollowingUser = followingUser;
+                follow.SourceUser = SourceUser;
                 follow.FollowedUser = followedUser;
                 context.Follows.Add(follow);
             }
