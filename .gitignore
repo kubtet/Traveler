@@ -485,3 +485,6 @@ $RECYCLE.BIN/
 API/appsettings.json
 client/ssl/localhost-key.pem
 client/ssl/localhost.pem
+
+# Database
+API/traveler.db
