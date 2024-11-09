@@ -11,7 +11,7 @@ public class User
     public required string Email { get; set; }
     public required string Gender { get; set; }
     public string? Bio { get; set; }
-    public string? ProfilePicture { get; set; }
+    public Photo? ProfilePhoto { get; set; }
     public required DateTime DateOfBirth { get; set; }
     public required DateTime CreationDate { get; set; } = DateTime.UtcNow;
 

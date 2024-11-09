@@ -1,82 +1,129 @@
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
-<div class="card surface-50 p-3 border-round mt-1">
-  <div
-    class="flex justify-content-between flex-column-reverse md:flex-row align-items-center"
-  >
-    <div>
-      <div
-        class="text-xl text-900 mb-4 mt-4 md:mt-0 text-center md:text-left font-semibold md:pr-4"
-      >
-        {{ travel?.title }}
-      </div>
-      <div
-        class="flex flex-wrap justify-content-center md:justify-content-start gap-3"
-      >
-        <span
-          class="inline-flex align-items-center py-2 px-3 font-medium border-1 surface-border border-round"
-          ><i class="pi pi-clock text-primary mr-2"></i>
-          @if (travel?.endDate) {
-          <span class="text-900"
-            >{{ travel?.startDate | date : "dd.MM.yyyy" }} -
-            {{ travel?.endDate | date : "dd.MM.yyyy" }}</span
-          >} @else {
-          <span class="text-900">{{
-            travel?.startDate | date : "dd.MM.yyyy"
-          }}</span>
-          } </span
-        ><span
-          class="inline-flex align-items-center py-2 px-3 font-medium border-1 surface-border border-round"
-          ><i class="pi pi-comments text-primary mr-2"></i
-          ><span class="text-900">24</span></span
-        ><span
-          class="inline-flex align-items-center py-2 px-3 font-medium border-1 surface-border border-round"
-          ><i class="pi pi-thumbs-up text-primary mr-2"></i
-          ><span class="text-900">124</span></span
-        >
-      </div>
+
+
+<i class="pi pi-arrow-left mt-10 ml-4" style="position: absolute; top: 6.5rem; left: 1.5rem; font-size: 1.5rem; cursor: pointer; color:black;"></i>
+
+
+<div class="card surface-50 p-4 border-round mt-6 p-6">
+  
+  <!-- Section Intro -->
+  <div class="flex justify-content-between align-items-center">
+    <!-- Author and profile in a single line -->
+    <div
+      class="text-3xl text-900 mt-4 md:mt-0 text-center md:text-left font-semibold md:pr-4"
+    >
+      {{ travel?.title }}
     </div>
-    <div class="flex flex-column align-items-center justify-content-center">
+   
+    <div class="flex align-items-center">
+      @if(!isOwnPost){
+      <span class="text-900 font-semibold m-3">by {{ travel?.username }}</span>
       <img
         src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-        class="w-4rem h-4rem"
-      /><span class="mt-3 font-bold text-900 text-center white-space-nowrap">{{
-        travel?.username
-      }}</span>
+        class="w-3rem h-3rem border-circle mr-2"
+      />
+      } @else{
+      <button class="p-button p-button-rounded p-button-secondary">
+        <i class="pi pi-cog"></i>
+        <!-- Settings icon -->
+      </button>
+      }
+      
     </div>
   </div>
-  <div class="galleria-container">
-    <p-galleria 
-    [value]="photos" 
-    [showItemNavigators]="true" 
-    [showThumbnails]="false" 
-    [showIndicators]="true" 
-    [showIndicatorsOnItem]="true" 
-    [containerStyle]="{ 'max-width': '1200px', 'margin-top': '2em' }">
+  <!-- Date and location details -->
+  <div
+    class="flex flex-wrap flex-column gap-2 align-items-left text-sm text-600 pt-3"
+  >
+  <span class="flex align-items-center">
+      <i class="pi pi-clock text-primary mr-1"></i>
+      @if (travel?.endDate) {
+      <span class="text-900"
+        >{{ travel?.startDate | date : "dd.MM.yyyy" }} -
+        {{ travel?.endDate | date : "dd.MM.yyyy" }}</span
+      >} @else {
+      <span class="text-900">{{
+        travel?.startDate | date : "dd.MM.yyyy"
+      }}</span>
+      <span *ngIf="!travel?.endDate">
+        {{ travel?.startDate | date : "dd.MM.yyyy" }} </span
+      >}
+    </span>
+    <span>
+      <i class="pi pi-map-marker text-primary mr-1"></i>
+      <span *ngFor="let place of travel?.placeNames; let index = index">
+        {{ place }}<span *ngIf="index < travel?.placeNames.length - 1">, </span>
+      </span>
+    </span>
+    
+  </div>
+  <!-- Section split into two columns -->
+  <div class="two-column-layout">
+    <!-- Left side with description and details -->
+    <div style="flex: 0 0 50%">
+      <div class="flex flex-wrap align-items-left text-sm text-600">
+        <!-- Description with regular font size -->
+        <p class="text-lg line-height-3 text-900 mt-3 pt-6">
+          {{ travel?.description }}
+        </p>
+        <div class="flex align-items-center">
+          <button
+            class="p-button p-button-rounded p-button-text p-button-icon-only"
+          >
+            <i [ngClass]="{'pi pi-heart-fill text-primary': isLikedByUser, 'pi pi-heart text-600': !isLikedByUser}"></i>
+          </button>
+          <span class="text-900 font-semibold ml-2">likesCount</span>
+        </div>
+      </div>
+    </div>
+    <!-- Right side with changing photo -->
+    <div
+      style="flex: 0 0 40%"
+      class="flex justify-content-center flex justify-center pt-2"
+    >
+      <p-galleria
+        [value]="photos"
+        [showItemNavigators]="true"
+        [showThumbnails]="false"
+        [showIndicators]="true"
+        [showIndicatorsOnItem]="true"
+        [containerStyle]="{ 'max-width': '500px', 'margin-top': '2em' }"
+      >
         <ng-template pTemplate="item" let-item>
-            <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
+          <img [src]="item.itemImageSrc" class="w-full h-auto border-round" />
         </ng-template>
-        <ng-template pTemplate="thumbnail" let-item>
-            <div class="grid grid-nogutter justify-content-center">
-                <img [src]="item.thumbnailImageSrc" style="display: block;" />
-            </div>
-        </ng-template>
-</p-galleria>
+      </p-galleria>
+    </div>
   </div>
-  <div class="text-2xl text-900 mb-4 font-semibold">
-    @for (place of travel?.placeNames; track place; let index = $index) {
-    @if(index !== travel?.placeNames.length - 1) {
-    {{ place }}<span>,</span>
-    } @else {
-    {{ place }}
-    }}
+
+  <!-- Down Arrow -->
+  <div class="flex justify-content-center m-8">
+    <button
+      class="p-button p-button-rounded p-button-secondary"
+      (click)="scrollToGallery()"
+    >
+      <i class="pi pi-arrow-down"></i>
+    </button>
   </div>
-  <p class="line-height-3 text-lg mb-4">
-    {{ travel?.description }}
-  </p>
-  <div class="flex flex-column sm:flex-row my-8 w-full gap-3">
-    <app-button icon="pi pi-twitter" label="Twitter"></app-button
-    ><app-button icon="pi pi-facebook" label="Facebook"></app-button
-    ><app-button icon="pi pi-pencil" label="Edit Post" class="sm:ml-auto">
-    </app-button>
+
+  <!-- Final Gallery Grid with 4 Columns and Smaller Thumbnails -->
+  <div id="gallery" class="mt-8 pt-4">
+    <div class="gallery-grid mt-5">
+      <div
+        class="grid grid-cols-4 gap-4 flex justify-content-evenly align-items-center"
+      >
+        <img
+          *ngFor="let photo of photos"
+          [src]="photo.thumbnailImageSrc"
+          class="w-full h-full border-round"
+          style="
+            cursor: pointer;
+            max-height: 250px;
+            max-width: 250px;
+            object-fit: cover;
+          "
+        />
+      </div>
+    </div>
   </div>
 </div>

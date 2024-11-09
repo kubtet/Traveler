@@ -1,3 +1,4 @@
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true" />
 @if (user) {
 <div class="edit-profile-container">
   <!-- name + alert -->
@@ -7,7 +8,6 @@
       <h2>Edit your profile</h2>
     </div>
     <div class="col-8">
-      <p>hello its second column with alert</p>
       <p-messages
         [(value)]="unsavedChangesMessages"
         [closable]="true"
@@ -22,8 +22,8 @@
   <div class="edit-elements-container">
     <div class="profile-picture-section">
       <p-image
-        src="{{ user.profilePicture }}"
-        alt="Image"
+        src="{{ previewProfilePhotoUrl }}"
+        [alt]="'../../assets/defaultProfilePicture.jfif'"
         width="150"
         class="round-image"
         [preview]="true"
@@ -35,13 +35,16 @@
           size="small"
           [outlined]="true"
           [style]="{ padding: '10px 20px' }"
+          (onClick)="updateProfilePicture()"
         />
         <app-button
           label="Delete"
+          [disabled]="isDeleteDisabled"
           [rounded]="true"
           size="small"
           [outlined]="true"
           [style]="{ padding: '10px 20px' }"
+          (onClick)="deleteProfilePicture()"
         />
       </div>
     </div>
@@ -53,40 +56,18 @@
         [label]="'Username'"
         [placeholder]="'Enter your username...'"
       ></app-input-text>
-     
+
       <!-- username input validation -->
-      @if(form.controls.username.invalid ||
-      form.controls.username.touched){
+      @if(form.controls.username.invalid || form.controls.username.touched){
       <div>
         @if(form.controls.bio.validator?.['required']){
         <small class="error"> Bio is required. </small>
-        }
-        @if(form.controls.bio.errors?.['maxlength']){
+        } @if(form.controls.bio.errors?.['maxlength']){
         <small class="error"> Bio cannot be longer than 20 characters. </small>
         }
       </div>
       }
-      <!-- Bio Input -->
-      <!-- <label for="bio">My Name</label>
-      <textarea
-        id="bio"
-        rows="5"
-        cols="30"
-        pInputTextarea
-        [(ngModel)]="user.bio"
-      >
-        class="ng-invalid"
-      ></textarea
-      >
-      @if(form.controls.bio.invalid && form.controls.bio.touched){
-      <div>
-        @if(form.controls.bio.errors?.['required']){
-        <small class="error"> Bio is required. </small>
-        } @if(form.controls.bio.errors?.['maxlength']){
-        <small class="error"> Bio cannot be longer than 200 characters. </small>
-        }
-      </div>
-      } -->
+
       <app-input-text
         [control]="form.controls.bio"
         [label]="'Bio'"
@@ -103,7 +84,7 @@
       size="large"
       severity="contrast"
       [style]="{ padding: '10px 20px' }"
-      (onClick)="onSaveChanges()"
+      (onClick)="this.onSaveChanges()"
     />
     <app-button
       label="Cancel"

@@ -3,11 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { TravelClient, TravelDetailDto } from '../../services/api';
+import { TravelClient, TravelDetailDto, UsersClient } from '../../services/api';
 import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
 import { GalleriaModule } from 'primeng/galleria';
 import { PhotoModel } from '../../shared/models/photo.model';
 import { PhotoService } from '../../services/photo.service';
+import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-travel-detail',
@@ -26,9 +27,13 @@ export class TravelDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private photoService = inject(PhotoService);
   private travelClient = inject(TravelClient);
+  private usersClient = inject(UsersClient);
+  protected accountService = inject(AccountService);
   protected photos: PhotoModel[] = [];
   protected travel: TravelDetailDto;
   protected travelId: number;
+  protected isOwnPost: boolean;
+  protected isLikedByUser: boolean = false;
   protected isLoading = new BehaviorSubject(false);
 
   public async ngOnInit() {
@@ -44,5 +49,22 @@ export class TravelDetailComponent implements OnInit {
       this.travel.photoUrls
     );
     this.isLoading.next(false);
+    this.checkIfOwnPost();
+  }
+
+  async checkIfOwnPost() {
+    const user = await firstValueFrom(
+      this.usersClient.getUserByUsername(
+        this.accountService.currentUser().username
+      )
+    );
+    this.isOwnPost = user.id === this.travel.userId;
+  }
+
+  scrollToGallery() {
+    const gallery = document.getElementById('gallery');
+    if (gallery) {
+      gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

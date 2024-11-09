@@ -6,7 +6,11 @@
     "Email": "reevesweber@acrodance.com",
     "Gender": "female",
     "Bio": "Est sint sit ut magna ea adipisicing velit ea ea tempor aliquip.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1985-06-24",
     "CreationDate": "2022-12-20T10:27:26",
     "Travels": [
@@ -172,7 +176,11 @@
     "Email": "patricecasey@acrodance.com",
     "Gender": "female",
     "Bio": "In et minim ut nostrud anim.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1989-04-18",
     "CreationDate": "2023-12-24T09:59:30",
     "Travels": [
@@ -251,7 +259,11 @@
     "Email": "sharpchambers@acrodance.com",
     "Gender": "male",
     "Bio": "Fugiat quis ad ut minim mollit enim.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1973-06-28",
     "CreationDate": "2022-12-25T10:40:04",
     "Travels": [
@@ -315,7 +327,11 @@
     "Email": "patelcummings@acrodance.com",
     "Gender": "male",
     "Bio": "Aliquip aute commodo dolore qui mollit cillum.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1973-09-20",
     "CreationDate": "2020-06-10T03:25:17",
     "Travels": [
@@ -346,7 +362,11 @@
     "Email": "snydercunningham@acrodance.com",
     "Gender": "female",
     "Bio": "Aliquip minim nisi ullamco eu proident ad ullamco adipisicing aute culpa.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1972-12-10",
     "CreationDate": "2023-12-05T03:34:37",
     "Travels": [
@@ -440,7 +460,11 @@
     "Email": "craneferguson@acrodance.com",
     "Gender": "male",
     "Bio": "Ad voluptate pariatur voluptate sint id do sit officia cupidatat adipisicing labore.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1985-10-05",
     "CreationDate": "2024-01-12T03:05:42",
     "Travels": [
@@ -525,7 +549,11 @@
     "Email": "cathydouglas@acrodance.com",
     "Gender": "male",
     "Bio": "Fugiat tempor dolore ea fugiat laboris.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1977-09-01",
     "CreationDate": "2021-12-06T04:21:25",
     "Travels": [
@@ -556,7 +584,11 @@
     "Email": "spencedejesus@acrodance.com",
     "Gender": "male",
     "Bio": "Irure officia tempor nostrud reprehenderit proident consequat.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1978-07-16",
     "CreationDate": "2020-11-30T09:57:41",
     "Travels": [
@@ -611,7 +643,11 @@
     "Email": "tonyaconway@acrodance.com",
     "Gender": "female",
     "Bio": "Dolor dolore culpa sunt fugiat duis adipisicing sint laboris quis tempor est velit.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "2000-05-10",
     "CreationDate": "2022-12-21T03:01:17",
     "Travels": [
@@ -684,7 +720,11 @@
     "Email": "jeanniewyatt@acrodance.com",
     "Gender": "female",
     "Bio": "Anim voluptate duis aliquip elit sint dolor minim reprehenderit mollit cupidatat nulla non.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1984-11-28",
     "CreationDate": "2020-04-15T11:04:29",
     "Travels": [
@@ -769,7 +809,11 @@
     "Email": "marvaharrison@acrodance.com",
     "Gender": "female",
     "Bio": "Amet pariatur magna non deserunt sunt irure commodo voluptate.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1998-08-16",
     "CreationDate": "2021-07-05T03:03:56",
     "Travels": [
@@ -845,7 +889,11 @@
     "Email": "karynvega@acrodance.com",
     "Gender": "female",
     "Bio": "Sit labore exercitation Lorem fugiat mollit.",
-    "ProfilePicture": "http://placehold.it/32x32",
+    "ProfilePhoto": {
+      "Url": "http://placehold.it/32x32",
+      "IsProfilePicture": true
+    },
+
     "DateOfBirth": "1995-09-17",
     "CreationDate": "2020-08-29T06:19:01",
     "Travels": [
