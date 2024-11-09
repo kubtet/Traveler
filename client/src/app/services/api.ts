@@ -421,8 +421,11 @@ export class CountryClient implements ICountryClient {
 }
 
 export interface ITravelClient {
+    getAllTravels(): Observable<TravelDto[]>;
     getTravelsByUserId(id: number): Observable<TravelDto[]>;
     getTravelDetails(id: number): Observable<TravelDetailDto>;
+    createTravel(createTravelDto: CreateTravelDto): Observable<FileResponse>;
+    removeTravel(id: number): Observable<FileResponse>;
 }
 
 @Injectable()
@@ -434,6 +437,61 @@ export class TravelClient implements ITravelClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    getAllTravels(): Observable<TravelDto[]> {
+        let url_ = this.baseUrl + "/api/Travel";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllTravels(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllTravels(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TravelDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TravelDto[]>;
+        }));
+    }
+
+    protected processGetAllTravels(response: HttpResponseBase): Observable<TravelDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TravelDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
 
     getTravelsByUserId(id: number): Observable<TravelDto[]> {
@@ -537,6 +595,117 @@ export class TravelClient implements ITravelClient {
             result200 = TravelDetailDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    createTravel(createTravelDto: CreateTravelDto): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Travel/create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(createTravelDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateTravel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateTravel(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processCreateTravel(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    removeTravel(id: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Travel/remove/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRemoveTravel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRemoveTravel(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processRemoveTravel(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -985,8 +1154,10 @@ export class Travel implements ITravel {
     startDate?: Date;
     endDate?: Date | undefined;
     createdAt?: Date;
+    countryId?: number;
+    countryName?: string;
+    cities?: string | undefined;
     user?: User;
-    travelPlaces?: TravelPlace[];
     photos?: Photo[];
 
     constructor(data?: ITravel) {
@@ -1007,12 +1178,10 @@ export class Travel implements ITravel {
             this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.countryId = _data["countryId"];
+            this.countryName = _data["countryName"];
+            this.cities = _data["cities"];
             this.user = _data["user"] ? User.fromJS(_data["user"]) : <any>undefined;
-            if (Array.isArray(_data["travelPlaces"])) {
-                this.travelPlaces = [] as any;
-                for (let item of _data["travelPlaces"])
-                    this.travelPlaces!.push(TravelPlace.fromJS(item));
-            }
             if (Array.isArray(_data["photos"])) {
                 this.photos = [] as any;
                 for (let item of _data["photos"])
@@ -1037,12 +1206,10 @@ export class Travel implements ITravel {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
+        data["cities"] = this.cities;
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        if (Array.isArray(this.travelPlaces)) {
-            data["travelPlaces"] = [];
-            for (let item of this.travelPlaces)
-                data["travelPlaces"].push(item.toJSON());
-        }
         if (Array.isArray(this.photos)) {
             data["photos"] = [];
             for (let item of this.photos)
@@ -1060,117 +1227,11 @@ export interface ITravel {
     startDate?: Date;
     endDate?: Date | undefined;
     createdAt?: Date;
+    countryId?: number;
+    countryName?: string;
+    cities?: string | undefined;
     user?: User;
-    travelPlaces?: TravelPlace[];
     photos?: Photo[];
-}
-
-export class TravelPlace implements ITravelPlace {
-    travelId?: number;
-    travel?: Travel;
-    placeId?: number;
-    place?: Place;
-
-    constructor(data?: ITravelPlace) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.travelId = _data["travelId"];
-            this.travel = _data["travel"] ? Travel.fromJS(_data["travel"]) : <any>undefined;
-            this.placeId = _data["placeId"];
-            this.place = _data["place"] ? Place.fromJS(_data["place"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): TravelPlace {
-        data = typeof data === 'object' ? data : {};
-        let result = new TravelPlace();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["travelId"] = this.travelId;
-        data["travel"] = this.travel ? this.travel.toJSON() : <any>undefined;
-        data["placeId"] = this.placeId;
-        data["place"] = this.place ? this.place.toJSON() : <any>undefined;
-        return data;
-    }
-}
-
-export interface ITravelPlace {
-    travelId?: number;
-    travel?: Travel;
-    placeId?: number;
-    place?: Place;
-}
-
-export class Place implements IPlace {
-    id?: number;
-    name?: string;
-    latitude?: number;
-    longitude?: number;
-    travelPlaces?: TravelPlace[];
-
-    constructor(data?: IPlace) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.latitude = _data["latitude"];
-            this.longitude = _data["longitude"];
-            if (Array.isArray(_data["travelPlaces"])) {
-                this.travelPlaces = [] as any;
-                for (let item of _data["travelPlaces"])
-                    this.travelPlaces!.push(TravelPlace.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): Place {
-        data = typeof data === 'object' ? data : {};
-        let result = new Place();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["latitude"] = this.latitude;
-        data["longitude"] = this.longitude;
-        if (Array.isArray(this.travelPlaces)) {
-            data["travelPlaces"] = [];
-            for (let item of this.travelPlaces)
-                data["travelPlaces"].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IPlace {
-    id?: number;
-    name?: string;
-    latitude?: number;
-    longitude?: number;
-    travelPlaces?: TravelPlace[];
 }
 
 export class Photo implements IPhoto {
@@ -1477,6 +1538,70 @@ export interface ITravelDetailDto {
     photoUrls?: string[] | undefined;
 }
 
+export class CreateTravelDto implements ICreateTravelDto {
+    cities?: string | undefined;
+    countryName?: string;
+    countryId?: number;
+    description?: string | undefined;
+    endDate?: Date | undefined;
+    startDate?: Date;
+    title?: string;
+    userId?: number;
+
+    constructor(data?: ICreateTravelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.cities = _data["cities"];
+            this.countryName = _data["countryName"];
+            this.countryId = _data["countryId"];
+            this.description = _data["description"];
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.title = _data["title"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateTravelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTravelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["cities"] = this.cities;
+        data["countryName"] = this.countryName;
+        data["countryId"] = this.countryId;
+        data["description"] = this.description;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["title"] = this.title;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateTravelDto {
+    cities?: string | undefined;
+    countryName?: string;
+    countryId?: number;
+    description?: string | undefined;
+    endDate?: Date | undefined;
+    startDate?: Date;
+    title?: string;
+    userId?: number;
+}
+
 export class MemberDto implements IMemberDto {
     id?: number;
     username?: string | undefined;
@@ -1627,6 +1752,13 @@ export interface IFollowerDto {
     id?: number;
     username?: string | undefined;
     profilePicture?: string | undefined;
+}
+
+export interface FileResponse {
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
 }
 
 export class SwaggerException extends Error {

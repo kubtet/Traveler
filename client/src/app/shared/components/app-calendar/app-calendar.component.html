@@ -3,6 +3,7 @@
     {{ label }}<span *ngIf="required" style="color: red"> *</span></label
   >
   <p-calendar
+    useUtc
     *ngIf="control"
     [dateFormat]="dateFormat"
     [formControl]="control"

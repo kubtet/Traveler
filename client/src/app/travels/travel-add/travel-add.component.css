@@ -3,3 +3,12 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.wrapper {
+  width: 1240px;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+}
+
