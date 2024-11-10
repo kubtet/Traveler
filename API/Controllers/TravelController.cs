@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Enums;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -33,19 +34,19 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult> CreateTravel(CreateTravelDto createTravelDto)
+        public async Task<ActionResult<int>> CreateTravel(CreateTravelDto createTravelDto)
         {
             if (createTravelDto == null)
             {
                 return BadRequest("No input provided");
             }
 
-            var travel = mapper.Map<Entities.Travel>(createTravelDto);
+            var travel = mapper.Map<Travel>(createTravelDto);
 
             repository.CreateTravel(travel);
             if (await repository.SaveAllAsync())
             {
-                return NoContent();
+                return Ok(travel.Id);
             }
 
             return BadRequest("Failed to add a travel");
@@ -70,21 +71,37 @@ namespace API.Controllers
             return BadRequest("Failed to remove a travel");
         }
 
+        [Consumes("multipart/form-data")]
         [HttpPost("user/add-travel-photo/{id}")]
-        public async Task<ActionResult<PhotoDto>> AddTravelPhoto(IFormFile file, int id)
+        public async Task<ActionResult> AddTravelPhoto([FromForm] IFormFile[] images, int id)
         {
             var travel = await repository.GetTravelDetailAsync(id);
-            if (travel == null) return BadRequest("No travel found.");
-            var result = await photoService.AddPhotoAsync(file);
-            if (result.Error != null) return BadRequest(result.Error.Message);
-            var photo = new Photo
+            if (travel == null)
             {
-                Url = result.SecureUrl.AbsoluteUri,
-                PublicId = result.PublicId
-            };
+                return BadRequest("No travel found.");
+            }
 
-            travel.Photos.Add(photo);
-            if (await repository.SaveAllAsync()) return mapper.Map<PhotoDto>(photo);
+            foreach (var image in images)
+            {
+                var result = await photoService.AddPhotoAsync(image, TypeOfPhoto.Travel);
+                if (result.Error != null)
+                {
+                    return BadRequest(result.Error.Message);
+                }
+
+                var photo = new Photo
+                {
+                    Url = result.SecureUrl.AbsoluteUri,
+                    PublicId = result.PublicId
+                };
+
+                travel.Photos.Add(photo);
+            }
+
+            if (await repository.SaveAllAsync())
+            {
+                return NoContent();
+            }
 
             return BadRequest("Error adding photo to the travel...");
         }

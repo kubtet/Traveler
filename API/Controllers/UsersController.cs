@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using API.DTOs;
 using API.Entities;
+using API.Enums;
 using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
@@ -32,8 +33,8 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
             return NotFound();
         }
 
-            return mapper.Map<MemberDto>(user);
-        }
+        return mapper.Map<MemberDto>(user);
+    }
 
     [AllowAnonymous]
     [HttpGet("username/{username}")]
@@ -87,7 +88,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
         var user = await userRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Cannot update user");
 
-        var result = await photoService.AddPhotoAsync(file);
+        var result = await photoService.AddPhotoAsync(file, TypeOfPhoto.Profile);
 
         if (result.Error != null) return BadRequest(result.Error.Message);
 

@@ -19,7 +19,7 @@
             <ng-template pTemplate="content">
               <ul *ngIf="uploadedImages.length > 0">
                 <li *ngFor="let file of uploadedImages">
-                  {{ file.name }}
+                  {{ file?.fileName }}
                 </li>
               </ul>
             </ng-template>
@@ -147,7 +147,7 @@
             <app-button
               [style]="{ width: '100%' }"
               class="flex-1"
-              [disabled]="form.invalid"
+              [disabled]="form.invalid || uploadedImages.length === 0"
               label="Publish"
               icon="pi pi-check"
               (onClick)="createTravel()"

@@ -39,7 +39,6 @@ export class UserProfileComponent implements OnInit {
         this.accountService.currentUser().username
       )
     );
-    console.log(this.user?.profilePhotoUrl);
   }
 
   public goToSettings() {

@@ -17,7 +17,6 @@ export class UseUtcDirective {
   }
 
   private toUtc() {
-    console.log(this.calendar.value);
     if (Array.isArray(this.calendar.value)) {
       const startDate = new Date(
         Date.UTC(

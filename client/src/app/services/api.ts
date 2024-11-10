@@ -424,8 +424,9 @@ export interface ITravelClient {
     getAllTravels(): Observable<TravelDto[]>;
     getTravelsByUserId(id: number): Observable<TravelDto[]>;
     getTravelDetails(id: number): Observable<TravelDetailDto>;
-    createTravel(createTravelDto: CreateTravelDto): Observable<FileResponse>;
+    createTravel(createTravelDto: CreateTravelDto): Observable<number>;
     removeTravel(id: number): Observable<FileResponse>;
+    addTravelPhoto(id: number, images?: FileParameter[] | null | undefined): Observable<FileResponse>;
 }
 
 @Injectable()
@@ -603,7 +604,7 @@ export class TravelClient implements ITravelClient {
         return _observableOf(null as any);
     }
 
-    createTravel(createTravelDto: CreateTravelDto): Observable<FileResponse> {
+    createTravel(createTravelDto: CreateTravelDto): Observable<number> {
         let url_ = this.baseUrl + "/api/Travel/create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -615,7 +616,7 @@ export class TravelClient implements ITravelClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -626,31 +627,28 @@ export class TravelClient implements ITravelClient {
                 try {
                     return this.processCreateTravel(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<number>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<number>;
         }));
     }
 
-    protected processCreateTravel(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCreateTravel(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -713,12 +711,75 @@ export class TravelClient implements ITravelClient {
         }
         return _observableOf(null as any);
     }
+
+    addTravelPhoto(id: number, images?: FileParameter[] | null | undefined): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Travel/user/add-travel-photo/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (images !== null && images !== undefined)
+            images.forEach(item_ => content_.append("images", item_.data, item_.fileName ? item_.fileName : "images") );
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddTravelPhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddTravelPhoto(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processAddTravelPhoto(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export interface IUsersClient {
     getUsers(): Observable<MemberDto[]>;
     getUserById(id: number): Observable<MemberDto>;
     getUserByUsername(username: string): Observable<MemberDto>;
+    updateUser(updateUserDto: UpdateUserDto): Observable<FileResponse>;
+    modifyProfilePicture(file?: FileParameter | null | undefined): Observable<PhotoDto>;
+    deleteProfilePhoto(): Observable<FileResponse>;
 }
 
 @Injectable()
@@ -888,6 +949,167 @@ export class UsersClient implements IUsersClient {
         }
         return _observableOf(null as any);
     }
+
+    updateUser(updateUserDto: UpdateUserDto): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Users/update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(updateUserDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processUpdateUser(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    modifyProfilePicture(file?: FileParameter | null | undefined): Observable<PhotoDto> {
+        let url_ = this.baseUrl + "/api/Users/modify-profile-photo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (file !== null && file !== undefined)
+            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processModifyProfilePicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processModifyProfilePicture(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PhotoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PhotoDto>;
+        }));
+    }
+
+    protected processModifyProfilePicture(response: HttpResponseBase): Observable<PhotoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PhotoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    deleteProfilePhoto(): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Users/delete-profile-photo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteProfilePhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteProfilePhoto(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processDeleteProfilePhoto(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export class UserDto implements IUserDto {
@@ -1040,7 +1262,7 @@ export class User implements IUser {
     email?: string;
     gender?: string;
     bio?: string | undefined;
-    profilePicture?: string | undefined;
+    profilePhoto?: Photo | undefined;
     dateOfBirth?: Date;
     creationDate?: Date;
     travels?: Travel[];
@@ -1067,7 +1289,7 @@ export class User implements IUser {
             this.email = _data["email"];
             this.gender = _data["gender"];
             this.bio = _data["bio"];
-            this.profilePicture = _data["profilePicture"];
+            this.profilePhoto = _data["profilePhoto"] ? Photo.fromJS(_data["profilePhoto"]) : <any>undefined;
             this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
             this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
             if (Array.isArray(_data["travels"])) {
@@ -1106,7 +1328,7 @@ export class User implements IUser {
         data["email"] = this.email;
         data["gender"] = this.gender;
         data["bio"] = this.bio;
-        data["profilePicture"] = this.profilePicture;
+        data["profilePhoto"] = this.profilePhoto ? this.profilePhoto.toJSON() : <any>undefined;
         data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         if (Array.isArray(this.travels)) {
@@ -1138,12 +1360,76 @@ export interface IUser {
     email?: string;
     gender?: string;
     bio?: string | undefined;
-    profilePicture?: string | undefined;
+    profilePhoto?: Photo | undefined;
     dateOfBirth?: Date;
     creationDate?: Date;
     travels?: Travel[];
     followers?: Follow[];
     following?: Follow[];
+}
+
+export class Photo implements IPhoto {
+    id?: number;
+    url?: string;
+    travelId?: number | undefined;
+    travel?: Travel | undefined;
+    userId?: number | undefined;
+    user?: User | undefined;
+    publicId?: string | undefined;
+    isProfilePicture?: boolean;
+
+    constructor(data?: IPhoto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.url = _data["url"];
+            this.travelId = _data["travelId"];
+            this.travel = _data["travel"] ? Travel.fromJS(_data["travel"]) : <any>undefined;
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? User.fromJS(_data["user"]) : <any>undefined;
+            this.publicId = _data["publicId"];
+            this.isProfilePicture = _data["isProfilePicture"];
+        }
+    }
+
+    static fromJS(data: any): Photo {
+        data = typeof data === 'object' ? data : {};
+        let result = new Photo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["url"] = this.url;
+        data["travelId"] = this.travelId;
+        data["travel"] = this.travel ? this.travel.toJSON() : <any>undefined;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["publicId"] = this.publicId;
+        data["isProfilePicture"] = this.isProfilePicture;
+        return data;
+    }
+}
+
+export interface IPhoto {
+    id?: number;
+    url?: string;
+    travelId?: number | undefined;
+    travel?: Travel | undefined;
+    userId?: number | undefined;
+    user?: User | undefined;
+    publicId?: string | undefined;
+    isProfilePicture?: boolean;
 }
 
 export class Travel implements ITravel {
@@ -1232,58 +1518,6 @@ export interface ITravel {
     cities?: string | undefined;
     user?: User;
     photos?: Photo[];
-}
-
-export class Photo implements IPhoto {
-    id?: number;
-    travelId?: number;
-    travel?: Travel;
-    url?: string;
-    publicId?: string | undefined;
-
-    constructor(data?: IPhoto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.travelId = _data["travelId"];
-            this.travel = _data["travel"] ? Travel.fromJS(_data["travel"]) : <any>undefined;
-            this.url = _data["url"];
-            this.publicId = _data["publicId"];
-        }
-    }
-
-    static fromJS(data: any): Photo {
-        data = typeof data === 'object' ? data : {};
-        let result = new Photo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["travelId"] = this.travelId;
-        data["travel"] = this.travel ? this.travel.toJSON() : <any>undefined;
-        data["url"] = this.url;
-        data["publicId"] = this.publicId;
-        return data;
-    }
-}
-
-export interface IPhoto {
-    id?: number;
-    travelId?: number;
-    travel?: Travel;
-    url?: string;
-    publicId?: string | undefined;
 }
 
 export class Follow implements IFollow {
@@ -1453,7 +1687,9 @@ export class TravelDetailDto implements ITravelDetailDto {
     username?: string;
     profilePicture?: string;
     dateOfBirth?: Date;
-    placeNames?: string[] | undefined;
+    cities?: string | undefined;
+    countryName?: string;
+    countryId?: number;
     photoUrls?: string[] | undefined;
 
     constructor(data?: ITravelDetailDto) {
@@ -1477,11 +1713,9 @@ export class TravelDetailDto implements ITravelDetailDto {
             this.username = _data["username"];
             this.profilePicture = _data["profilePicture"];
             this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
-            if (Array.isArray(_data["placeNames"])) {
-                this.placeNames = [] as any;
-                for (let item of _data["placeNames"])
-                    this.placeNames!.push(item);
-            }
+            this.cities = _data["cities"];
+            this.countryName = _data["countryName"];
+            this.countryId = _data["countryId"];
             if (Array.isArray(_data["photoUrls"])) {
                 this.photoUrls = [] as any;
                 for (let item of _data["photoUrls"])
@@ -1509,11 +1743,9 @@ export class TravelDetailDto implements ITravelDetailDto {
         data["username"] = this.username;
         data["profilePicture"] = this.profilePicture;
         data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
-        if (Array.isArray(this.placeNames)) {
-            data["placeNames"] = [];
-            for (let item of this.placeNames)
-                data["placeNames"].push(item);
-        }
+        data["cities"] = this.cities;
+        data["countryName"] = this.countryName;
+        data["countryId"] = this.countryId;
         if (Array.isArray(this.photoUrls)) {
             data["photoUrls"] = [];
             for (let item of this.photoUrls)
@@ -1534,7 +1766,9 @@ export interface ITravelDetailDto {
     username?: string;
     profilePicture?: string;
     dateOfBirth?: Date;
-    placeNames?: string[] | undefined;
+    cities?: string | undefined;
+    countryName?: string;
+    countryId?: number;
     photoUrls?: string[] | undefined;
 }
 
@@ -1610,7 +1844,7 @@ export class MemberDto implements IMemberDto {
     email?: string | undefined;
     gender?: string | undefined;
     bio?: string | undefined;
-    profilePicture?: string | undefined;
+    profilePhotoUrl?: string | undefined;
     dateOfBirth?: Date;
     creationDate?: Date;
     travels?: TravelDto[] | undefined;
@@ -1635,7 +1869,7 @@ export class MemberDto implements IMemberDto {
             this.email = _data["email"];
             this.gender = _data["gender"];
             this.bio = _data["bio"];
-            this.profilePicture = _data["profilePicture"];
+            this.profilePhotoUrl = _data["profilePhotoUrl"];
             this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
             this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
             if (Array.isArray(_data["travels"])) {
@@ -1672,7 +1906,7 @@ export class MemberDto implements IMemberDto {
         data["email"] = this.email;
         data["gender"] = this.gender;
         data["bio"] = this.bio;
-        data["profilePicture"] = this.profilePicture;
+        data["profilePhotoUrl"] = this.profilePhotoUrl;
         data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         if (Array.isArray(this.travels)) {
@@ -1702,7 +1936,7 @@ export interface IMemberDto {
     email?: string | undefined;
     gender?: string | undefined;
     bio?: string | undefined;
-    profilePicture?: string | undefined;
+    profilePhotoUrl?: string | undefined;
     dateOfBirth?: Date;
     creationDate?: Date;
     travels?: TravelDto[] | undefined;
@@ -1713,7 +1947,7 @@ export interface IMemberDto {
 export class FollowerDto implements IFollowerDto {
     id?: number;
     username?: string | undefined;
-    profilePicture?: string | undefined;
+    profilePhoto?: string | undefined;
 
     constructor(data?: IFollowerDto) {
         if (data) {
@@ -1728,7 +1962,7 @@ export class FollowerDto implements IFollowerDto {
         if (_data) {
             this.id = _data["id"];
             this.username = _data["username"];
-            this.profilePicture = _data["profilePicture"];
+            this.profilePhoto = _data["profilePhoto"];
         }
     }
 
@@ -1743,7 +1977,7 @@ export class FollowerDto implements IFollowerDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["username"] = this.username;
-        data["profilePicture"] = this.profilePicture;
+        data["profilePhoto"] = this.profilePhoto;
         return data;
     }
 }
@@ -1751,7 +1985,92 @@ export class FollowerDto implements IFollowerDto {
 export interface IFollowerDto {
     id?: number;
     username?: string | undefined;
-    profilePicture?: string | undefined;
+    profilePhoto?: string | undefined;
+}
+
+export class UpdateUserDto implements IUpdateUserDto {
+    username?: string | undefined;
+    bio?: string | undefined;
+
+    constructor(data?: IUpdateUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data["username"];
+            this.bio = _data["bio"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["username"] = this.username;
+        data["bio"] = this.bio;
+        return data;
+    }
+}
+
+export interface IUpdateUserDto {
+    username?: string | undefined;
+    bio?: string | undefined;
+}
+
+export class PhotoDto implements IPhotoDto {
+    id?: number;
+    url?: string | undefined;
+
+    constructor(data?: IPhotoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.url = _data["url"];
+        }
+    }
+
+    static fromJS(data: any): PhotoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PhotoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["url"] = this.url;
+        return data;
+    }
+}
+
+export interface IPhotoDto {
+    id?: number;
+    url?: string | undefined;
+}
+
+export interface FileParameter {
+    data: any;
+    fileName: string;
 }
 
 export interface FileResponse {

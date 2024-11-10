@@ -12,7 +12,9 @@ namespace API.DTOs
         public required string Username { get; set; }
         public required string ProfilePicture { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public List<string>? PlaceNames { get; set; }
+        public string? Cities { get; set; }
+        public required string CountryName { get; set; }
+        public int CountryId { get; set; }
         public List<string>? PhotoUrls { get; set; }
     }
 }

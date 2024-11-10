@@ -22,9 +22,15 @@ import { AppInputTextComponent } from '../../shared/components/app-input-text/ap
 import { AppCalendarComponent } from '../../shared/components/app-calendar/app-calendar.component';
 import { HttpEvent } from '@angular/common/http';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { CreateTravelDto, TravelClient, UsersClient } from '../../services/api';
+import {
+  CreateTravelDto,
+  FileParameter,
+  TravelClient,
+  UsersClient,
+} from '../../services/api';
 import { AccountService } from '../../services/account.service';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-travel-add',
   standalone: true,
@@ -51,9 +57,11 @@ export class TravelAddComponent implements OnInit {
   private accountService = inject(AccountService);
   private cityService = inject(CityService);
   private countryService = inject(CountryService);
+  private messageService = inject(MessageService);
   private router = inject(Router);
   private travelsClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
+  protected maxImages: number = 15;
   protected today: Date = new Date();
   protected userId: number;
   protected form = new FormGroup({
@@ -68,7 +76,7 @@ export class TravelAddComponent implements OnInit {
 
   protected countries: Country[] = [];
   protected cities: City[] = [];
-  protected uploadedImages: any[] = [];
+  protected uploadedImages: FileParameter[] = [];
   protected isLoading = new BehaviorSubject(false);
 
   public async ngOnInit() {
@@ -87,16 +95,16 @@ export class TravelAddComponent implements OnInit {
 
     this.form.controls.travelCountry.valueChanges.subscribe(async (value) => {
       this.isLoading.next(true);
+      this.cities = [];
+      this.form.controls.travelCities.setValue(undefined);
       if (value) {
         console.log(value);
         const cities = await this.cityService.getCitiesForCountry(value?.code);
         if (cities.length > 0) {
           this.cities = cities;
         }
-      } else {
-        this.cities = [];
-        this.form.controls.travelCities.setValue(undefined);
-      }
+      } 
+
       this.isLoading.next(false);
     });
 
@@ -121,20 +129,38 @@ export class TravelAddComponent implements OnInit {
       userId: this.userId,
     });
 
-    console.log(controls.travelDates.value);
-    await firstValueFrom(this.travelsClient.createTravel(createTravelDto));
+    const newTravelId = await firstValueFrom(
+      this.travelsClient.createTravel(createTravelDto)
+    );
+    await firstValueFrom(
+      this.travelsClient.addTravelPhoto(newTravelId, this.uploadedImages)
+    );
     this.isLoading.next(false);
     this.router.navigateByUrl('/user-profile');
   }
 
   protected onImageUpload(event: UploadEvent) {
-    if (event?.files?.length > 0) {
-      event.files.forEach((file) => {
-        this.uploadedImages.push(file);
+    const totalImages = this.uploadedImages.length + event.files.length;
+
+    if (totalImages > this.maxImages) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Image Limit Exceeded',
+        detail: `You can only upload up to ${this.maxImages} images.`,
       });
+
+      event.files.splice(this.maxImages - this.uploadedImages.length);
     }
 
-    console.log(this.uploadedImages);
+    if (event?.files?.length > 0) {
+      event.files.forEach((file) => {
+        const fileParam: FileParameter = {
+          data: file,
+          fileName: file.name,
+        };
+        this.uploadedImages.push(fileParam);
+      });
+    }
   }
 
   protected clearForm() {

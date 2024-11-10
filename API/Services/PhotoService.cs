@@ -1,3 +1,4 @@
+using API.Enums;
 using API.Helpers;
 using API.Interfaces;
 using CloudinaryDotNet;
@@ -17,22 +18,37 @@ public class PhotoService : IPhotoService
 
 
 
-    public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
+    public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file, TypeOfPhoto type)
     {
         var uploadResult = new ImageUploadResult();
 
         if (file.Length > 0)
         {
             using var stream = file.OpenReadStream();
-            var uploadParams = new ImageUploadParams
+
+            if (type == TypeOfPhoto.Profile)
             {
-                File = new FileDescription(file.FileName, stream),
-                Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("auto"),
-                Folder = "demo-traveller"
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("auto"),
+                    Folder = "demo-traveller"
+                };
 
-            };
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            }
 
-            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            if (type == TypeOfPhoto.Travel)
+            {
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Transformation = new Transformation().Height(1080).Width(1920).Crop("fill").Gravity("auto"),
+                    Folder = "demo-traveller"
+                };
+
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            }
         }
 
         return uploadResult;

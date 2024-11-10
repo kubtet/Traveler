@@ -16,6 +16,9 @@
     "Travels": [
       {
         "Title": "officia Trip",
+        "Cities": "Buenos Aires,Rosario",
+        "CountryId": 11,
+        "CountryName": "Argentina",
         "Description": "Et incididunt proident magna ipsum dolore cupidatat pariatur exercitation quis quis labore ut minim exercitation. Aute enim non Lorem ut. Sit amet officia fugiat ut. Esse quis cillum nisi amet et adipisicing elit laborum deserunt reprehenderit et. Fugiat non dolor irure aliquip adipisicing ad.\r\n",
         "StartDate": "2022-10-02",
         "EndDate": "2020-12-03",
@@ -46,6 +49,9 @@
       },
       {
         "Title": "enim Trip",
+        "Cities": "Canberra",
+        "CountryId": 14,
+        "CountryName": "Australia",
         "Description": "Esse officia aliquip tempor excepteur sunt cillum. Adipisicing elit commodo sint elit tempor ea. Ipsum nostrud consequat commodo cillum elit reprehenderit sunt eu magna anim.\r\n",
         "StartDate": "2021-11-23",
         "EndDate": "2022-03-28",
@@ -76,6 +82,9 @@
       },
       {
         "Title": "cupidatat Trip",
+        "Cities": "Antwerp,Brussels,Genk,Gent",
+        "CountryId": 22,
+        "CountryName": "Belgium",
         "Description": "Consectetur eu non velit laboris reprehenderit excepteur ipsum ex nostrud tempor eiusmod est ea. Ut eu quis incididunt culpa ut et cillum laboris ea id non. Nisi incididunt nulla ad nisi reprehenderit sit officia adipisicing.\r\n",
         "StartDate": "2020-03-24",
         "EndDate": "2024-02-24",
@@ -88,6 +97,9 @@
       },
       {
         "Title": "ut Trip",
+        "Cities": "Sarajevo",
+        "CountryId": 28,
+        "CountryName": "Bosnia and Herzegovina",
         "Description": "Quis elit qui pariatur id duis non sit nostrud Lorem est mollit fugiat laborum amet. Deserunt culpa consectetur elit consequat. Exercitation irure mollit adipisicing ea sit nulla cillum tempor.\r\n",
         "StartDate": "2021-04-04",
         "EndDate": "2022-09-23",
@@ -121,6 +133,9 @@
       },
       {
         "Title": "aliquip Trip",
+        "Cities": "Belo Horizonte,Rio de Janeiro,Sao Paulo",
+        "CountryId": 31,
+        "CountryName": "Brazil",
         "Description": "Veniam consequat elit ullamco duis esse sint veniam enim adipisicing sit consectetur. Sint reprehenderit irure aliquip dolor labore dolore nulla ut amet adipisicing non exercitation officia id. Nostrud excepteur ad in commodo irure id excepteur incididunt laboris amet anim. Cupidatat voluptate aliquip dolore anim id laborum et pariatur. Fugiat magna qui ipsum nulla.\r\n",
         "StartDate": "2022-02-25",
         "EndDate": "2023-02-26",
@@ -145,6 +160,9 @@
       },
       {
         "Title": "laboris Trip",
+        "Cities": "Yaounde",
+        "CountryId": 38,
+        "CountryName": "Cameroon",
         "Description": "Lorem sint deserunt eiusmod irure deserunt exercitation eu in adipisicing exercitation eiusmod. Culpa aliqua aute non amet enim est excepteur veniam proident. Tempor dolor elit velit veniam aliquip cillum esse enim aliqua esse laborum magna excepteur tempor. Mollit culpa enim nostrud laboris.\r\n",
         "StartDate": "2021-05-06",
         "EndDate": "2024-08-17",
@@ -186,6 +204,9 @@
     "Travels": [
       {
         "Title": "sunt Trip",
+        "Cities": "Ottawa,Toronto",
+        "CountryId": 39,
+        "CountryName": "Canada",
         "Description": "Fugiat sit cillum mollit cupidatat eiusmod tempor. Sit cupidatat tempor qui commodo eiusmod ea. Consectetur sunt mollit anim exercitation Lorem duis officia laboris. Non tempor sint reprehenderit est commodo officia deserunt do duis cillum cupidatat deserunt cillum. Culpa et Lorem ex irure reprehenderit nisi amet deserunt consequat eiusmod eiusmod. Minim sunt reprehenderit veniam do.\r\n",
         "StartDate": "2022-01-16",
         "EndDate": "2021-06-05",
@@ -210,6 +231,9 @@
       },
       {
         "Title": "consectetur Trip",
+        "Cities": "Santiago",
+        "CountryId": 44,
+        "CountryName": "Chile",
         "Description": "Exercitation nostrud sunt aliquip voluptate. Mollit ipsum tempor ullamco laboris quis do mollit proident incididunt sunt. Commodo enim Lorem tempor ea in laboris Lorem ea amet nisi officia.\r\n",
         "StartDate": "2020-08-04",
         "EndDate": "2022-07-28",
@@ -231,6 +255,9 @@
       },
       {
         "Title": "eu Trip",
+        "Cities": "Bogota",
+        "CountryId": 48,
+        "CountryName": "Colombia",
         "Description": "Culpa do velit Lorem cupidatat. Reprehenderit Lorem duis labore exercitation deserunt. Commodo irure excepteur consectetur laborum officia qui magna fugiat. Labore consequat nostrud eu sunt minim excepteur ipsum adipisicing.\r\n",
         "StartDate": "2024-08-03",
         "EndDate": "2022-11-26",
@@ -269,6 +296,9 @@
     "Travels": [
       {
         "Title": "dolor Trip",
+        "Cities": "San Jose",
+        "CountryId": 53,
+        "CountryName": "Costa Rica",
         "Description": "Excepteur velit ex est eu id laboris quis fugiat. Commodo tempor mollit pariatur elit enim mollit velit eiusmod velit amet. Elit sint non nostrud commodo et dolore officia. Fugiat reprehenderit ad anim velit sit et enim enim. Dolor tempor ad in est velit consectetur excepteur est sunt nostrud laborum cupidatat. Culpa id culpa aliqua laborum mollit veniam dolore sit ea. Ipsum ut nisi fugiat sint consequat est mollit sunt veniam.\r\n",
         "StartDate": "2021-01-16",
         "EndDate": "2021-04-15",
@@ -296,6 +326,9 @@
       },
       {
         "Title": "nostrud Trip",
+        "Cities": "",
+        "CountryId": 54,
+        "CountryName": "Cote D'Ivoire (Ivory Coast)",
         "Description": "Deserunt enim sit et sit nisi incididunt irure est proident officia tempor irure ullamco ipsum. Pariatur excepteur duis minim et do qui proident officia duis ad qui incididunt. Aliquip Lorem ex duis incididunt dolor anim voluptate voluptate laboris sunt exercitation Lorem.\r\n",
         "StartDate": "2022-05-24",
         "EndDate": "2024-04-11",
@@ -337,6 +370,9 @@
     "Travels": [
       {
         "Title": "dolor Trip",
+        "Cities": "Split,Zadar,Zagreb",
+        "CountryId": 55,
+        "CountryName": "Croatia",
         "Description": "Est ullamco nulla nulla ad duis dolor reprehenderit. Reprehenderit consectetur dolore id exercitation velit ipsum exercitation laborum commodo esse pariatur laborum. Duis enim ut esse magna elit ullamco nulla. Ea excepteur duis sunt anim anim esse dolore occaecat proident pariatur culpa.\r\n",
         "StartDate": "2022-08-04",
         "EndDate": "2023-06-27",
@@ -372,6 +408,9 @@
     "Travels": [
       {
         "Title": "ut Trip",
+        "Cities": "Aalborg",
+        "CountryId": 59,
+        "CountryName": "Denmark",
         "Description": "Quis elit qui pariatur id duis non sit nostrud Lorem est mollit fugiat laborum amet. Deserunt culpa consectetur elit consequat. Exercitation irure mollit adipisicing ea sit nulla cillum tempor.\r\n",
         "StartDate": "2021-04-04",
         "EndDate": "2022-09-23",
@@ -405,6 +444,9 @@
       },
       {
         "Title": "aliquip Trip",
+        "Cities": "",
+        "CountryId": 64,
+        "CountryName": "Ecuador",
         "Description": "Veniam consequat elit ullamco duis esse sint veniam enim adipisicing sit consectetur. Sint reprehenderit irure aliquip dolor labore dolore nulla ut amet adipisicing non exercitation officia id. Nostrud excepteur ad in commodo irure id excepteur incididunt laboris amet anim. Cupidatat voluptate aliquip dolore anim id laborum et pariatur. Fugiat magna qui ipsum nulla.\r\n",
         "StartDate": "2022-02-25",
         "EndDate": "2023-02-26",
@@ -429,6 +471,9 @@
       },
       {
         "Title": "laboris Trip",
+        "Cities": "Alexandria,Cairo,Giza,Hurghada",
+        "CountryId": 65,
+        "CountryName": "Egypt",
         "Description": "Lorem sint deserunt eiusmod irure deserunt exercitation eu in adipisicing exercitation eiusmod. Culpa aliqua aute non amet enim est excepteur veniam proident. Tempor dolor elit velit veniam aliquip cillum esse enim aliqua esse laborum magna excepteur tempor. Mollit culpa enim nostrud laboris.\r\n",
         "StartDate": "2021-05-06",
         "EndDate": "2024-08-17",
@@ -470,6 +515,9 @@
     "Travels": [
       {
         "Title": "pariatur Trip",
+        "Cities": "Nantes,Paris,Saint-Etienne,Marseille,Lyon,Saint Tropez,Lens,Nantes,Lille,Nice",
+        "CountryId": 75,
+        "CountryName": "France",
         "Description": "Sint amet exercitation sit ex irure esse ullamco elit adipisicing ipsum labore. Id minim consequat minim sit cupidatat. Consequat proident fugiat laborum id aute non velit ipsum non. Voluptate veniam proident ut cupidatat aliqua Lorem laboris. Proident elit officia aliquip elit do eiusmod sit. In aute commodo eiusmod ea.\r\n",
         "StartDate": "2020-10-13",
         "EndDate": "2022-03-25",
@@ -503,6 +551,9 @@
       },
       {
         "Title": "commodo Trip",
+        "Cities": "Koln,Dortmund,Dusseldorf,Gelsenkirchen,Munich,Berlin,Leipzig,Hamburg,Stuttgart,Frankfurt am Main",
+        "CountryId": 82,
+        "CountryName": "Germany",
         "Description": "Velit veniam dolore occaecat sint ipsum consectetur. Aute commodo sint et labore ea. Tempor ad officia duis excepteur. Ipsum consequat consectetur in aute laboris. Ex consequat nisi laborum ad do non cillum veniam do labore. Proident pariatur ullamco velit fugiat quis nulla reprehenderit aliquip nisi minim labore magna sit ut.\r\n",
         "StartDate": "2020-12-16",
         "EndDate": "2023-06-25",
@@ -559,6 +610,9 @@
     "Travels": [
       {
         "Title": "proident Trip",
+        "Cities": "Acra",
+        "CountryId": 83,
+        "CountryName": "Ghana",
         "Description": "Ut esse anim ea consectetur sit magna voluptate anim tempor. Est sunt incididunt cupidatat eiusmod veniam reprehenderit id cillum qui. Mollit excepteur fugiat ex est sit. Proident est velit deserunt commodo ut eiusmod pariatur consequat adipisicing proident.\r\n",
         "StartDate": "2023-10-30",
         "EndDate": "2022-10-21",
@@ -594,6 +648,9 @@
     "Travels": [
       {
         "Title": "deserunt Trip",
+        "Cities": "Athens",
+        "CountryId": 85,
+        "CountryName": "Greece",
         "Description": "Eu pariatur elit aliqua laboris nulla quis aliqua nulla. Officia incididunt ea excepteur officia proident proident pariatur ex est. Id aliqua veniam nisi dolore enim dolore non. Anim ipsum pariatur reprehenderit dolore Lorem est anim aliquip anim Lorem velit fugiat veniam voluptate.\r\n",
         "StartDate": "2021-03-06",
         "EndDate": "2022-05-18",
@@ -624,6 +681,9 @@
       },
       {
         "Title": "ut Trip",
+        "Cities": "Tegucigalpa",
+        "CountryId": 97,
+        "CountryName": "Honduras",
         "Description": "Occaecat consequat commodo elit aute exercitation do duis labore cupidatat qui cupidatat ex. Proident fugiat ea sunt ex qui ad excepteur. Magna elit sunt duis id tempor adipisicing id pariatur. Dolore magna anim aliquip sunt cillum tempor. Consectetur pariatur anim laborum deserunt quis. Esse duis elit cillum labore mollit occaecat labore enim amet aliqua magna anim est. Mollit id fugiat et ullamco.\r\n",
         "StartDate": "2021-04-18",
         "EndDate": "2024-04-02",
@@ -653,6 +713,9 @@
     "Travels": [
       {
         "Title": "labore Trip",
+        "Cities": "Reykjavik",
+        "CountryId": 100,
+        "CountryName": "Iceland",
         "Description": "Exercitation labore mollit incididunt et pariatur do exercitation. Ex eiusmod occaecat aute incididunt adipisicing magna deserunt aliqua laborum qui laborum fugiat tempor mollit. Consectetur id et adipisicing commodo sint tempor consequat cillum ea.\r\n",
         "StartDate": "2022-10-24",
         "EndDate": "2023-06-11",
@@ -674,6 +737,9 @@
       },
       {
         "Title": "duis Trip",
+        "Cities": "Tehran",
+        "CountryId": 103,
+        "CountryName": "Iran",
         "Description": "Deserunt sint culpa et pariatur tempor deserunt ut aliqua Lorem officia. Minim et eu deserunt cillum est consequat aliquip officia laborum amet adipisicing aliqua eu. Sunt nulla aliqua dolor sint culpa ex voluptate non ex mollit labore amet amet exercitation. Proident cillum velit ipsum commodo. Laboris eiusmod proident ipsum ut amet Lorem commodo mollit ex aliquip sint magna.\r\n",
         "StartDate": "2021-01-31",
         "EndDate": "2020-12-07",
@@ -730,6 +796,9 @@
     "Travels": [
       {
         "Title": "non Trip",
+        "Cities": "Monte Cattini,Pisa,Firenze,Napoli,Roma,Monte Cassino,Assisi,Venezia",
+        "CountryId": 107,
+        "CountryName": "Italy",
         "Description": "Reprehenderit duis laborum reprehenderit sint nulla eiusmod sit qui consequat fugiat cillum Lorem fugiat labore. Fugiat consectetur fugiat laborum velit laboris irure eiusmod velit ut ullamco commodo. Aute pariatur sunt et non mollit aliqua et enim. Excepteur aliqua mollit tempor ut quis elit aliqua qui commodo duis. Est pariatur exercitation tempor duis exercitation voluptate Lorem reprehenderit nulla nostrud nisi in adipisicing ex. Do nulla reprehenderit sint pariatur reprehenderit labore proident Lorem fugiat occaecat.\r\n",
         "StartDate": "2020-09-02",
         "EndDate": "2020-08-16",
@@ -748,6 +817,9 @@
       },
       {
         "Title": "velit Trip",
+        "Cities": "Tokyo",
+        "CountryId": 109,
+        "CountryName": "Japan",
         "Description": "Sit enim enim velit ullamco ut deserunt sint aliqua veniam. Reprehenderit adipisicing ex est quis dolor officia sit voluptate aliqua magna. Sunt velit culpa nisi cillum eiusmod laborum aliquip nulla et laborum. Irure quis nostrud excepteur veniam ex occaecat duis et esse duis minim. Ex culpa eu deserunt proident sint nulla ullamco. Enim anim ex reprehenderit amet.\r\n",
         "StartDate": "2021-02-27",
         "EndDate": "2024-05-21",
@@ -775,6 +847,9 @@
       },
       {
         "Title": "laboris Trip",
+        "Cities": "Leon,Mexico City, Monterrey",
+        "CountryId": 142,
+        "CountryName": "Mexico",
         "Description": "Ex eu sit consequat labore nulla Lorem do incididunt excepteur voluptate nisi. Magna dolore ea sunt velit elit consectetur nulla qui minim ea fugiat. Enim minim ad id sit ipsum in esse proident duis. Do est nisi nulla anim officia cillum labore cillum commodo. Esse quis ex incididunt deserunt tempor officia et ad commodo nulla. Exercitation veniam nisi magna deserunt eu incididunt consequat ut est sunt sunt incididunt in. Fugiat id ipsum enim et veniam.\r\n",
         "StartDate": "2021-08-15",
         "EndDate": "2024-07-20",
@@ -819,6 +894,9 @@
     "Travels": [
       {
         "Title": "id Trip",
+        "Cities": "Tanger,Rabat",
+        "CountryId": 149,
+        "CountryName": "Morocco",
         "Description": "Lorem anim occaecat incididunt culpa adipisicing id Lorem amet excepteur fugiat eiusmod excepteur reprehenderit. Nostrud dolor aute minim sunt non commodo excepteur ipsum eiusmod culpa laboris pariatur. Ipsum sint velit laborum quis velit cupidatat proident est in elit voluptate velit labore. Enim deserunt culpa enim officia culpa velit culpa in pariatur ad. Incididunt pariatur labore cupidatat incididunt sunt. Amet non sit do exercitation nulla aute fugiat ad proident adipisicing anim duis irure. Id ipsum minim aute ut do laboris aliquip nostrud reprehenderit anim eiusmod.\r\n",
         "StartDate": "2020-04-26",
         "EndDate": "2020-01-26",
@@ -834,6 +912,9 @@
       },
       {
         "Title": "pariatur Trip",
+        "Cities": "Amsterdam",
+        "CountryId": 156,
+        "CountryName": "Netherlands",
         "Description": "Commodo irure minim aliquip consectetur adipisicing aliquip qui mollit incididunt elit. Qui sunt dolore proident in laborum deserunt magna incididunt. Nisi incididunt mollit aute sint ea adipisicing. Ad sint ad ea ipsum Lorem consequat duis deserunt labore. Eu excepteur labore magna aliqua aliqua deserunt magna.\r\n",
         "StartDate": "2021-10-29",
         "EndDate": "2020-11-02",
@@ -867,6 +948,9 @@
       },
       {
         "Title": "deserunt Trip",
+        "Cities": "Wellington",
+        "CountryId": 158,
+        "CountryName": "New Zealand",
         "Description": "Qui excepteur dolor reprehenderit nulla eu. Magna dolor nisi dolor culpa et sunt consectetur aliquip pariatur proident officia cillum occaecat laborum. Magna consequat ad in do ad nostrud deserunt. Et laborum sit qui eiusmod ea laborum velit mollit est voluptate reprehenderit officia. Enim laboris nostrud eiusmod ullamco cupidatat proident nulla in pariatur minim do.\r\n",
         "StartDate": "2022-09-01",
         "EndDate": "2021-01-04",
@@ -899,6 +983,9 @@
     "Travels": [
       {
         "Title": "quis Trip",
+        "Cities": "Stokholm",
+        "CountryId": 213,
+        "CountryName": "Sweden",
         "Description": "Quis eiusmod ea reprehenderit tempor nostrud. Qui mollit id mollit aute officia. Duis irure est incididunt amet incididunt nostrud sint incididunt cillum cupidatat minim est. Lorem reprehenderit commodo magna cupidatat commodo ad consequat. Nostrud occaecat pariatur ipsum aliqua ullamco anim. Nostrud ut exercitation eiusmod deserunt commodo exercitation sunt aute labore dolor anim elit aute.\r\n",
         "StartDate": "2023-09-29",
         "EndDate": "2022-09-17",
