@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241108190956_TravelEntityModified")]
+    partial class TravelEntityModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -73,28 +76,19 @@ namespace API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsProfilePicture")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("PublicId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("TravelId")
+                    b.Property<int>("TravelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TravelId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Photos");
                 });
@@ -216,6 +210,9 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -252,15 +249,11 @@ namespace API.Data.Migrations
                 {
                     b.HasOne("API.Entities.Travel", "Travel")
                         .WithMany("Photos")
-                        .HasForeignKey("TravelId");
-
-                    b.HasOne("API.Entities.User", "User")
-                        .WithOne("ProfilePhoto")
-                        .HasForeignKey("API.Entities.Photo", "UserId");
+                        .HasForeignKey("TravelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Travel");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("API.Entities.Travel", b =>
@@ -308,8 +301,6 @@ namespace API.Data.Migrations
                     b.Navigation("Followers");
 
                     b.Navigation("Following");
-
-                    b.Navigation("ProfilePhoto");
 
                     b.Navigation("Travels");
                 });

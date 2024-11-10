@@ -31,12 +31,13 @@ public class MappingProfiles : Profile
             .ForMember(d => d.Username, opt => opt.MapFrom(src => src.User.UserName))
             .ForMember(d => d.DateOfBirth, opt => opt.MapFrom(src => src.User.DateOfBirth))
             .ForMember(d => d.ProfilePicture, opt => opt.MapFrom(src => src.User.ProfilePhoto != null ? src.User.ProfilePhoto.Url : null))
-            .ForMember(d => d.PhotoUrls, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()))
-            .ForMember(d => d.PlaceNames, o => o.MapFrom(s => s.TravelPlaces.Select(tp => tp.Place.Name).ToList()));
+            .ForMember(d => d.PhotoUrls, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()));
 
 
         CreateMap<Photo, PhotoDto>();
         CreateMap<Place, PlaceDto>();
         CreateMap<UpdateUserDto, User>();
+        CreateMap<CreateTravelDto, Travel>()
+            .ForMember(d => d.CreatedAt, opt => opt.MapFrom(x => DateTime.Now));
     }
 }

@@ -1,11 +1,18 @@
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
 
-
-<i class="pi pi-arrow-left mt-10 ml-4" style="position: absolute; top: 6.5rem; left: 1.5rem; font-size: 1.5rem; cursor: pointer; color:black;"></i>
-
+<i
+  class="pi pi-arrow-left mt-10 ml-4"
+  style="
+    position: absolute;
+    top: 6.5rem;
+    left: 1.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: black;
+  "
+></i>
 
 <div class="card surface-50 p-4 border-round mt-6 p-6">
-  
   <!-- Section Intro -->
   <div class="flex justify-content-between align-items-center">
     <!-- Author and profile in a single line -->
@@ -14,7 +21,7 @@
     >
       {{ travel?.title }}
     </div>
-   
+
     <div class="flex align-items-center">
       @if(!isOwnPost){
       <span class="text-900 font-semibold m-3">by {{ travel?.username }}</span>
@@ -28,34 +35,29 @@
         <!-- Settings icon -->
       </button>
       }
-      
     </div>
   </div>
   <!-- Date and location details -->
   <div
     class="flex flex-wrap flex-column gap-2 align-items-left text-sm text-600 pt-3"
   >
-  <span class="flex align-items-center">
+    <span class="flex align-items-center">
       <i class="pi pi-clock text-primary mr-1"></i>
       @if (travel?.endDate) {
       <span class="text-900"
         >{{ travel?.startDate | date : "dd.MM.yyyy" }} -
         {{ travel?.endDate | date : "dd.MM.yyyy" }}</span
       >} @else {
-      <span class="text-900">{{
-        travel?.startDate | date : "dd.MM.yyyy"
-      }}</span>
-      <span *ngIf="!travel?.endDate">
-        {{ travel?.startDate | date : "dd.MM.yyyy" }} </span
+      <span class="text-900">{{ travel?.startDate | date : "dd.MM.yyyy" }}</span
       >}
     </span>
     <span>
       <i class="pi pi-map-marker text-primary mr-1"></i>
-      <span *ngFor="let place of travel?.placeNames; let index = index">
-        {{ place }}<span *ngIf="index < travel?.placeNames.length - 1">, </span>
-      </span>
+      <span>{{ travel?.countryName }}</span>
+      @if (travel?.cities) {
+      <span>: {{ travel.cities }}</span>
+      }
     </span>
-    
   </div>
   <!-- Section split into two columns -->
   <div class="two-column-layout">
@@ -70,7 +72,12 @@
           <button
             class="p-button p-button-rounded p-button-text p-button-icon-only"
           >
-            <i [ngClass]="{'pi pi-heart-fill text-primary': isLikedByUser, 'pi pi-heart text-600': !isLikedByUser}"></i>
+            <i
+              [ngClass]="{
+                'pi pi-heart-fill text-primary': isLikedByUser,
+                'pi pi-heart text-600': !isLikedByUser
+              }"
+            ></i>
           </button>
           <span class="text-900 font-semibold ml-2">likesCount</span>
         </div>

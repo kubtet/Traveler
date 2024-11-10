@@ -1,26 +1,160 @@
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
-<div class="row">
-  <div class="col-2">
-    <app-dropdown
-      label="Select visited country"
-      [control]="visitedCountry"
-      optionLabel="name"
-      [options]="countries"
-      [filter]="true"
-      filterBy="name"
-      [countries]="true"
-    ></app-dropdown>
-  </div>
-</div>
-<div class="row">
-  <div class="col-2">
-    <app-dropdown
-      label="Select the city"
-      [control]="visitedCity"
-      optionLabel="name"
-      [options]="cities"
-      [filter]="true"
-      filterBy="name"
-    ></app-dropdown>
+<div class="wrapper">
+  <div class="card surface-50 p-3 border-round mt-1">
+    <div class="card">
+      <span class="block text-900 font-bold text-xl mb-4"
+        >Add a new travel</span
+      >
+      <div class="grid">
+        <div class="col-12 lg:col-8">
+          <p-fileUpload
+            class="fileUpload"
+            name="demo[]"
+            url="https://www.primefaces.org/cdn/api/upload.php"
+            [multiple]="true"
+            accept="image/*"
+            maxFileSize="1000000"
+            (onUpload)="onImageUpload($event)"
+          >
+            <ng-template pTemplate="content">
+              <ul *ngIf="uploadedImages.length > 0">
+                <li *ngFor="let file of uploadedImages">
+                  {{ file?.fileName }}
+                </li>
+              </ul>
+            </ng-template>
+          </p-fileUpload>
+          <div class="flex flex-column p-fluid">
+            <div class="mt-3">
+              <app-input-text
+                [control]="form.controls.travelTitel"
+                placeholder="Title"
+              ></app-input-text>
+            </div>
+            <div class="mt-3">
+              <app-input-text-area
+                [control]="form.controls.travelDescription"
+                placeholder="Description"
+                [rows]="6"
+              ></app-input-text-area>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 lg:col-4">
+          <div class="border-1 surface-border border-round mb-4">
+            <span
+              class="text-900 font-bold border-bottom-1 surface-border p-3 flex-container"
+              >Visited places</span
+            >
+            <div class="p-3">
+              <app-dropdown
+                placeholder="Select visited country"
+                [control]="form.controls.travelCountry"
+                optionLabel="name"
+                [options]="countries"
+                [filter]="true"
+                filterBy="name"
+                [countries]="true"
+              ></app-dropdown>
+            </div>
+            <div class="p-3">
+              <p-multiSelect
+                [style]="{ width: '100%' }"
+                placeholder="Select visited city"
+                [formControl]="form.controls.travelCities"
+                optionLabel="name"
+                optionValue="name"
+                [options]="cities"
+                [filter]="true"
+                filterBy="name"
+                [loading]="isLoading | async"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="43"
+                [selectionLimit]="15"
+              ></p-multiSelect>
+            </div>
+          </div>
+          <div class="border-1 surface-border border-round mb-4">
+            <span
+              class="text-900 font-bold block border-bottom-1 surface-border p-3"
+              >Dates</span
+            >
+            <div class="p-3">
+              <app-calendar
+                [control]="form.controls.travelDates"
+                [maxDate]="today"
+                placeholder="Select when your travel had a place"
+                selectionMode="range"
+              ></app-calendar>
+            </div>
+          </div>
+          <div class="border-1 surface-border border-round mb-4">
+            <span
+              class="text-900 font-bold block border-bottom-1 surface-border p-3"
+              >Tags</span
+            >
+            <div class="p-3 flex gap-2">
+              <p-chip class="p-element ng-star-inserted"
+                ><div
+                  aria-label="Software"
+                  class="p-chip p-component ng-star-inserted"
+                >
+                  <div
+                    class="p-chip-text ng-star-inserted"
+                    data-pc-section="label"
+                  >
+                    Travel
+                  </div>
+                </div> </p-chip
+              ><p-chip class="p-element ng-star-inserted"
+                ><div
+                  aria-label="Web"
+                  class="p-chip p-component ng-star-inserted"
+                >
+                  <div
+                    class="p-chip-text ng-star-inserted"
+                    data-pc-section="label"
+                  >
+                    Journey
+                  </div>
+                </div>
+              </p-chip>
+              <p-chip class="p-element ng-star-inserted"
+                ><div
+                  aria-label="Web"
+                  class="p-chip p-component ng-star-inserted"
+                >
+                  <div
+                    class="p-chip-text ng-star-inserted"
+                    data-pc-section="label"
+                  >
+                    Adventure
+                  </div>
+                </div>
+              </p-chip>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <app-button
+              [style]="{ width: '100%' }"
+              class="flex-1"
+              label="Discard"
+              icon="pi pi-trash"
+              severity="danger"
+              [outlined]="true"
+              (onClick)="clearForm()"
+            ></app-button>
+            <app-button
+              [style]="{ width: '100%' }"
+              class="flex-1"
+              [disabled]="form.invalid || uploadedImages.length === 0"
+              label="Publish"
+              icon="pi pi-check"
+              (onClick)="createTravel()"
+            ></app-button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

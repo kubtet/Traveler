@@ -1,0 +1,32 @@
+<div class="p-fluid" style="padding: 0">
+  <label *ngIf="label" [for]="id" class="font-bold block mb-2">
+    {{ label }}<span *ngIf="required" style="color: red"> *</span></label
+  >
+  <ng-container *ngIf="control; else template">
+    <textarea
+      [ngClass]="!resizable ? 'unresizable' : ''"
+      [autoResize]="autoResize"
+      [cols]="cols"
+      [formControl]="control"
+      [id]="id"
+      [placeholder]="placeholder"
+      [required]="required"
+      [rows]="rows"
+      pInputTextarea
+    ></textarea>
+  </ng-container>
+  <ng-template #template>
+    <textarea
+      [ngClass]="!resizable ? 'unresizable' : ''"
+      [autoResize]="autoResize"
+      [cols]="cols"
+      [disabled]="disabled"
+      [id]="id"
+      [placeholder]="placeholder"
+      [required]="required"
+      [rows]="rows"
+      [(ngModel)]="value"
+      pInputTextarea
+    ></textarea>
+  </ng-template>
+</div>

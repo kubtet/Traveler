@@ -12,8 +12,6 @@ namespace API.Repositories
             return await context.Travels
                 .Include(t => t.User)
                 .Include(t => t.Photos)
-                .Include(t => t.TravelPlaces)
-                .ThenInclude(tp => tp.Place)
                 .SingleOrDefaultAsync(t => t.Id == travelId);
         }
 
@@ -22,9 +20,17 @@ namespace API.Repositories
             return await context.Travels
                 .Where(t => t.UserId == userId)
                 .Include(t => t.Photos)
-                .Include(t => t.TravelPlaces)
-                .ThenInclude(tp => tp.Place)
                 .ToListAsync();
+        }
+
+        async Task<IEnumerable<Travel>> ITravelRepository.GetAllTravelsAsync()
+        {
+            return await context.Travels.ToListAsync();
+        }
+
+        async void ITravelRepository.CreateTravel(Travel travel)
+        {
+            await context.Travels.AddAsync(travel);
         }
 
         public async Task<bool> SaveAllAsync()
@@ -32,5 +38,9 @@ namespace API.Repositories
             return await context.SaveChangesAsync() > 0;
         }
 
+        public void RemoveTravel(Travel travel)
+        {
+            context.Travels.Remove(travel);
+        }
     }
 }

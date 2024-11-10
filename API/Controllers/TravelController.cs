@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Enums;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,14 @@ namespace API.Controllers
 {
     public class TravelController(IMapper mapper, ITravelRepository repository, IPhotoService photoService) : BaseApiController
     {
+        [HttpGet]
+        public async Task<ActionResult<List<TravelDto>>> GetAllTravels()
+        {
+            var travels = await repository.GetAllTravelsAsync();
+
+            return mapper.Map<List<TravelDto>>(travels);
+        }
+
         [HttpGet("user/{id}")]
         public async Task<ActionResult<List<TravelDto>>> GetTravelsByUserId(int id)
         {
@@ -24,30 +33,77 @@ namespace API.Controllers
             return mapper.Map<TravelDetailDto>(travel);
         }
 
-
-        [HttpPost("user/add-travel-photo/{id}")]
-        public async Task<ActionResult<PhotoDto>> AddTravelPhoto(IFormFile file, int id)
+        [HttpPost("create")]
+        public async Task<ActionResult<int>> CreateTravel(CreateTravelDto createTravelDto)
         {
-            var travel = await repository.GetTravelDetailAsync(id);
-            if(travel == null) return BadRequest("No travel found.");
-            var result = await photoService.AddPhotoAsync(file);
-            if (result.Error != null) return BadRequest(result.Error.Message);
-            var photo = new Photo
+            if (createTravelDto == null)
             {
-                Url = result.SecureUrl.AbsoluteUri,
-                PublicId = result.PublicId
-            };
+                return BadRequest("No input provided");
+            }
 
-            travel.Photos.Add(photo);
-            if (await repository.SaveAllAsync()) return mapper.Map<PhotoDto>(photo);
+            var travel = mapper.Map<Travel>(createTravelDto);
 
-            return BadRequest("Error adding photo to the travel...");
+            repository.CreateTravel(travel);
+            if (await repository.SaveAllAsync())
+            {
+                return Ok(travel.Id);
+            }
 
-
-
-
+            return BadRequest("Failed to add a travel");
         }
 
+        [HttpDelete("remove/{id}")]
+        public async Task<ActionResult> RemoveTravel(int id)
+        {
+            var travel = await repository.GetTravelDetailAsync(id);
 
+            if (travel == null)
+            {
+                return BadRequest("No travel with provided id found");
+            }
+
+            repository.RemoveTravel(travel);
+
+            if (await repository.SaveAllAsync())
+            {
+                return NoContent();
+            }
+            return BadRequest("Failed to remove a travel");
+        }
+
+        [Consumes("multipart/form-data")]
+        [HttpPost("user/add-travel-photo/{id}")]
+        public async Task<ActionResult> AddTravelPhoto([FromForm] IFormFile[] images, int id)
+        {
+            var travel = await repository.GetTravelDetailAsync(id);
+            if (travel == null)
+            {
+                return BadRequest("No travel found.");
+            }
+
+            foreach (var image in images)
+            {
+                var result = await photoService.AddPhotoAsync(image, TypeOfPhoto.Travel);
+                if (result.Error != null)
+                {
+                    return BadRequest(result.Error.Message);
+                }
+
+                var photo = new Photo
+                {
+                    Url = result.SecureUrl.AbsoluteUri,
+                    PublicId = result.PublicId
+                };
+
+                travel.Photos.Add(photo);
+            }
+
+            if (await repository.SaveAllAsync())
+            {
+                return NoContent();
+            }
+
+            return BadRequest("Error adding photo to the travel...");
+        }
     }
 }

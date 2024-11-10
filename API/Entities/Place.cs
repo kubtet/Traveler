@@ -3,7 +3,8 @@ namespace API.Entities
     public class Place
     {
         public int Id { get; set; }
-        public required string Name { get; set; } // Paris, France TO_DO
+        public required string CountryName { get; set; } // Paris, France TO_DO
+        public required string Cities { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
 

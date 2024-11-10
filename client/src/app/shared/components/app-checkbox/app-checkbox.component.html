@@ -7,7 +7,7 @@
     [required]="required"
     [value]="value"
   />
-  <label class="font-bold ml-2" [for]="inputId"
+  <label *ngIf="label" class="font-bold ml-2" [for]="inputId"
     >{{ label }}<span *ngIf="required" style="color: red"> *</span></label
   >
 </div>
