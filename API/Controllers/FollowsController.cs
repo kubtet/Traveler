@@ -2,6 +2,7 @@
 using System.Data;
 using API;
 using API.Controllers;
+using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -41,17 +42,17 @@ public class FollowsController(IFollowsRepository followsRepository) : BaseApiCo
     }
 
     [HttpGet("{userId:int}/followers")]
-    public async Task<ActionResult> GetFollowers(int userId)
+    public async Task<IEnumerable<MemberDto>> GetFollowers(int userId)
     {
         var followers = await followsRepository.GetFollowers(userId);
-        return Ok(followers);
+        return followers;
     }
 
     [HttpGet("{userId:int}/following")]
-    public async Task<ActionResult> GetFollowing(int userId)
+    public async Task<IEnumerable<MemberDto>> GetFollowing(int userId)
     {
         var followings = await followsRepository.GetFollowings(userId);
-        return Ok(followings);
+        return followings;
     }
 
 
