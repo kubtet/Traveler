@@ -43,9 +43,6 @@ namespace API.Controllers
 
             return BadRequest("Error adding photo to the travel...");
 
-
-
-
         }
 
 

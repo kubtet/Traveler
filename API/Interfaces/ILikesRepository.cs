@@ -1,15 +1,28 @@
 using API.DTOs;
 
-namespace API;
-public interface ILikesRepository
+namespace API
 {
+    public interface ILikesRepository
+    {
+        // Dodaje polubienie do posta
+        void AddLike(TravelLike like);
 
-    Task<TravelLike?> GetTravelLike(int TravelId, int UserId); // checks if user like travel
-    Task<IEnumerable<int>> GetCurrentTravelLikeIds(int currentTravelId);
+        // Usuwa polubienie z posta
+        void DeleteLike(TravelLike like);
 
+        // Liczy polubienia dla konkretnego wpisu podróżniczego
+        Task<int> CountLikesForTravel(int travelId);
 
-    void DeleteLike(TravelLike follow);
-    void AddLike(TravelLike follow);
-    Task<bool> SaveChanges();
+        // Pobiera identyfikatory użytkowników, którzy polubili dany post
+        Task<IEnumerable<int>> GetCurrentTravelLikeIds(int travelId);
 
+        // Sprawdza, czy użytkownik polubił daną podróż
+        Task<TravelLike?> GetTravelLikeByUser(int travelId, int userId); 
+
+        // Pobiera listę użytkowników, którzy polubili dany post
+        Task<IEnumerable<MemberDto>> GetUsersWhoLikedTravel(int travelId);
+
+        // Zapisuje zmiany do bazy danych
+        Task<bool> SaveChanges();
+    }
 }

@@ -1,8 +1,12 @@
 
 using API;
 using API.Data;
+using API.DTOs;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
-public class LikesRepository(DataContext context) : ILikesRepository
+public class LikesRepository(DataContext context, IMapper mapper) : ILikesRepository
 {
     public void AddLike(TravelLike like)
     {
@@ -15,18 +19,35 @@ public class LikesRepository(DataContext context) : ILikesRepository
 
     }
 
-    public Task<IEnumerable<int>> GetCurrentTravelLikeIds(int currentTravelId)
+    public async Task<int> CountLikesForTravel(int travelId)
     {
-        throw new NotImplementedException();
+        return await context.TravelLikes.CountAsync(l => l.TravelId == travelId);
     }
 
-    public Task<TravelLike?> GetTravelLike(int TravelId, int UserId)
+    public async Task<IEnumerable<int>> GetCurrentTravelLikeIds(int currentTravelId)
     {
-        throw new NotImplementedException();
+        return await context.TravelLikes
+        .Where(x => x.TravelId == currentTravelId)
+        .Select(x => x.UserId)
+        .ToListAsync();
     }
 
-    public Task<bool> SaveChanges()
+    public async Task<TravelLike?> GetTravelLikeByUser(int travelId, int userId)
     {
-        throw new NotImplementedException();
+        return await context.TravelLikes.FindAsync(travelId, userId);
+    }
+
+    public async Task<IEnumerable<MemberDto>> GetUsersWhoLikedTravel(int travelId)
+    {
+        return await context.TravelLikes
+        .Where(x => x.TravelId == travelId)
+        .Select(x => x.User)
+        .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+        .ToListAsync();
+    }
+
+    public async Task<bool> SaveChanges()
+    {
+        return await context.SaveChangesAsync() > 0;
     }
 }

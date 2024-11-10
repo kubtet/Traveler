@@ -3,36 +3,59 @@ using API;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
-public class FollowsRepository(DataContext context) : IFollowsRepository
+public class FollowsRepository(DataContext context, IMapper mapper) : IFollowsRepository
 {
     public void AddFollow(Follow follow)
     {
         context.Follows.Add(follow);
     }
-
     public void DeleteFollow(Follow follow)
     {
         context.Follows.Remove(follow);
     }
 
-    public async Task<IEnumerable<int>> GetCurrentTravelLikeIds(int currenTravelId)
+    public async Task<Follow?> GetFollow(int followerId, int followingId)
     {
-        throw new NotImplementedException();
+        return await context.Follows.FindAsync(followerId, followingId);
     }
 
-    public Task<IEnumerable<MemberDto>> GetTravelLikes(string predicate, int travelId)
+    public async Task<int> CountFollowers(int userId)
     {
-        throw new NotImplementedException();
+        return await context.Follows
+        .CountAsync(f => f.FollowedUserId == userId);
+
     }
 
-    public Task<Follow?> GetUserFollow(int sourceUserId, int FollowedUserId)
+    public async Task<int> CountFollowings(int userId)
     {
-        throw new NotImplementedException();
+        return await context.Follows
+        .CountAsync(f => f.SourceUserId == userId);
     }
 
-    public Task<bool> SaveChanges()
+    public async Task<IEnumerable<MemberDto>> GetFollowers(int userId)
     {
-        throw new NotImplementedException();
+        return await context.Follows
+        .Where(f => f.FollowedUserId == userId)
+        .Select(f => f.SourceUser)
+        .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+        .ToListAsync();
+    }
+
+    public async Task<IEnumerable<MemberDto>> GetFollowings(int userId)
+    {
+        return await context.Follows
+        .Where(f => f.SourceUserId == userId)
+        .Select(f => f.FollowedUser)
+        .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+        .ToListAsync();
+    }
+
+    public async Task<bool> SaveChangesAsync()
+    {
+        return await context.SaveChangesAsync() > 0;
     }
 }
