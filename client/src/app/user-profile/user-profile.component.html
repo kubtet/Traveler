@@ -1,3 +1,5 @@
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
+@if(!(isLoading | async)) {
 <!-- Row 1: photo and username and settings -->
 @if (user) {
 <p-card class="user-profile-card">
@@ -16,7 +18,7 @@
     <!-- Info about user (name, folllowers) -->
     <!-- TODO -->
     <div class="user-info">
-      <div class="username">{{ accountService.currentUser()?.username }}</div>
+      <div class="username">{{ this.user.username }}</div>
       <div class="followers-info">
         <div class="following">
           <p>following</p>
@@ -30,6 +32,7 @@
     </div>
 
     <!-- Settings  -->
+    @if(isCurrent) {
     <app-button
       icon="pi pi-cog"
       label="Edit profile"
@@ -42,6 +45,7 @@
       class="settings-button"
       (onClick)="logOut()"
     />
+    }
   </div>
 </p-card>
 
@@ -50,7 +54,7 @@
   <p-tabView class="tabs">
     <p-tabPanel header="Feed">
       <!-- Content for Your Board/Feed tab -->
-      <app-travels></app-travels>
+      <app-travels [user]="user"></app-travels>
     </p-tabPanel>
     <p-tabPanel header="Statistics">
       <!-- Content for Statistics tab -->
@@ -62,4 +66,4 @@
     </p-tabPanel>
   </p-tabView>
 </div>
-}
+} }

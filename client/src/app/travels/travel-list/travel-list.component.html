@@ -1,5 +1,5 @@
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
-<h3>My travels</h3>
+<h3>List of travels</h3>
 @if ((isLoading | async) === false) {
 <div class="row">
   @for (travel of travels; track travel) {

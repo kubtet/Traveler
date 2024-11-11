@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
@@ -30,6 +30,7 @@ import { AccountService } from '../../services/account.service';
 })
 export class TravelDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private photoService = inject(PhotoService);
   private travelClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
@@ -37,6 +38,7 @@ export class TravelDetailComponent implements OnInit {
   protected photos: PhotoModel[] = [];
   protected travel: TravelDetailDto;
   protected travelId: number;
+  protected creator: MemberDto = new MemberDto();
   protected user: MemberDto = new MemberDto();
   protected isOwnPost: boolean;
   protected isLikedByUser: boolean = false;
@@ -50,15 +52,26 @@ export class TravelDetailComponent implements OnInit {
     const travel = await firstValueFrom(
       this.travelClient.getTravelDetails(this.travelId)
     );
+    if (!travel) {
+      this.router.navigateByUrl('/not-found');
+    }
     this.travel = travel;
     this.photos = this.photoService.castPhotosToPhotoModel(
       this.travel.photoUrls
     );
+
+    const creator = await firstValueFrom(
+      this.usersClient.getUserById(this.travel.userId)
+    );
+    if (creator) {
+      this.creator = creator;
+    }
+
     this.isLoading.next(false);
     this.checkIfOwnPost();
   }
 
-  async checkIfOwnPost() {
+  protected async checkIfOwnPost() {
     const user = await firstValueFrom(
       this.usersClient.getUserByUsername(
         this.accountService.currentUser().username
@@ -70,10 +83,14 @@ export class TravelDetailComponent implements OnInit {
     this.isOwnPost = this.user.id === this.travel.userId;
   }
 
-  scrollToGallery() {
+  protected scrollToGallery() {
     const gallery = document.getElementById('gallery');
     if (gallery) {
       gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  protected goToUserProfile() {
+    this.router.navigateByUrl('/user-profile/' + this.travel.userId.toString());
   }
 }

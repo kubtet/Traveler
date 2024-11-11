@@ -18,6 +18,9 @@ export class AppCalendarComponent implements OnChanges {
   /** Format of the date which can also be defined at locale settings. */
   @Input() public dateFormat: string = 'dd/mm/yy';
 
+  /** Set the date to highlight on first opening if the field is blank. */
+  @Input() public defaultDate?: Date;
+
   /** Identifier of the focus input to match a label defined for the component. */
   @Input() public inputId: string = '';
 

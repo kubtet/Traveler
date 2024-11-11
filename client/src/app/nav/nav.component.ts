@@ -5,6 +5,8 @@ import { AppButtonComponent } from '../shared/components/app-button/app-button.c
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../services/account.service';
+import { UsersClient } from '../services/api';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-nav',
@@ -14,11 +16,19 @@ import { AccountService } from '../services/account.service';
   styleUrl: './nav.component.css',
 })
 export class NavComponent implements OnInit {
+  private usersClient = inject(UsersClient);
   protected accountService = inject(AccountService);
+  protected currentUserId: number = 0;
   protected items: MenuItem[] = [];
   protected loggedOutItems: MenuItem[] = [];
 
-  public ngOnInit() {
+  public async ngOnInit() {
+    const username = this.accountService.currentUser().username;
+    const user = await firstValueFrom(
+      this.usersClient.getUserByUsername(username)
+    );
+    this.currentUserId = user.id;
+
     this.items = [
       {
         label: '',
@@ -51,7 +61,7 @@ export class NavComponent implements OnInit {
       {
         label: '',
         icon: 'pi pi-user',
-        routerLink: '/user-profile',
+        routerLink: '/user-profile/' + this.currentUserId.toString(),
       },
       {
         label: 'Example',
