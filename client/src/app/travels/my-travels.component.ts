@@ -43,7 +43,6 @@ export class MyTravelsComponent implements OnInit {
       this.travelClient.getTravelsByUserId(user.id)
     );
     this.travels = travels;
-    console.log(this.travels);
     this.isLoading.next(false);
   }
 

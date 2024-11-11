@@ -3,7 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { TravelClient, TravelDetailDto, UsersClient } from '../../services/api';
+import {
+  MemberDto,
+  TravelClient,
+  TravelDetailDto,
+  UsersClient,
+} from '../../services/api';
 import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
 import { GalleriaModule } from 'primeng/galleria';
 import { PhotoModel } from '../../shared/models/photo.model';
@@ -32,6 +37,7 @@ export class TravelDetailComponent implements OnInit {
   protected photos: PhotoModel[] = [];
   protected travel: TravelDetailDto;
   protected travelId: number;
+  protected user: MemberDto = new MemberDto();
   protected isOwnPost: boolean;
   protected isLikedByUser: boolean = false;
   protected isLoading = new BehaviorSubject(false);
@@ -58,7 +64,10 @@ export class TravelDetailComponent implements OnInit {
         this.accountService.currentUser().username
       )
     );
-    this.isOwnPost = user.id === this.travel.userId;
+    if (user) {
+      this.user = user;
+    }
+    this.isOwnPost = this.user.id === this.travel.userId;
   }
 
   scrollToGallery() {

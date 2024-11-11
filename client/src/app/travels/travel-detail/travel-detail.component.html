@@ -26,7 +26,11 @@
       @if(!isOwnPost){
       <span class="text-900 font-semibold m-3">by {{ travel?.username }}</span>
       <img
-        src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+        [src]="
+          this.user.profilePhotoUrl === '' || this.user.profilePhotoUrl === null
+            ? '../../assets/defaultProfilePicture.jfif'
+            : this.user.profilePhotoUrl
+        "
         class="w-3rem h-3rem border-circle mr-2"
       />
       } @else{

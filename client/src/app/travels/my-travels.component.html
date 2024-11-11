@@ -5,6 +5,7 @@
   @for (travel of travels; track travel) {
   <app-travel-card
     [travel]="travel"
+    [profilePhotoDisplay]="false"
     (click)="navigateToTravelDetails(travel?.id)"
   ></app-travel-card>
   }

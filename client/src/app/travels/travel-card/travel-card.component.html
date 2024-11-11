@@ -7,6 +7,19 @@
         [src]="travel().photoUrls[0]"
       /><p-image />
     </div>
+    @if (profilePhotoDisplay()) {
+    <div class="relative">
+      <img class="w-full" /><img
+        class="flex absolute w-4rem h-4rem"
+        style="bottom: -0.5rem; right: 1.5rem; border-radius: 50%"
+        [src]="
+          this.user.profilePhotoUrl === '' || this.user.profilePhotoUrl === null
+            ? '../../assets/defaultProfilePicture.jfif'
+            : this.user.profilePhotoUrl
+        "
+      />
+    </div>
+    }
     <div class="p-3">
       <div class="text-900 font-semibold text-xl size-20 mb-3">
         {{ travel().title }}

@@ -25,7 +25,7 @@ namespace API.Repositories
 
         async Task<IEnumerable<Travel>> ITravelRepository.GetAllTravelsAsync()
         {
-            return await context.Travels.ToListAsync();
+            return await context.Travels.Include(t => t.Photos).ToListAsync();
         }
 
         async void ITravelRepository.CreateTravel(Travel travel)

@@ -110,10 +110,10 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
     [HttpDelete("delete-profile-photo")]
     public async Task<ActionResult> DeleteProfilePhoto()
     {
-        // get current user
         var user = await userRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("No user found in token.");
         if (user.ProfilePhoto?.Url == null) return BadRequest("No profile picture exist.");
+        if (user.ProfilePhoto?.PublicId == null) return BadRequest("No profile picture public id.");
 
         var result = await photoService.DeletePhotoAsync(user.ProfilePhoto.PublicId);
         if (result.Error != null) return BadRequest(result.Error.Message);

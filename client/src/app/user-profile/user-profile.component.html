@@ -4,7 +4,11 @@
   <div class="card-header">
     <!-- Photo of the user -->
     <p-avatar
-      [image]="this.user.profilePhotoUrl"
+      [image]="
+        this.user.profilePhotoUrl === '' || this.user.profilePhotoUrl === null
+          ? '../../assets/defaultProfilePicture.jfif'
+          : this.user.profilePhotoUrl
+      "
       styleClass="profile-picture mr-2"
       size="xlarge"
       shape="circle"

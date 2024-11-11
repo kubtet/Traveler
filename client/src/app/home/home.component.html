@@ -1,7 +1,15 @@
 @if (accountService.currentUser()) {
-<ul>
-  <li *ngFor="let user of users">{{ user.id }} - {{ user.userName }}</li>
-</ul>
-} @else {
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
+@if ((isLoading | async) === false) {
+<div class="row">
+  @for (travel of travels; track travel) {
+  <app-travel-card
+    [travel]="travel"
+    [profilePhotoDisplay]="true"
+    (click)="navigateToTravelDetails(travel?.id)"
+  ></app-travel-card>
+  }
+</div>
+} } @else {
 <app-login></app-login>
 }
