@@ -47,6 +47,12 @@ export class RegisterComponent {
     surname: new FormControl<string>('', [Validators.required]),
     username: new FormControl<string>('', [Validators.required]),
   });
+  protected minDate: Date = new Date(1900, 0, 1);
+  protected maxDate: Date = new Date(
+    new Date().getFullYear() - 13,
+    new Date().getMonth(),
+    new Date().getDate()
+  );
 
   public async signUp() {
     const control = this.form.controls;
@@ -72,8 +78,6 @@ export class RegisterComponent {
     const result: UserDto = await firstValueFrom(
       this.accountClient.register(input)
     );
-
-    console.log(result);
 
     if (result) {
       this.accountService.setUser(result);

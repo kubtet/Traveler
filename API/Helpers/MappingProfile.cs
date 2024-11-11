@@ -9,8 +9,7 @@ public class MappingProfiles : Profile
     public MappingProfiles()
     {
         CreateMap<User, MemberDto>()
-            .ForMember(dest => dest.ProfilePhotoUrl, opt => opt.MapFrom(src =>
-        src.ProfilePhoto != null && src.ProfilePhoto.IsProfilePicture ? src.ProfilePhoto.Url : null))
+            .ForMember(dest => dest.ProfilePhotoUrl, opt => opt.MapFrom(src => src.ProfilePhoto != null && src.ProfilePhoto.IsProfilePicture ? src.ProfilePhoto.Url : null))
             .ForMember(dest => dest.Followers, opt => opt.MapFrom(src => src.Followers.Select(f => new FollowerDto
             {
                 Id = f.FollowingUser.Id,

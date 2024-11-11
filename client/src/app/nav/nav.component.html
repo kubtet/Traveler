@@ -9,16 +9,16 @@
     />
   </ng-template>
   <ng-template pTemplate="end">
-    <div class="flex align-items-center gap-2"></div>
-  </ng-template>
-
-  <ng-template pTemplate="end">
     <div class="flex align-items-center gap-2">
       <i class="pi pi-search search-icon"></i>
-        <input type="text" pInputText placeholder="Search..." class="w-8rem sm:w-auto" />
-     
+      <input
+        type="text"
+        pInputText
+        placeholder="Search..."
+        class="w-8rem sm:w-auto"
+      />
     </div>
-</ng-template>
+  </ng-template>
 </p-menubar>
 } @if(!accountService.currentUser()) {
 <p-menubar [model]="loggedOutItems">
@@ -30,10 +30,8 @@
       routerLink="/"
     />
   </ng-template>
-  
   <ng-template pTemplate="end">
     <div class="flex align-items-center gap-2"></div>
   </ng-template>
-  
 </p-menubar>
 }

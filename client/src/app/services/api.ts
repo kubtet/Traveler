@@ -1618,6 +1618,7 @@ export interface ICountry {
 
 export class TravelDto implements ITravelDto {
     id?: number;
+    userId?: number;
     title?: string | undefined;
     description?: string | undefined;
     startDate?: Date;
@@ -1635,6 +1636,7 @@ export class TravelDto implements ITravelDto {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.userId = _data["userId"];
             this.title = _data["title"];
             this.description = _data["description"];
             this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
@@ -1656,6 +1658,7 @@ export class TravelDto implements ITravelDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["userId"] = this.userId;
         data["title"] = this.title;
         data["description"] = this.description;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
@@ -1670,6 +1673,7 @@ export class TravelDto implements ITravelDto {
 
 export interface ITravelDto {
     id?: number;
+    userId?: number;
     title?: string | undefined;
     description?: string | undefined;
     startDate?: Date;

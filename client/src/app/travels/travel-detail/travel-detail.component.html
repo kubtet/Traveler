@@ -26,13 +26,19 @@
       @if(!isOwnPost){
       <span class="text-900 font-semibold m-3">by {{ travel?.username }}</span>
       <img
-        src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-        class="w-3rem h-3rem border-circle mr-2"
+        [src]="
+          this.creator.profilePhotoUrl === '' ||
+          this.creator.profilePhotoUrl === null
+            ? '../../assets/defaultProfilePicture.jfif'
+            : this.creator.profilePhotoUrl
+        "
+        class="w-3rem h-3rem border-circle mr-2 pointer"
+        (click)="goToUserProfile()"
       />
       } @else{
       <button class="p-button p-button-rounded p-button-secondary">
-        <i class="pi pi-cog"></i>
         <!-- Settings icon -->
+        <i class="pi pi-cog"></i>
       </button>
       }
     </div>
