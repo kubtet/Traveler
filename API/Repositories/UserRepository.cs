@@ -10,9 +10,9 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task<User?> GetUserByIdAsync(int id)
     {
         return await context.Users
-        .Include(x => x.Travels)
-        .Include(u => u.ProfilePhoto)
-        .SingleOrDefaultAsync(x => x.Id == id);
+            .Include(x => x.Travels)
+            .Include(u => u.ProfilePhoto)
+            .SingleOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)

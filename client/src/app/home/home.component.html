@@ -1,8 +1,15 @@
 @if (accountService.currentUser()) {
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
 @if ((isLoading | async) === false) {
+<p-paginator
+  (onPageChange)="onPageChange($event)"
+  [first]="(pageNumber - 1) * pageSize"
+  [rows]="pageSize"
+  [totalRecords]="travels.totalCount"
+  [rowsPerPageOptions]="[5, 10, 15, 20]"
+/>
 <div class="row">
-  @for (travel of travels; track travel) {
+  @for (travel of travels?.items; track travel) {
   <app-travel-card
     [travel]="travel"
     [profilePhotoDisplay]="true"

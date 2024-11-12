@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,9 +24,11 @@ namespace API.Repositories
                 .ToListAsync();
         }
 
-        async Task<IEnumerable<Travel>> ITravelRepository.GetAllTravelsAsync()
+        async Task<PagedList<Travel>> ITravelRepository.GetAllTravelsAsync(DataParams dataParams)
         {
-            return await context.Travels.Include(t => t.Photos).ToListAsync();
+            var query = context.Travels.Include(t => t.Photos).AsQueryable();
+
+            return await PagedList<Travel>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
         }
 
         async void ITravelRepository.CreateTravel(Travel travel)

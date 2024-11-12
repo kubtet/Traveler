@@ -421,7 +421,7 @@ export class CountryClient implements ICountryClient {
 }
 
 export interface ITravelClient {
-    getAllTravels(): Observable<TravelDto[]>;
+    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
     getTravelsByUserId(id: number): Observable<TravelDto[]>;
     getTravelDetails(id: number): Observable<TravelDetailDto>;
     createTravel(createTravelDto: CreateTravelDto): Observable<number>;
@@ -440,8 +440,16 @@ export class TravelClient implements ITravelClient {
         this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
-    getAllTravels(): Observable<TravelDto[]> {
-        let url_ = this.baseUrl + "/api/Travel";
+    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto> {
+        let url_ = this.baseUrl + "/api/Travel?";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -459,14 +467,14 @@ export class TravelClient implements ITravelClient {
                 try {
                     return this.processGetAllTravels(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<TravelDto[]>;
+                    return _observableThrow(e) as any as Observable<PaginatedResponseOfTravelDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<TravelDto[]>;
+                return _observableThrow(response_) as any as Observable<PaginatedResponseOfTravelDto>;
         }));
     }
 
-    protected processGetAllTravels(response: HttpResponseBase): Observable<TravelDto[]> {
+    protected processGetAllTravels(response: HttpResponseBase): Observable<PaginatedResponseOfTravelDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -477,14 +485,7 @@ export class TravelClient implements ITravelClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(TravelDto.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
+            result200 = PaginatedResponseOfTravelDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1614,6 +1615,66 @@ export interface ICountry {
     id?: number;
     name?: string;
     iso2?: string;
+}
+
+export class PaginatedResponseOfTravelDto implements IPaginatedResponseOfTravelDto {
+    items?: TravelDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
+
+    constructor(data?: IPaginatedResponseOfTravelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(TravelDto.fromJS(item));
+            }
+            this.currentPage = _data["currentPage"];
+            this.totalPages = _data["totalPages"];
+            this.pageSize = _data["pageSize"];
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedResponseOfTravelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResponseOfTravelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["currentPage"] = this.currentPage;
+        data["totalPages"] = this.totalPages;
+        data["pageSize"] = this.pageSize;
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+}
+
+export interface IPaginatedResponseOfTravelDto {
+    items?: TravelDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
 }
 
 export class TravelDto implements ITravelDto {
