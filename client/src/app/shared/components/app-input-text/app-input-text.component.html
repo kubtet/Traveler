@@ -1,5 +1,5 @@
 <div class="p-fluid" style="padding: 0">
-  <label [for]="id" class="font-bold block mb-2">
+  <label *ngIf="label" [for]="id" class="font-bold block mb-2">
     {{ label }}<span *ngIf="required" style="color: red"> *</span></label
   >
   <ng-container *ngIf="isPassword; else simpleInput">

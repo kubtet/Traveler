@@ -1,27 +1,43 @@
-import { NgFor } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AccountService } from '../services/account.service';
-import { LoginComponent } from "../account/login/login.component";
+import { LoginComponent } from '../account/login/login.component';
+import { TravelClient, TravelDto } from '../services/api';
+import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
+import { TravelCardComponent } from '../travels/travel-card/travel-card.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, LoginComponent],
+  imports: [
+    LoginComponent,
+    AppLoadingComponent,
+    AsyncPipe,
+    TravelCardComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent {
+  private router = inject(Router);
+  private travelClient = inject(TravelClient);
   protected accountService = inject(AccountService);
-  private http = inject(HttpClient);
 
-  protected users: any;
+  protected isLoading = new BehaviorSubject(false);
+  protected travels: TravelDto[] = [];
 
   public async ngOnInit() {
-    this.users = await firstValueFrom(
-      this.http.get('https://localhost:5001/api/users')
-    );
-    console.log(this.users);
+    this.isLoading.next(true);
+    const travels = await firstValueFrom(this.travelClient.getAllTravels());
+    if (travels.length > 0) {
+      this.travels = travels;
+    }
+    this.isLoading.next(false);
+  }
+
+  protected navigateToTravelDetails(travelId: number) {
+    this.router.navigateByUrl('/travel/' + travelId);
   }
 }

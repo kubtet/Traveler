@@ -1,15 +1,40 @@
 <div class="p-fluid" style="padding: 0">
-  <label [for]="inputId" class="font-bold block mb-2">
+  <label *ngIf="label" [for]="inputId" class="font-bold block mb-2">
     {{ label }}<span *ngIf="required" style="color: red"> *</span></label
   ><p-dropdown
     *ngIf="control"
     [formControl]="control"
     [inputId]="inputId"
+    [filter]="filter"
+    [filterBy]="filterBy"
     [optionLabel]="optionLabel"
     [optionValue]="optionValue"
     [options]="options"
     [placeholder]="placeholder"
     [required]="required"
     [showClear]="showClear"
-  ></p-dropdown>
+  >
+    @if(countries) {
+    <ng-template pTemplate="selectedItem">
+      <div class="flex align-items-center gap-2" *ngIf="control.value">
+        <img
+          src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+          [class]="'flag flag-' + control.value?.code?.toLowerCase()"
+          style="width: 18px"
+        />
+        <div>{{ control.value?.name }}</div>
+      </div>
+    </ng-template>
+    <ng-template let-country pTemplate="item">
+      <div class="flex align-items-center gap-2">
+        <img
+          src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+          [class]="'flag flag-' + country.code?.toLowerCase()"
+          style="width: 18px"
+        />
+        <div>{{ country.name }}</div>
+      </div>
+    </ng-template>
+    }
+  </p-dropdown>
 </div>

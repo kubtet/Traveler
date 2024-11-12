@@ -5,6 +5,7 @@ namespace API.Data;
 
 public class DataContext(DbContextOptions options) : DbContext(options)
 {
+    public DbSet<Country> Countries { get; set; }
     public DbSet<Follow> Follows { get; set; }
     public DbSet<TravelLike> TravelLikes { get; set; }
     public DbSet<Photo> Photos { get; set; } // Maybe unnecessary

@@ -2,11 +2,12 @@ import { NgIf } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
+import { UseUtcDirective } from '../../directives/use-utc.directive';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CalendarModule, NgIf, ReactiveFormsModule],
+  imports: [CalendarModule, NgIf, ReactiveFormsModule, UseUtcDirective],
   templateUrl: './app-calendar.component.html',
   styleUrl: './app-calendar.component.css',
 })
@@ -16,6 +17,9 @@ export class AppCalendarComponent implements OnChanges {
 
   /** Format of the date which can also be defined at locale settings. */
   @Input() public dateFormat: string = 'dd/mm/yy';
+
+  /** Set the date to highlight on first opening if the field is blank. */
+  @Input() public defaultDate?: Date;
 
   /** Identifier of the focus input to match a label defined for the component. */
   @Input() public inputId: string = '';
@@ -31,6 +35,9 @@ export class AppCalendarComponent implements OnChanges {
 
   /** The minimum selectable date. */
   @Input() public minDate?: Date;
+
+  /** Default text to display when no option is selected. */
+  @Input() public placeholder: string = '';
 
   /** When present, it specifies that an input field must be filled out before submitting the form. */
   @Input() public required: boolean = false;

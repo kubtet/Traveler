@@ -30,9 +30,8 @@ try
     await context.Database.MigrateAsync(); // will create db if doesnt exist yeat
     // Seed data
     await Seed.SeedUsers(context);
-    await Seed.SeedPlaces(context);
     await Seed.SeedFollows(context);
-    await Seed.SeedTravelPlace(context);
+    await Seed.SeedCountries(context);
 
 }
 catch (Exception ex)

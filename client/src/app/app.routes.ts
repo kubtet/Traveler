@@ -11,6 +11,7 @@ import { TestErrorsComponent } from './errors/test-errors/test-errors.component'
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { TravelDetailComponent } from './travels/travel-detail/travel-detail.component';
+import { TravelAddComponent } from './travels/travel-add/travel-add.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,12 +21,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'example', component: ExampleComponent },
-      { path: 'user-profile', component: UserProfileComponent },
+      { path: 'user-profile/:id', component: UserProfileComponent },
       {
         path: 'settings',
         component: SettingsComponent,
         canDeactivate: [preventUnsavedChangesGuard],
       },
+      { path: 'travel/add', component: TravelAddComponent },
       { path: 'travel/:id', component: TravelDetailComponent },
     ],
   },

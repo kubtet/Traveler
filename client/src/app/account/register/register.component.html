@@ -69,6 +69,9 @@
     <app-calendar
       class="mr-2"
       label="Date of birth"
+      [maxDate]="maxDate"
+      [minDate]="minDate"
+      [defaultDate]="maxDate"
       [control]="form.controls.dateOfBirth"
     ></app-calendar>
   </div>
