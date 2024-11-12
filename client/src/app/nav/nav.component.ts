@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
-import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../services/account.service';
@@ -11,7 +10,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [MenubarModule, AppButtonComponent, InputTextModule, CommonModule],
+  imports: [MenubarModule, InputTextModule, CommonModule],
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css',
 })
@@ -34,6 +33,11 @@ export class NavComponent implements OnInit {
         label: '',
         icon: 'pi pi-home',
         routerLink: '/',
+      },
+      {
+        label: '',
+        icon: 'pi pi-search',
+        routerLink: '/search',
       },
       {
         label: '',
@@ -64,7 +68,7 @@ export class NavComponent implements OnInit {
         routerLink: '/user-profile/' + this.currentUserId.toString(),
       },
       {
-        label: 'Example',
+        label: '',
         icon: 'pi pi-lightbulb',
         routerLink: '/example',
       },

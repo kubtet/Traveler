@@ -3,6 +3,7 @@ using API.DTOs;
 using API.Entities;
 using API.Enums;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -15,11 +16,19 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
 {
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+    public async Task<ActionResult<PaginatedResponse<MemberDto>>> GetUsers([FromQuery] DataParams dataParams)
     {
-        var users = await userRepository.GetUsersAsync();
-        var usersToReturn = mapper.Map<IEnumerable<MemberDto>>(users);
-        return Ok(usersToReturn);
+        var users = await userRepository.GetUsersAsync(dataParams);
+        var usersToReturn = users.Select(mapper.Map<MemberDto>).ToList();
+        var response = new PaginatedResponse<MemberDto>(
+                usersToReturn,
+                users.CurrentPage,
+                users.TotalPages,
+                users.PageSize,
+                users.TotalCount
+            );
+
+        return Ok(response);
     }
 
     [AllowAnonymous] //TODO
