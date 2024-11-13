@@ -7,19 +7,13 @@ namespace API.Entities
     {
         public int Id { get; set; }
         public required string Url { get; set; }
-
-        // relationship with travel to have album gallery
         public int? TravelId { get; set; }
         public Travel? Travel { get; set; } = null!;
-
-
-
-        // relationship with user for profile picture
+        // Relationship with user if profile picture
         public int? UserId { get; set; }
         public User? User { get; set; }
-
-        public required string PublicId { get; set; } // needed for stroage
-
+        // Cloudify
+        public string? PublicId { get; set; }
         // flag for profile piture
         public bool IsProfilePicture { get; set; } = false;
     }

@@ -1,17 +1,24 @@
-
 using API;
 using API.Controllers;
 using API.Data;
 using API.DTOs;
 using API.Extensions;
+using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-public class LikesController(DataContext context, ILikesRepository likesRepository) : BaseApiController
+public class LikesController(DataContext context, ILikesRepository likesRepository, IUserRepository userRepository) : BaseApiController
 {
     [HttpPost("{targetTravelId:int}")]
+    [Authorize]
     public async Task<ActionResult> ToggleLikeTravel(int targetTravelId)
     {
-        var sourceUserId = User.GetUserId();
+        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        if (user == null)
+        {
+            throw new Exception("no user found based on id from claims.");
+        }
+        var sourceUserId = user.Id;
         var travel = await context.Travels.FindAsync(targetTravelId);
         if (travel == null) return NotFound("Travel not found.");
 
@@ -35,16 +42,18 @@ public class LikesController(DataContext context, ILikesRepository likesReposito
         {
             return Ok(new { message = "You have unliked this travel post." });
         }
-
-
         return BadRequest("Failed to like/unlike travel post.");
-
     }
 
     [HttpGet("{travelId:int}/likedbyuser")]
-    public async Task<bool> IsTravelLikedByUser(int travelId)
+    public async Task<ActionResult<bool>> IsTravelLikedByUser(int travelId)
     {
-        var userId = User.GetUserId();
+        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        if (user == null)
+        {
+            throw new Exception("no user found based on id from claims.");
+        }
+        var userId = user.Id;
         var existingLike = await likesRepository.GetTravelLikeByUser(travelId, userId);
 
         if (existingLike != null)
@@ -58,7 +67,7 @@ public class LikesController(DataContext context, ILikesRepository likesReposito
     }
 
     [HttpGet("{travelId:int}/likecount")]
-    public async Task<int> GetLikeCountForTravel(int travelId)
+    public async Task<ActionResult<int>> GetLikeCountForTravel(int travelId)
     {
         var likeCount = await likesRepository.CountLikesForTravel(travelId);
         return likeCount;
@@ -71,8 +80,4 @@ public class LikesController(DataContext context, ILikesRepository likesReposito
         return usersWhoLiked;
 
     }
-
-
-
-
 }

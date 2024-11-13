@@ -1,4 +1,3 @@
-
 using API;
 using API.Data;
 using API.DTOs;
@@ -34,7 +33,9 @@ public class LikesRepository(DataContext context, IMapper mapper) : ILikesReposi
 
     public async Task<TravelLike?> GetTravelLikeByUser(int travelId, int userId)
     {
-        return await context.TravelLikes.FindAsync(travelId, userId);
+        return await context.TravelLikes
+       .Where(l => l.TravelId == travelId && l.UserId == userId)
+       .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<MemberDto>> GetUsersWhoLikedTravel(int travelId)

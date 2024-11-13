@@ -1,5 +1,5 @@
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
-
+//TODO
 <i
   class="pi pi-arrow-left mt-10 ml-4"
   style="
@@ -11,7 +11,6 @@
     color: black;
   "
 ></i>
-
 <div class="card surface-50 p-4 border-round mt-6 p-6">
   <!-- Section Intro -->
   <div class="flex justify-content-between align-items-center">
@@ -75,17 +74,12 @@
           {{ travel?.description }}
         </p>
         <div class="flex align-items-center">
-          <button
-            class="p-button p-button-rounded p-button-text p-button-icon-only"
-          >
-            <i
-              [ngClass]="{
-                'pi pi-heart-fill text-primary': isLikedByUser,
-                'pi pi-heart text-600': !isLikedByUser
-              }"
-            ></i>
-          </button>
-          <span class="text-900 font-semibold ml-2">likesCount</span>
+          <i
+            (click)="toggleLike()"
+            [ngClass]="isLiked ? 'pi pi-heart-fill text-danger' : 'pi pi-heart'"
+            style="font-size: 1.5rem; cursor: pointer"
+          ></i>
+          <span class="text-900 font-semibold ml-2">{{ numberOfLikes }}</span>
         </div>
       </div>
     </div>
@@ -118,7 +112,6 @@
       <i class="pi pi-arrow-down"></i>
     </button>
   </div>
-
   <!-- Final Gallery Grid with 4 Columns and Smaller Thumbnails -->
   <div id="gallery" class="mt-8 pt-4">
     <div class="gallery-grid mt-5">

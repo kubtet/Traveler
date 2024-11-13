@@ -6,7 +6,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
-import { MemberDto, UsersClient } from '../services/api';
+import { FollowsClient, MemberDto, UsersClient } from '../services/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MyTravelsComponent } from '../travels/travel-list/travel-list.component';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
@@ -34,11 +34,28 @@ export class UserProfileComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private usersClient = inject(UsersClient);
+  protected followsClient = inject(FollowsClient);
   protected accountService = inject(AccountService);
   protected isCurrent: boolean = false;
   protected isLoading = new BehaviorSubject(false);
   protected userId: number = 0;
   protected user: MemberDto;
+  protected numberOfFollowers: number;
+  protected numberOfFollowings: number;
+  protected isFollowedByCurrent: boolean;
+
+  protected async toggleFollow() {
+    this.isLoading.next(true);
+
+    await firstValueFrom(this.followsClient.toggleFollow(this.userId));
+    this.numberOfFollowers = await firstValueFrom(
+      this.followsClient.countFollowers(this.user.id)
+    );
+    this.isFollowedByCurrent = await firstValueFrom(
+      this.followsClient.isFolledStatus(this.user.id)
+    );
+    this.isLoading.next(false);
+  }
 
   async ngOnInit() {
     this.route.paramMap.subscribe(async (params) => {
@@ -51,6 +68,15 @@ export class UserProfileComponent implements OnInit {
         this.usersClient.getUserById(this.userId)
       );
       this.checkIfCurrentUser();
+      this.numberOfFollowings = await firstValueFrom(
+        this.followsClient.countFollowers(this.user.id)
+      );
+      this.numberOfFollowers = await firstValueFrom(
+        this.followsClient.countFollowers(this.user.id)
+      );
+      this.isFollowedByCurrent = await firstValueFrom(
+        this.followsClient.isFolledStatus(this.user.id)
+      );
       this.isLoading.next(false);
     });
   }

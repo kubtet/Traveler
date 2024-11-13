@@ -16,11 +16,12 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IFollowsClient {
-    toggleLike(targetUserId: number): Observable<FileResponse>;
+    toggleFollow(targetUserId: number): Observable<FileResponse>;
     getFollowers(userId: number): Observable<MemberDto[]>;
     getFollowing(userId: number): Observable<MemberDto[]>;
-    countFollowings(userId: number): Observable<FileResponse>;
-    countFollowers(userId: number): Observable<FileResponse>;
+    countFollowings(userId: number): Observable<number>;
+    countFollowers(userId: number): Observable<number>;
+    isFolledStatus(targetUserId: number): Observable<boolean>;
 }
 
 @Injectable()
@@ -34,7 +35,7 @@ export class FollowsClient implements IFollowsClient {
         this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
-    toggleLike(targetUserId: number): Observable<FileResponse> {
+    toggleFollow(targetUserId: number): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/Follows/{targetUserId}";
         if (targetUserId === undefined || targetUserId === null)
             throw new Error("The parameter 'targetUserId' must be defined.");
@@ -50,11 +51,11 @@ export class FollowsClient implements IFollowsClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processToggleLike(response_);
+            return this.processToggleFollow(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processToggleLike(response_ as any);
+                    return this.processToggleFollow(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<FileResponse>;
                 }
@@ -63,7 +64,7 @@ export class FollowsClient implements IFollowsClient {
         }));
     }
 
-    protected processToggleLike(response: HttpResponseBase): Observable<FileResponse> {
+    protected processToggleFollow(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -205,7 +206,7 @@ export class FollowsClient implements IFollowsClient {
         return _observableOf(null as any);
     }
 
-    countFollowings(userId: number): Observable<FileResponse> {
+    countFollowings(userId: number): Observable<number> {
         let url_ = this.baseUrl + "/api/Follows/{userId}/following/count";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
@@ -216,7 +217,7 @@ export class FollowsClient implements IFollowsClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -227,31 +228,28 @@ export class FollowsClient implements IFollowsClient {
                 try {
                     return this.processCountFollowings(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<number>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<number>;
         }));
     }
 
-    protected processCountFollowings(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCountFollowings(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -260,7 +258,7 @@ export class FollowsClient implements IFollowsClient {
         return _observableOf(null as any);
     }
 
-    countFollowers(userId: number): Observable<FileResponse> {
+    countFollowers(userId: number): Observable<number> {
         let url_ = this.baseUrl + "/api/Follows/{userId}/followers/count";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
@@ -271,7 +269,7 @@ export class FollowsClient implements IFollowsClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -282,31 +280,80 @@ export class FollowsClient implements IFollowsClient {
                 try {
                     return this.processCountFollowers(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<number>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<number>;
         }));
     }
 
-    protected processCountFollowers(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCountFollowers(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    isFolledStatus(targetUserId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/Follows/{targetUserId}/followedBy";
+        if (targetUserId === undefined || targetUserId === null)
+            throw new Error("The parameter 'targetUserId' must be defined.");
+        url_ = url_.replace("{targetUserId}", encodeURIComponent("" + targetUserId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsFolledStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsFolledStatus(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<boolean>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<boolean>;
+        }));
+    }
+
+    protected processIsFolledStatus(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -2140,7 +2187,7 @@ export class Photo implements IPhoto {
     travel?: Travel | undefined;
     userId?: number | undefined;
     user?: User | undefined;
-    publicId?: string;
+    publicId?: string | undefined;
     isProfilePicture?: boolean;
 
     constructor(data?: IPhoto) {
@@ -2193,7 +2240,7 @@ export interface IPhoto {
     travel?: Travel | undefined;
     userId?: number | undefined;
     user?: User | undefined;
-    publicId?: string;
+    publicId?: string | undefined;
     isProfilePicture?: boolean;
 }
 

@@ -1,16 +1,15 @@
-
-using System.Data;
 using API;
 using API.Controllers;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-public class FollowsController(IFollowsRepository followsRepository) : BaseApiController
+public class FollowsController(IFollowsRepository followsRepository, IUserRepository userRepository) : BaseApiController
 {
     [HttpPost("{targetUserId:int}")]
-    public async Task<ActionResult> ToggleLike(int targetUserId)
+    public async Task<ActionResult> ToggleFollow(int targetUserId)
     {
         var sourceUserId = User.GetUserId();
 
@@ -36,7 +35,7 @@ public class FollowsController(IFollowsRepository followsRepository) : BaseApiCo
 
         if (await followsRepository.SaveChangesAsync())
         {
-            return Ok();
+            return Ok("Followed/unfollowed a user.");
         }
         return BadRequest("Failed to follow/unfollow user.");
     }
@@ -57,16 +56,38 @@ public class FollowsController(IFollowsRepository followsRepository) : BaseApiCo
 
 
     [HttpGet("{userId:int}/following/count")]
-    public async Task<ActionResult> CountFollowings(int userId)
+    public async Task<ActionResult<int>> CountFollowings(int userId)
     {
         var count = await followsRepository.CountFollowings(userId);
-        return Ok(new { userId, count });
+        return Ok(count);
     }
 
     [HttpGet("{userId:int}/followers/count")]
-    public async Task<ActionResult> CountFollowers(int userId)
+    public async Task<ActionResult<int>> CountFollowers(int userId)
     {
         var count = await followsRepository.CountFollowers(userId);
-        return Ok(new { userId, count });
+        return Ok(count);
     }
+
+    [HttpGet("{targetUserId:int}/followedBy")]
+    public async Task<ActionResult<bool>> IsFollowedByCurrentStatus(int targetUserId)
+    {
+        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        if (user == null)
+        {
+            throw new Exception("no user found based on id from claims.");
+        }
+        var userId = user.Id;
+        var existingFollow = await followsRepository.GetFollow(userId, targetUserId);
+
+        if (existingFollow != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }
