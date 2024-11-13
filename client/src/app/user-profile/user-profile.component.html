@@ -19,15 +19,28 @@
     <!-- TODO -->
     <div class="user-info">
       <div class="username">{{ this.user.username }}</div>
+      <div class="bio">{{ this.user.bio }}</div>
       <div class="followers-info">
         <div class="following">
           <p>following</p>
-          <p>66</p>
+          <p>{{ numberOfFollowings }}</p>
         </div>
         <div>
           <p>followers</p>
-          <p>61</p>
+          <p>{{ numberOfFollowers }}</p>
         </div>
+        @if(!isCurrent){
+        <div class="follow-button">
+          <app-button
+            [icon]="
+              isFollowedByCurrent ? 'pi pi-user-minus' : 'pi pi-user-plus'
+            "
+            [label]="isFollowedByCurrent ? 'Unfollow' : 'Follow'"
+            class="settings-button"
+            (onClick)="toggleFollow()"
+          />
+        </div>
+        }
       </div>
     </div>
 

@@ -15,6 +15,590 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
+export interface IFollowsClient {
+    toggleFollow(targetUserId: number): Observable<FileResponse>;
+    getFollowers(userId: number): Observable<MemberDto[]>;
+    getFollowing(userId: number): Observable<MemberDto[]>;
+    countFollowings(userId: number): Observable<number>;
+    countFollowers(userId: number): Observable<number>;
+    isFolledStatus(targetUserId: number): Observable<boolean>;
+}
+
+@Injectable()
+export class FollowsClient implements IFollowsClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    toggleFollow(targetUserId: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Follows/{targetUserId}";
+        if (targetUserId === undefined || targetUserId === null)
+            throw new Error("The parameter 'targetUserId' must be defined.");
+        url_ = url_.replace("{targetUserId}", encodeURIComponent("" + targetUserId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processToggleFollow(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processToggleFollow(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processToggleFollow(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getFollowers(userId: number): Observable<MemberDto[]> {
+        let url_ = this.baseUrl + "/api/Follows/{userId}/followers";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFollowers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFollowers(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MemberDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MemberDto[]>;
+        }));
+    }
+
+    protected processGetFollowers(response: HttpResponseBase): Observable<MemberDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MemberDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getFollowing(userId: number): Observable<MemberDto[]> {
+        let url_ = this.baseUrl + "/api/Follows/{userId}/following";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFollowing(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFollowing(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MemberDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MemberDto[]>;
+        }));
+    }
+
+    protected processGetFollowing(response: HttpResponseBase): Observable<MemberDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MemberDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    countFollowings(userId: number): Observable<number> {
+        let url_ = this.baseUrl + "/api/Follows/{userId}/following/count";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCountFollowings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCountFollowings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCountFollowings(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    countFollowers(userId: number): Observable<number> {
+        let url_ = this.baseUrl + "/api/Follows/{userId}/followers/count";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCountFollowers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCountFollowers(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCountFollowers(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    isFolledStatus(targetUserId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/Follows/{targetUserId}/followedBy";
+        if (targetUserId === undefined || targetUserId === null)
+            throw new Error("The parameter 'targetUserId' must be defined.");
+        url_ = url_.replace("{targetUserId}", encodeURIComponent("" + targetUserId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsFolledStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsFolledStatus(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<boolean>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<boolean>;
+        }));
+    }
+
+    protected processIsFolledStatus(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+export interface ILikesClient {
+    toggleLikeTravel(targetTravelId: number): Observable<FileResponse>;
+    isTravelLikedByUser(travelId: number): Observable<boolean>;
+    getLikeCountForTravel(travelId: number): Observable<number>;
+    getUsersWhoLikedTravel(travelId: number): Observable<MemberDto[]>;
+}
+
+@Injectable()
+export class LikesClient implements ILikesClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    toggleLikeTravel(targetTravelId: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Likes/{targetTravelId}";
+        if (targetTravelId === undefined || targetTravelId === null)
+            throw new Error("The parameter 'targetTravelId' must be defined.");
+        url_ = url_.replace("{targetTravelId}", encodeURIComponent("" + targetTravelId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processToggleLikeTravel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processToggleLikeTravel(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processToggleLikeTravel(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    isTravelLikedByUser(travelId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/Likes/{travelId}/likedbyuser";
+        if (travelId === undefined || travelId === null)
+            throw new Error("The parameter 'travelId' must be defined.");
+        url_ = url_.replace("{travelId}", encodeURIComponent("" + travelId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsTravelLikedByUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsTravelLikedByUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<boolean>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<boolean>;
+        }));
+    }
+
+    protected processIsTravelLikedByUser(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getLikeCountForTravel(travelId: number): Observable<number> {
+        let url_ = this.baseUrl + "/api/Likes/{travelId}/likecount";
+        if (travelId === undefined || travelId === null)
+            throw new Error("The parameter 'travelId' must be defined.");
+        url_ = url_.replace("{travelId}", encodeURIComponent("" + travelId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLikeCountForTravel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLikeCountForTravel(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processGetLikeCountForTravel(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getUsersWhoLikedTravel(travelId: number): Observable<MemberDto[]> {
+        let url_ = this.baseUrl + "/api/Likes/{travelId}/userswholiked";
+        if (travelId === undefined || travelId === null)
+            throw new Error("The parameter 'travelId' must be defined.");
+        url_ = url_.replace("{travelId}", encodeURIComponent("" + travelId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUsersWhoLikedTravel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUsersWhoLikedTravel(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MemberDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MemberDto[]>;
+        }));
+    }
+
+    protected processGetUsersWhoLikedTravel(response: HttpResponseBase): Observable<MemberDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MemberDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IAccountClient {
     register(registerDto: RegisterDto): Observable<UserDto>;
     login(loginDto: LoginDto): Observable<UserDto>;
@@ -1112,6 +1696,222 @@ export class UsersClient implements IUsersClient {
     }
 }
 
+export class MemberDto implements IMemberDto {
+    id?: number;
+    username?: string | undefined;
+    name?: string | undefined;
+    surname?: string | undefined;
+    email?: string | undefined;
+    gender?: string | undefined;
+    bio?: string | undefined;
+    profilePhotoUrl?: string | undefined;
+    dateOfBirth?: Date;
+    creationDate?: Date;
+    travels?: TravelDto[] | undefined;
+    followers?: FollowerDto[] | undefined;
+    followees?: FollowerDto[] | undefined;
+
+    constructor(data?: IMemberDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.username = _data["username"];
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.email = _data["email"];
+            this.gender = _data["gender"];
+            this.bio = _data["bio"];
+            this.profilePhotoUrl = _data["profilePhotoUrl"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
+            if (Array.isArray(_data["travels"])) {
+                this.travels = [] as any;
+                for (let item of _data["travels"])
+                    this.travels!.push(TravelDto.fromJS(item));
+            }
+            if (Array.isArray(_data["followers"])) {
+                this.followers = [] as any;
+                for (let item of _data["followers"])
+                    this.followers!.push(FollowerDto.fromJS(item));
+            }
+            if (Array.isArray(_data["followees"])) {
+                this.followees = [] as any;
+                for (let item of _data["followees"])
+                    this.followees!.push(FollowerDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): MemberDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["username"] = this.username;
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["email"] = this.email;
+        data["gender"] = this.gender;
+        data["bio"] = this.bio;
+        data["profilePhotoUrl"] = this.profilePhotoUrl;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        if (Array.isArray(this.travels)) {
+            data["travels"] = [];
+            for (let item of this.travels)
+                data["travels"].push(item.toJSON());
+        }
+        if (Array.isArray(this.followers)) {
+            data["followers"] = [];
+            for (let item of this.followers)
+                data["followers"].push(item.toJSON());
+        }
+        if (Array.isArray(this.followees)) {
+            data["followees"] = [];
+            for (let item of this.followees)
+                data["followees"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IMemberDto {
+    id?: number;
+    username?: string | undefined;
+    name?: string | undefined;
+    surname?: string | undefined;
+    email?: string | undefined;
+    gender?: string | undefined;
+    bio?: string | undefined;
+    profilePhotoUrl?: string | undefined;
+    dateOfBirth?: Date;
+    creationDate?: Date;
+    travels?: TravelDto[] | undefined;
+    followers?: FollowerDto[] | undefined;
+    followees?: FollowerDto[] | undefined;
+}
+
+export class TravelDto implements ITravelDto {
+    id?: number;
+    userId?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    startDate?: Date;
+    photoUrls?: string[] | undefined;
+
+    constructor(data?: ITravelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.userId = _data["userId"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            if (Array.isArray(_data["photoUrls"])) {
+                this.photoUrls = [] as any;
+                for (let item of _data["photoUrls"])
+                    this.photoUrls!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): TravelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TravelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userId"] = this.userId;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        if (Array.isArray(this.photoUrls)) {
+            data["photoUrls"] = [];
+            for (let item of this.photoUrls)
+                data["photoUrls"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ITravelDto {
+    id?: number;
+    userId?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    startDate?: Date;
+    photoUrls?: string[] | undefined;
+}
+
+export class FollowerDto implements IFollowerDto {
+    id?: number;
+    username?: string | undefined;
+    profilePhoto?: string | undefined;
+
+    constructor(data?: IFollowerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.username = _data["username"];
+            this.profilePhoto = _data["profilePhoto"];
+        }
+    }
+
+    static fromJS(data: any): FollowerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FollowerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["username"] = this.username;
+        data["profilePhoto"] = this.profilePhoto;
+        return data;
+    }
+}
+
+export interface IFollowerDto {
+    id?: number;
+    username?: string | undefined;
+    profilePhoto?: string | undefined;
+}
+
 export class UserDto implements IUserDto {
     username?: string;
     token?: string;
@@ -1268,6 +2068,7 @@ export class User implements IUser {
     travels?: Travel[];
     followers?: Follow[];
     following?: Follow[];
+    likedTravels?: TravelLike[];
 
     constructor(data?: IUser) {
         if (data) {
@@ -1306,6 +2107,11 @@ export class User implements IUser {
                 this.following = [] as any;
                 for (let item of _data["following"])
                     this.following!.push(Follow.fromJS(item));
+            }
+            if (Array.isArray(_data["likedTravels"])) {
+                this.likedTravels = [] as any;
+                for (let item of _data["likedTravels"])
+                    this.likedTravels!.push(TravelLike.fromJS(item));
             }
         }
     }
@@ -1346,6 +2152,11 @@ export class User implements IUser {
             for (let item of this.following)
                 data["following"].push(item.toJSON());
         }
+        if (Array.isArray(this.likedTravels)) {
+            data["likedTravels"] = [];
+            for (let item of this.likedTravels)
+                data["likedTravels"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -1366,6 +2177,7 @@ export interface IUser {
     travels?: Travel[];
     followers?: Follow[];
     following?: Follow[];
+    likedTravels?: TravelLike[];
 }
 
 export class Photo implements IPhoto {
@@ -1445,6 +2257,7 @@ export class Travel implements ITravel {
     cities?: string | undefined;
     user?: User;
     photos?: Photo[];
+    likes?: TravelLike[];
 
     constructor(data?: ITravel) {
         if (data) {
@@ -1472,6 +2285,11 @@ export class Travel implements ITravel {
                 this.photos = [] as any;
                 for (let item of _data["photos"])
                     this.photos!.push(Photo.fromJS(item));
+            }
+            if (Array.isArray(_data["likes"])) {
+                this.likes = [] as any;
+                for (let item of _data["likes"])
+                    this.likes!.push(TravelLike.fromJS(item));
             }
         }
     }
@@ -1501,6 +2319,11 @@ export class Travel implements ITravel {
             for (let item of this.photos)
                 data["photos"].push(item.toJSON());
         }
+        if (Array.isArray(this.likes)) {
+            data["likes"] = [];
+            for (let item of this.likes)
+                data["likes"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -1518,11 +2341,60 @@ export interface ITravel {
     cities?: string | undefined;
     user?: User;
     photos?: Photo[];
+    likes?: TravelLike[];
+}
+
+export class TravelLike implements ITravelLike {
+    userId?: number;
+    user?: User;
+    travelId?: number;
+    travel?: Travel;
+
+    constructor(data?: ITravelLike) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? User.fromJS(_data["user"]) : <any>undefined;
+            this.travelId = _data["travelId"];
+            this.travel = _data["travel"] ? Travel.fromJS(_data["travel"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TravelLike {
+        data = typeof data === 'object' ? data : {};
+        let result = new TravelLike();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["travelId"] = this.travelId;
+        data["travel"] = this.travel ? this.travel.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ITravelLike {
+    userId?: number;
+    user?: User;
+    travelId?: number;
+    travel?: Travel;
 }
 
 export class Follow implements IFollow {
-    followingUserId?: number;
-    followingUser?: User;
+    sourceUserId?: number;
+    sourceUser?: User;
     followedUserId?: number;
     followedUser?: User;
     createdAt?: Date;
@@ -1538,8 +2410,8 @@ export class Follow implements IFollow {
 
     init(_data?: any) {
         if (_data) {
-            this.followingUserId = _data["followingUserId"];
-            this.followingUser = _data["followingUser"] ? User.fromJS(_data["followingUser"]) : <any>undefined;
+            this.sourceUserId = _data["sourceUserId"];
+            this.sourceUser = _data["sourceUser"] ? User.fromJS(_data["sourceUser"]) : <any>undefined;
             this.followedUserId = _data["followedUserId"];
             this.followedUser = _data["followedUser"] ? User.fromJS(_data["followedUser"]) : <any>undefined;
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
@@ -1555,8 +2427,8 @@ export class Follow implements IFollow {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["followingUserId"] = this.followingUserId;
-        data["followingUser"] = this.followingUser ? this.followingUser.toJSON() : <any>undefined;
+        data["sourceUserId"] = this.sourceUserId;
+        data["sourceUser"] = this.sourceUser ? this.sourceUser.toJSON() : <any>undefined;
         data["followedUserId"] = this.followedUserId;
         data["followedUser"] = this.followedUser ? this.followedUser.toJSON() : <any>undefined;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
@@ -1565,8 +2437,8 @@ export class Follow implements IFollow {
 }
 
 export interface IFollow {
-    followingUserId?: number;
-    followingUser?: User;
+    sourceUserId?: number;
+    sourceUser?: User;
     followedUserId?: number;
     followedUser?: User;
     createdAt?: Date;
@@ -1614,70 +2486,6 @@ export interface ICountry {
     id?: number;
     name?: string;
     iso2?: string;
-}
-
-export class TravelDto implements ITravelDto {
-    id?: number;
-    userId?: number;
-    title?: string | undefined;
-    description?: string | undefined;
-    startDate?: Date;
-    photoUrls?: string[] | undefined;
-
-    constructor(data?: ITravelDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.userId = _data["userId"];
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
-            if (Array.isArray(_data["photoUrls"])) {
-                this.photoUrls = [] as any;
-                for (let item of _data["photoUrls"])
-                    this.photoUrls!.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): TravelDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TravelDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userId"] = this.userId;
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        if (Array.isArray(this.photoUrls)) {
-            data["photoUrls"] = [];
-            for (let item of this.photoUrls)
-                data["photoUrls"].push(item);
-        }
-        return data;
-    }
-}
-
-export interface ITravelDto {
-    id?: number;
-    userId?: number;
-    title?: string | undefined;
-    description?: string | undefined;
-    startDate?: Date;
-    photoUrls?: string[] | undefined;
 }
 
 export class TravelDetailDto implements ITravelDetailDto {
@@ -1838,158 +2646,6 @@ export interface ICreateTravelDto {
     startDate?: Date;
     title?: string;
     userId?: number;
-}
-
-export class MemberDto implements IMemberDto {
-    id?: number;
-    username?: string | undefined;
-    name?: string | undefined;
-    surname?: string | undefined;
-    email?: string | undefined;
-    gender?: string | undefined;
-    bio?: string | undefined;
-    profilePhotoUrl?: string | undefined;
-    dateOfBirth?: Date;
-    creationDate?: Date;
-    travels?: TravelDto[] | undefined;
-    followers?: FollowerDto[] | undefined;
-    followees?: FollowerDto[] | undefined;
-
-    constructor(data?: IMemberDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.username = _data["username"];
-            this.name = _data["name"];
-            this.surname = _data["surname"];
-            this.email = _data["email"];
-            this.gender = _data["gender"];
-            this.bio = _data["bio"];
-            this.profilePhotoUrl = _data["profilePhotoUrl"];
-            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
-            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
-            if (Array.isArray(_data["travels"])) {
-                this.travels = [] as any;
-                for (let item of _data["travels"])
-                    this.travels!.push(TravelDto.fromJS(item));
-            }
-            if (Array.isArray(_data["followers"])) {
-                this.followers = [] as any;
-                for (let item of _data["followers"])
-                    this.followers!.push(FollowerDto.fromJS(item));
-            }
-            if (Array.isArray(_data["followees"])) {
-                this.followees = [] as any;
-                for (let item of _data["followees"])
-                    this.followees!.push(FollowerDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): MemberDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new MemberDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["username"] = this.username;
-        data["name"] = this.name;
-        data["surname"] = this.surname;
-        data["email"] = this.email;
-        data["gender"] = this.gender;
-        data["bio"] = this.bio;
-        data["profilePhotoUrl"] = this.profilePhotoUrl;
-        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        if (Array.isArray(this.travels)) {
-            data["travels"] = [];
-            for (let item of this.travels)
-                data["travels"].push(item.toJSON());
-        }
-        if (Array.isArray(this.followers)) {
-            data["followers"] = [];
-            for (let item of this.followers)
-                data["followers"].push(item.toJSON());
-        }
-        if (Array.isArray(this.followees)) {
-            data["followees"] = [];
-            for (let item of this.followees)
-                data["followees"].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IMemberDto {
-    id?: number;
-    username?: string | undefined;
-    name?: string | undefined;
-    surname?: string | undefined;
-    email?: string | undefined;
-    gender?: string | undefined;
-    bio?: string | undefined;
-    profilePhotoUrl?: string | undefined;
-    dateOfBirth?: Date;
-    creationDate?: Date;
-    travels?: TravelDto[] | undefined;
-    followers?: FollowerDto[] | undefined;
-    followees?: FollowerDto[] | undefined;
-}
-
-export class FollowerDto implements IFollowerDto {
-    id?: number;
-    username?: string | undefined;
-    profilePhoto?: string | undefined;
-
-    constructor(data?: IFollowerDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.username = _data["username"];
-            this.profilePhoto = _data["profilePhoto"];
-        }
-    }
-
-    static fromJS(data: any): FollowerDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new FollowerDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["username"] = this.username;
-        data["profilePhoto"] = this.profilePhoto;
-        return data;
-    }
-}
-
-export interface IFollowerDto {
-    id?: number;
-    username?: string | undefined;
-    profilePhoto?: string | undefined;
 }
 
 export class UpdateUserDto implements IUpdateUserDto {

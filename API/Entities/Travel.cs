@@ -18,5 +18,7 @@ namespace API.Entities
 
         // relationship many to many with places
         public List<Photo> Photos { get; set; } = []; // Photo is navigation property inside travel class
+
+        public List<TravelLike> Likes { get; set; } = [];
     }
 }

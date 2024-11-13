@@ -36,16 +36,27 @@
   margin-bottom: 1rem;
 }
 
+.bio {
+  font-size: 1.1em;
+  font-weight: normal;
+  margin-bottom: 1rem;
+}
+
+.follow-button {
+  margin-top: 2rem;
+  margin-left: 1.8rem;
+}
+
 .settings-button {
   align-self: flex-start; /* Wyrównanie przycisku do prawej strony */
   margin-top: 0.6rem;
 }
 
-.main-part{
-    display: flex;
-    width: 100%;
+.main-part {
+  display: flex;
+  width: 100%;
 }
 
 .tabs {
-    width: 100%;
+  width: 100%;
 }

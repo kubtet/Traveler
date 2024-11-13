@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import {
+  LikesClient,
   MemberDto,
   TravelClient,
   TravelDetailDto,
@@ -34,6 +35,7 @@ export class TravelDetailComponent implements OnInit {
   private photoService = inject(PhotoService);
   private travelClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
+  private likeService = inject(LikesClient);
   protected accountService = inject(AccountService);
   protected photos: PhotoModel[] = [];
   protected travel: TravelDetailDto;
@@ -43,6 +45,20 @@ export class TravelDetailComponent implements OnInit {
   protected isOwnPost: boolean;
   protected isLikedByUser: boolean = false;
   protected isLoading = new BehaviorSubject(false);
+  protected isLiked;
+  protected numberOfLikes: number;
+
+  protected async toggleLike() {
+    this.isLoading.next(true);
+    await firstValueFrom(this.likeService.toggleLikeTravel(this.travelId));
+    this.isLiked = await firstValueFrom(
+      this.likeService.isTravelLikedByUser(this.travelId)
+    );
+    this.numberOfLikes = await firstValueFrom(
+      this.likeService.getLikeCountForTravel(this.travelId)
+    );
+    this.isLoading.next(false);
+  }
 
   public async ngOnInit() {
     this.isLoading.next(true);
@@ -66,6 +82,18 @@ export class TravelDetailComponent implements OnInit {
     if (creator) {
       this.creator = creator;
     }
+
+    this.numberOfLikes = await firstValueFrom(
+      this.likeService.getLikeCountForTravel(this.travel.id)
+    );
+
+    this.isLikedByUser = await firstValueFrom(
+      this.likeService.isTravelLikedByUser(this.travel.id)
+    );
+
+    this.isLiked = await firstValueFrom(
+      this.likeService.isTravelLikedByUser(this.travelId)
+    );
 
     this.isLoading.next(false);
     this.checkIfOwnPost();

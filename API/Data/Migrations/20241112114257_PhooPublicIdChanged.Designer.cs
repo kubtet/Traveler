@@ -11,14 +11,33 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241019233429_UpdateUserModel")]
-    partial class UpdateUserModel
+    [Migration("20241112114257_PhooPublicIdChanged")]
+    partial class PhooPublicIdChanged
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
+
+            modelBuilder.Entity("API.Entities.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Iso2")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+                });
 
             modelBuilder.Entity("API.Entities.Follow", b =>
                 {
@@ -36,19 +55,6 @@ namespace API.Data.Migrations
                     b.HasIndex("FollowedUserId");
 
                     b.ToTable("Follows");
-                });
-
-            modelBuilder.Entity("API.Entities.Like", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TravelId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("UserId", "TravelId");
-
-                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("API.Entities.Photo", b =>
@@ -89,14 +95,18 @@ namespace API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Cities")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CountryName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal>("Latitude")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Longitude")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -109,6 +119,16 @@ namespace API.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Cities")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CountryName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -199,6 +219,21 @@ namespace API.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TravelLike", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TravelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "TravelId");
+
+                    b.HasIndex("TravelId");
+
+                    b.ToTable("TravelLike");
+                });
+
             modelBuilder.Entity("API.Entities.Follow", b =>
                 {
                     b.HasOne("API.Entities.User", "FollowedUser")
@@ -253,7 +288,7 @@ namespace API.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("API.Entities.Travel", "Travel")
-                        .WithMany("TravelPlaces")
+                        .WithMany()
                         .HasForeignKey("TravelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -263,6 +298,25 @@ namespace API.Data.Migrations
                     b.Navigation("Travel");
                 });
 
+            modelBuilder.Entity("TravelLike", b =>
+                {
+                    b.HasOne("API.Entities.Travel", "Travel")
+                        .WithMany("Likes")
+                        .HasForeignKey("TravelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.User", "User")
+                        .WithMany("LikedTravels")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Travel");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("API.Entities.Place", b =>
                 {
                     b.Navigation("TravelPlaces");
@@ -270,9 +324,9 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Travel", b =>
                 {
-                    b.Navigation("Photos");
+                    b.Navigation("Likes");
 
-                    b.Navigation("TravelPlaces");
+                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("API.Entities.User", b =>
@@ -280,6 +334,8 @@ namespace API.Data.Migrations
                     b.Navigation("Followers");
 
                     b.Navigation("Following");
+
+                    b.Navigation("LikedTravels");
 
                     b.Navigation("ProfilePhoto");
 

@@ -34,13 +34,13 @@ namespace API.Data.Migrations
                 name: "Follows",
                 columns: table => new
                 {
-                    FollowingUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SourceUserId = table.Column<int>(type: "INTEGER", nullable: false),
                     FollowedUserId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Follows", x => new { x.FollowingUserId, x.FollowedUserId });
+                    table.PrimaryKey("PK_Follows", x => new { x.SourceUserId, x.FollowedUserId });
                 });
 
             migrationBuilder.CreateTable(
