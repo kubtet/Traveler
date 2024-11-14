@@ -17,6 +17,8 @@ public class User
 
     // relationships
     public List<Travel> Travels { get; set; } = new List<Travel>();
-    public List<Follow> Followers { get; set; } = new List<Follow>();
-    public List<Follow> Following { get; set; } = new List<Follow>();
+    public List<Follow> Followers { get; set; } = new List<Follow>(); // followed by 
+    public List<Follow> Following { get; set; } = new List<Follow>(); // followed
+
+    public List<TravelLike> LikedTravels { get; set; } = [];
 }

@@ -22,7 +22,7 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Follow", b =>
                 {
-                    b.Property<int>("FollowingUserId")
+                    b.Property<int>("SourceUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("FollowedUserId")
@@ -31,7 +31,7 @@ namespace API.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("FollowingUserId", "FollowedUserId");
+                    b.HasKey("SourceUserId", "FollowedUserId");
 
                     b.HasIndex("FollowedUserId");
 
@@ -201,15 +201,15 @@ namespace API.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Entities.User", "FollowingUser")
+                    b.HasOne("API.Entities.User", "SourceUser")
                         .WithMany("Following")
-                        .HasForeignKey("FollowingUserId")
+                        .HasForeignKey("SourceUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FollowedUser");
 
-                    b.Navigation("FollowingUser");
+                    b.Navigation("SourceUser");
                 });
 
             modelBuilder.Entity("API.Entities.Photo", b =>

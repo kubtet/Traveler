@@ -31,7 +31,7 @@ public class UserRepository(DataContext context) : IUserRepository
         var query = context.Users
             .Include(u => u.ProfilePhoto)
             .Include(u => u.Followers)
-            .ThenInclude(f => f.FollowingUser)
+            .ThenInclude(f => f.SourceUser)
             .Include(u => u.Following)
             .ThenInclude(f => f.FollowedUser)
             .Include(u => u.Travels)

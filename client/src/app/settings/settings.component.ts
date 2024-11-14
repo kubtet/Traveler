@@ -104,6 +104,7 @@ export class SettingsComponent implements OnInit {
           },
         ];
       } else {
+        this.form.markAsPristine();
         this.unsavedChangesMessages = [];
       }
     });
@@ -116,7 +117,7 @@ export class SettingsComponent implements OnInit {
     fileInput.onchange = (event: any) => {
       const file = event.target.files[0];
       if (file) {
-        this.uploadProfilePhoto(file);
+        this.isDeleteDisabled = false;
         this.previewProfilePhotoUrl = URL.createObjectURL(file);
         this.fileToUpload = file;
         this.form.markAsDirty();
@@ -159,14 +160,24 @@ export class SettingsComponent implements OnInit {
 
   public async deleteProfilePicture() {
     this.previewProfilePhotoUrl = '../../assets/defaultProfilePicture.jfif';
-    this.form.markAsDirty();
-    this.unsavedChangesMessages = [
-      {
-        severity: 'warn',
-        summary: 'Unsaved changes',
-        detail: "You've made some changes that haven't been saved.",
-      },
-    ];
+    if (this.user.profilePhotoUrl != null) {
+      this.form.markAsDirty();
+      this.unsavedChangesMessages = [
+        {
+          severity: 'warn',
+          summary: 'Unsaved changes',
+          detail: "You've made some changes that haven't been saved.",
+        },
+      ];
+    } else {
+      if (
+        this.form.controls.username.value === this.user.username &&
+        this.form.controls.bio.value === this.user.bio
+      ) {
+        this.form.markAsPristine();
+        this.unsavedChangesMessages = [];
+      }
+    }
     this.isDeleteDisabled = true;
   }
 

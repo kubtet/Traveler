@@ -13,7 +13,9 @@ import {
   BuggyClient,
   CountryClient,
   TravelClient,
+  LikesClient,
   UsersClient,
+  FollowsClient,
 } from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
@@ -28,6 +30,8 @@ export const appConfig: ApplicationConfig = {
     CountryService,
     MessageService,
     PhotoService,
+    LikesClient,
+    FollowsClient,
     provideRouter(routes),
     provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor])),
     provideAnimations(),
@@ -49,6 +53,16 @@ export const appConfig: ApplicationConfig = {
     {
       provide: TravelClient,
       useFactory: (http: HttpClient) => new TravelClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: LikesClient,
+      useFactory: (http: HttpClient) => new LikesClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: FollowsClient,
+      useFactory: (http: HttpClient) => new FollowsClient(http),
       deps: [HttpClient],
     },
     {

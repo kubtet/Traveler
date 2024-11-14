@@ -1,5 +1,10 @@
 import { Component, inject, input, OnInit } from '@angular/core';
-import { MemberDto, TravelDto, UsersClient } from '../../services/api';
+import {
+  MemberDto,
+  TravelDto,
+  UsersClient,
+  LikesClient,
+} from '../../services/api';
 import { DatePipe } from '@angular/common';
 import { ImageModule } from 'primeng/image';
 import { firstValueFrom } from 'rxjs';
@@ -13,6 +18,8 @@ import { firstValueFrom } from 'rxjs';
 })
 export class TravelCardComponent implements OnInit {
   private usersClient = inject(UsersClient);
+  private likesClient = inject(LikesClient);
+  protected numberOfLikes: number;
   protected user: MemberDto = new MemberDto();
   public travel = input.required<TravelDto>();
   public profilePhotoDisplay = input.required<boolean>();
@@ -23,5 +30,8 @@ export class TravelCardComponent implements OnInit {
         this.usersClient.getUserById(this.travel().userId)
       );
     }
+    this.numberOfLikes = await firstValueFrom(
+      this.likesClient.getLikeCountForTravel(this.travel().id)
+    );
   }
 }
