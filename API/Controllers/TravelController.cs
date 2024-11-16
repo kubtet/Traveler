@@ -33,11 +33,22 @@ namespace API.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<List<TravelDto>>> GetTravelsByUserId(int id)
+        public async Task<ActionResult<PaginatedResponse<TravelDto>>> GetTravelsByUserId(int id, [FromQuery] DataParams dataParams)
         {
-            var travels = await repository.GetTravelsAsync(id);
+            dataParams.UserId = id;
+            var travels = await repository.GetTravelsAsync(dataParams);
 
-            return mapper.Map<List<TravelDto>>(travels);
+            var travelDtos = travels.Select(mapper.Map<TravelDto>).ToList();
+
+            var response = new PaginatedResponse<TravelDto>(
+                travelDtos,
+                travels.CurrentPage,
+                travels.TotalPages,
+                travels.PageSize,
+                travels.TotalCount
+            );
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
