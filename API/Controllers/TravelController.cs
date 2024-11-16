@@ -1,28 +1,54 @@
 using API.DTOs;
 using API.Entities;
 using API.Enums;
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class TravelController(IMapper mapper, ITravelRepository repository, IPhotoService photoService) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<List<TravelDto>>> GetAllTravels()
+        public async Task<ActionResult<PaginatedResponse<TravelDto>>> GetAllTravels([FromQuery] DataParams dataParams)
         {
-            var travels = await repository.GetAllTravelsAsync();
+            dataParams.CurrentUserId = User.GetUserId();
+            var travels = await repository.GetAllTravelsAsync(dataParams);
 
-            return mapper.Map<List<TravelDto>>(travels);
+            var travelDtos = travels.Select(mapper.Map<TravelDto>).ToList();
+
+            var response = new PaginatedResponse<TravelDto>(
+                travelDtos,
+                travels.CurrentPage,
+                travels.TotalPages,
+                travels.PageSize,
+                travels.TotalCount
+            );
+
+            return Ok(response);
         }
 
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<List<TravelDto>>> GetTravelsByUserId(int id)
+        public async Task<ActionResult<PaginatedResponse<TravelDto>>> GetTravelsByUserId(int id, [FromQuery] DataParams dataParams)
         {
-            var travels = await repository.GetTravelsAsync(id);
+            dataParams.UserId = id;
+            var travels = await repository.GetTravelsAsync(dataParams);
 
-            return mapper.Map<List<TravelDto>>(travels);
+            var travelDtos = travels.Select(mapper.Map<TravelDto>).ToList();
+
+            var response = new PaginatedResponse<TravelDto>(
+                travelDtos,
+                travels.CurrentPage,
+                travels.TotalPages,
+                travels.PageSize,
+                travels.TotalCount
+            );
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

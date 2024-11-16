@@ -52,7 +52,7 @@ export class UserProfileComponent implements OnInit {
       this.followsClient.countFollowers(this.user.id)
     );
     this.isFollowedByCurrent = await firstValueFrom(
-      this.followsClient.isFolledStatus(this.user.id)
+      this.followsClient.isFollowedByCurrentStatus(this.user.id)
     );
     this.isLoading.next(false);
   }
@@ -75,7 +75,7 @@ export class UserProfileComponent implements OnInit {
         this.followsClient.countFollowers(this.user.id)
       );
       this.isFollowedByCurrent = await firstValueFrom(
-        this.followsClient.isFolledStatus(this.user.id)
+        this.followsClient.isFollowedByCurrentStatus(this.user.id)
       );
       this.isLoading.next(false);
     });

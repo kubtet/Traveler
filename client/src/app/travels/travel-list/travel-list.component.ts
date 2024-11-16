@@ -1,14 +1,11 @@
 import { Component, inject, input, OnInit } from '@angular/core';
-import { AccountService } from '../../services/account.service';
 import {
   MemberDto,
+  PaginatedResponseOfTravelDto,
   TravelClient,
-  TravelDto,
-  UsersClient,
 } from '../../services/api';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { TravelCardComponent } from '../travel-card/travel-card.component';
-import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
 import { Router } from '@angular/router';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
@@ -16,12 +13,7 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-travels',
   standalone: true,
-  imports: [
-    TravelCardComponent,
-    AppButtonComponent,
-    AppLoadingComponent,
-    AsyncPipe,
-  ],
+  imports: [TravelCardComponent, AppLoadingComponent, AsyncPipe],
   templateUrl: './travel-list.component.html',
   styleUrl: './travel-list.component.css',
 })
@@ -31,7 +23,8 @@ export class MyTravelsComponent implements OnInit {
   public user = input.required<MemberDto>();
 
   protected isLoading = new BehaviorSubject(false);
-  protected travels: TravelDto[] = [];
+  protected travels: PaginatedResponseOfTravelDto =
+    new PaginatedResponseOfTravelDto();
 
   async ngOnInit() {
     this.isLoading.next(true);
