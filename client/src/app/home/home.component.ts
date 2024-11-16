@@ -31,6 +31,7 @@ export class HomeComponent {
   protected isLoading = new BehaviorSubject(false);
   protected travels: PaginatedResponseOfTravelDto =
     new PaginatedResponseOfTravelDto();
+  protected travelCache = new Map();
 
   public async ngOnInit() {
     await this.loadTravels();
@@ -38,11 +39,23 @@ export class HomeComponent {
 
   protected async loadTravels() {
     this.isLoading.next(true);
+    const response = this.travelCache.get(
+      this.pageNumber + '-' + this.pageSize
+    );
+    if (response) {
+      this.isLoading.next(false);
+      return this.setResponse(response);
+    }
+
     const listOfTravels = await firstValueFrom(
       this.travelClient.getAllTravels(this.pageNumber, this.pageSize)
     );
     if (listOfTravels?.items?.length > 0) {
-      this.travels = listOfTravels;
+      this.setResponse(listOfTravels);
+      this.travelCache.set(
+        this.pageNumber + '-' + this.pageSize,
+        listOfTravels
+      );
     }
     this.isLoading.next(false);
   }
@@ -52,8 +65,12 @@ export class HomeComponent {
   }
 
   protected async onPageChange(event: any) {
-    this.pageNumber = event.page + 1; 
+    this.pageNumber = event.page + 1;
     this.pageSize = event.rows;
     await this.loadTravels();
+  }
+
+  private setResponse(listOfTravels: PaginatedResponseOfTravelDto) {
+    this.travels = listOfTravels;
   }
 }
