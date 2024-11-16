@@ -5,15 +5,18 @@ using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class TravelController(IMapper mapper, ITravelRepository repository, IPhotoService photoService) : BaseApiController
     {
         [HttpGet]
         public async Task<ActionResult<PaginatedResponse<TravelDto>>> GetAllTravels([FromQuery] DataParams dataParams)
         {
+            dataParams.CurrentUserId = User.GetUserId();
             var travels = await repository.GetAllTravelsAsync(dataParams);
 
             var travelDtos = travels.Select(mapper.Map<TravelDto>).ToList();

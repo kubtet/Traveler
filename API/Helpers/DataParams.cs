@@ -11,4 +11,7 @@ public class DataParams
         get => _pageSize;
         set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
     }
+
+    public string? Username { get; set; }
+    public int? CurrentUserId { get; set; }
 }

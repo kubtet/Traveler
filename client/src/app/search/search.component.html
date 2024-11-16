@@ -1,8 +1,36 @@
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
 @if ((isLoading | async) === false) {
 <div class="row">
+  <div class="col-12">
+    <app-input-text
+      [control]="searchedUsername"
+      placeholder="Search"
+    ></app-input-text>
+  </div>
+</div>
+<div class="row mb-5">
+  @if (users?.items.length === 0) {
+    <p class="">No users found</p>
+  }
   @for (user of users?.items; track user) {
-  {{ user.username }}
+  <div
+    class="surface-50 cursor-pointer z-index border-round"
+    (click)="navigateToUserProfile(user.id)"
+  >
+    <div class="flex flex-column align-items-center text-center mb-3">
+      <p-avatar
+        [image]="
+          user.profilePhotoUrl === '' || user.profilePhotoUrl === null
+            ? '../../assets/defaultProfilePicture.jfif'
+            : user.profilePhotoUrl
+        "
+        styleClass="profile-picture"
+        size="xlarge"
+        shape="circle"
+      ></p-avatar>
+      <div class="text">{{ user.username }}</div>
+    </div>
+  </div>
   }
 </div>
 <p-paginator

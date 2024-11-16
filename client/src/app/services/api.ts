@@ -1005,7 +1005,7 @@ export class CountryClient implements ICountryClient {
 }
 
 export interface ITravelClient {
-    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
+    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined): Observable<PaginatedResponseOfTravelDto>;
     getTravelsByUserId(id: number): Observable<TravelDto[]>;
     getTravelDetails(id: number): Observable<TravelDetailDto>;
     createTravel(createTravelDto: CreateTravelDto): Observable<number>;
@@ -1024,7 +1024,7 @@ export class TravelClient implements ITravelClient {
         this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
-    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto> {
+    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined): Observable<PaginatedResponseOfTravelDto> {
         let url_ = this.baseUrl + "/api/Travel?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -1034,6 +1034,10 @@ export class TravelClient implements ITravelClient {
             throw new Error("The parameter 'pageSize' cannot be null.");
         else if (pageSize !== undefined)
             url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (username !== undefined && username !== null)
+            url_ += "Username=" + encodeURIComponent("" + username) + "&";
+        if (currentUserId !== undefined && currentUserId !== null)
+            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1359,7 +1363,7 @@ export class TravelClient implements ITravelClient {
 }
 
 export interface IUsersClient {
-    getUsers(pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMemberDto>;
+    getUsers(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined): Observable<PaginatedResponseOfMemberDto>;
     getUserById(id: number): Observable<MemberDto>;
     getUserByUsername(username: string): Observable<MemberDto>;
     updateUser(updateUserDto: UpdateUserDto): Observable<FileResponse>;
@@ -1378,7 +1382,7 @@ export class UsersClient implements IUsersClient {
         this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
-    getUsers(pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMemberDto> {
+    getUsers(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined): Observable<PaginatedResponseOfMemberDto> {
         let url_ = this.baseUrl + "/api/Users?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -1388,6 +1392,10 @@ export class UsersClient implements IUsersClient {
             throw new Error("The parameter 'pageSize' cannot be null.");
         else if (pageSize !== undefined)
             url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (username !== undefined && username !== null)
+            url_ += "Username=" + encodeURIComponent("" + username) + "&";
+        if (currentUserId !== undefined && currentUserId !== null)
+            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

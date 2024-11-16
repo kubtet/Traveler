@@ -14,10 +14,10 @@ namespace API.Controllers;
 [Authorize]
 public class UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService) : BaseApiController
 {
-    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<PaginatedResponse<MemberDto>>> GetUsers([FromQuery] DataParams dataParams)
     {
+        dataParams.CurrentUserId = User.GetUserId();
         var users = await userRepository.GetUsersAsync(dataParams);
         var usersToReturn = users.Select(mapper.Map<MemberDto>).ToList();
         var response = new PaginatedResponse<MemberDto>(

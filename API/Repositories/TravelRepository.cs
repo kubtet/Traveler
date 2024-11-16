@@ -27,6 +27,7 @@ namespace API.Repositories
         async Task<PagedList<Travel>> ITravelRepository.GetAllTravelsAsync(DataParams dataParams)
         {
             var query = context.Travels.Include(t => t.Photos).AsQueryable();
+            query = query.Where(t => t.UserId != dataParams.CurrentUserId);
 
             return await PagedList<Travel>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
         }

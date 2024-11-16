@@ -39,6 +39,13 @@ public class UserRepository(DataContext context) : IUserRepository
             .Include(u => u.Travels)
             .AsQueryable();
 
+        query = query.Where(x => x.Id != dataParams.CurrentUserId);
+
+        if (!string.IsNullOrEmpty(dataParams.Username))
+        {
+            query = query.Where(x => x.UserName.ToUpper().Contains(dataParams.Username.ToUpper()));
+        }
+
         return await PagedList<User>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
     }
 
