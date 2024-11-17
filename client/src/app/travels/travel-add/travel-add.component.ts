@@ -103,7 +103,7 @@ export class TravelAddComponent implements OnInit {
         if (cities.length > 0) {
           this.cities = cities;
         }
-      } 
+      }
 
       this.isLoading.next(false);
     });
@@ -117,6 +117,7 @@ export class TravelAddComponent implements OnInit {
     const createTravelDto: CreateTravelDto = new CreateTravelDto({
       cities: controls.travelCities.value?.toString(),
       countryId: controls.travelCountry.value?.id,
+      countryIso2Code: controls.travelCountry.value?.code,
       countryName: controls.travelCountry.value?.name,
       description: controls.travelDescription.value,
       endDate: Array.isArray(controls.travelDates.value)

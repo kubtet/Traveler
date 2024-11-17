@@ -12,6 +12,8 @@ import { MyTravelsComponent } from '../travels/travel-list/travel-list.component
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
+import { StatisticsComponent } from "../statistics/statistics.component";
+import { MapComponent } from "../map/map.component";
 
 @Component({
   selector: 'app-user-profile',
@@ -26,7 +28,9 @@ import { AsyncPipe } from '@angular/common';
     TabViewModule,
     MyTravelsComponent,
     AppLoadingComponent,
-  ],
+    StatisticsComponent,
+    MapComponent
+],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
 })

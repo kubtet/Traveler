@@ -935,6 +935,7 @@ export class BuggyClient implements IBuggyClient {
 
 export interface ICountryClient {
     getAllCountries(): Observable<Country[]>;
+    getAllCountryCodes(id: number): Observable<string[]>;
 }
 
 @Injectable()
@@ -989,6 +990,64 @@ export class CountryClient implements ICountryClient {
                 result200 = [] as any;
                 for (let item of resultData200)
                     result200!.push(Country.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getAllCountryCodes(id: number): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/Country/codes/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllCountryCodes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllCountryCodes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string[]>;
+        }));
+    }
+
+    protected processGetAllCountryCodes(response: HttpResponseBase): Observable<string[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(item);
             }
             else {
                 result200 = <any>null;
@@ -2274,6 +2333,7 @@ export class Travel implements ITravel {
     endDate?: Date | undefined;
     createdAt?: Date;
     countryId?: number;
+    countryIso2Code?: string;
     countryName?: string;
     cities?: string | undefined;
     user?: User;
@@ -2299,6 +2359,7 @@ export class Travel implements ITravel {
             this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.countryId = _data["countryId"];
+            this.countryIso2Code = _data["countryIso2Code"];
             this.countryName = _data["countryName"];
             this.cities = _data["cities"];
             this.user = _data["user"] ? User.fromJS(_data["user"]) : <any>undefined;
@@ -2332,6 +2393,7 @@ export class Travel implements ITravel {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["countryId"] = this.countryId;
+        data["countryIso2Code"] = this.countryIso2Code;
         data["countryName"] = this.countryName;
         data["cities"] = this.cities;
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
@@ -2358,6 +2420,7 @@ export interface ITravel {
     endDate?: Date | undefined;
     createdAt?: Date;
     countryId?: number;
+    countryIso2Code?: string;
     countryName?: string;
     cities?: string | undefined;
     user?: User;
@@ -2583,6 +2646,7 @@ export class TravelDetailDto implements ITravelDetailDto {
     cities?: string | undefined;
     countryName?: string;
     countryId?: number;
+    countryIso2Code?: string;
     photoUrls?: string[] | undefined;
 
     constructor(data?: ITravelDetailDto) {
@@ -2609,6 +2673,7 @@ export class TravelDetailDto implements ITravelDetailDto {
             this.cities = _data["cities"];
             this.countryName = _data["countryName"];
             this.countryId = _data["countryId"];
+            this.countryIso2Code = _data["countryIso2Code"];
             if (Array.isArray(_data["photoUrls"])) {
                 this.photoUrls = [] as any;
                 for (let item of _data["photoUrls"])
@@ -2639,6 +2704,7 @@ export class TravelDetailDto implements ITravelDetailDto {
         data["cities"] = this.cities;
         data["countryName"] = this.countryName;
         data["countryId"] = this.countryId;
+        data["countryIso2Code"] = this.countryIso2Code;
         if (Array.isArray(this.photoUrls)) {
             data["photoUrls"] = [];
             for (let item of this.photoUrls)
@@ -2662,6 +2728,7 @@ export interface ITravelDetailDto {
     cities?: string | undefined;
     countryName?: string;
     countryId?: number;
+    countryIso2Code?: string;
     photoUrls?: string[] | undefined;
 }
 
@@ -2669,6 +2736,7 @@ export class CreateTravelDto implements ICreateTravelDto {
     cities?: string | undefined;
     countryName?: string;
     countryId?: number;
+    countryIso2Code?: string;
     description?: string | undefined;
     endDate?: Date | undefined;
     startDate?: Date;
@@ -2689,6 +2757,7 @@ export class CreateTravelDto implements ICreateTravelDto {
             this.cities = _data["cities"];
             this.countryName = _data["countryName"];
             this.countryId = _data["countryId"];
+            this.countryIso2Code = _data["countryIso2Code"];
             this.description = _data["description"];
             this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
             this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
@@ -2709,6 +2778,7 @@ export class CreateTravelDto implements ICreateTravelDto {
         data["cities"] = this.cities;
         data["countryName"] = this.countryName;
         data["countryId"] = this.countryId;
+        data["countryIso2Code"] = this.countryIso2Code;
         data["description"] = this.description;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
@@ -2722,6 +2792,7 @@ export interface ICreateTravelDto {
     cities?: string | undefined;
     countryName?: string;
     countryId?: number;
+    countryIso2Code?: string;
     description?: string | undefined;
     endDate?: Date | undefined;
     startDate?: Date;
