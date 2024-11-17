@@ -15,6 +15,7 @@ namespace API.DTOs
         public string? Cities { get; set; }
         public required string CountryName { get; set; }
         public int CountryId { get; set; }
+        public required string CountryIso2Code { get; set; }
         public List<string>? PhotoUrls { get; set; }
     }
 }

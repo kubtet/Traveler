@@ -5,6 +5,7 @@ namespace API.DTOs
         public string? Cities { get; set; }
         public required string CountryName { get; set; }
         public int CountryId { get; set; }
+        public required string CountryIso2Code { get; set; }
         public string? Description { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime StartDate { get; set; }
