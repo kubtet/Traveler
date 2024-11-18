@@ -40,6 +40,7 @@ export class UserProfileComponent implements OnInit {
   protected isLoading = new BehaviorSubject(false);
   protected userId: number = 0;
   protected user: MemberDto;
+  protected currentUser: MemberDto;
   protected numberOfFollowers: number;
   protected numberOfFollowings: number;
   protected isFollowedByCurrent: boolean;
@@ -52,7 +53,7 @@ export class UserProfileComponent implements OnInit {
       this.followsClient.countFollowers(this.user.id)
     );
     this.isFollowedByCurrent = await firstValueFrom(
-      this.followsClient.isFolledStatus(this.user.id)
+      this.followsClient.isFollowedByCurrentStatus(this.user.id)
     );
     this.isLoading.next(false);
   }
@@ -68,14 +69,20 @@ export class UserProfileComponent implements OnInit {
         this.usersClient.getUserById(this.userId)
       );
       this.checkIfCurrentUser();
-      this.numberOfFollowings = await firstValueFrom(
-        this.followsClient.countFollowers(this.user.id)
-      );
+
       this.numberOfFollowers = await firstValueFrom(
         this.followsClient.countFollowers(this.user.id)
       );
       this.isFollowedByCurrent = await firstValueFrom(
-        this.followsClient.isFolledStatus(this.user.id)
+        this.followsClient.isFollowedByCurrentStatus(this.user.id)
+      );
+      this.currentUser = await firstValueFrom(
+        this.usersClient.getUserByUsername(
+          this.accountService.currentUser().username
+        )
+      );
+      this.numberOfFollowings = await firstValueFrom(
+        this.followsClient.countFollowings(this.user.id)
       );
       this.isLoading.next(false);
     });
