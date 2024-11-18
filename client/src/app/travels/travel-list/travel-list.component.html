@@ -2,7 +2,7 @@
 <h3>List of travels</h3>
 @if ((isLoading | async) === false) {
 <div class="row">
-  @for (travel of travels; track travel) {
+  @for (travel of travels.items; track travel) {
   <app-travel-card
     [travel]="travel"
     [profilePhotoDisplay]="false"

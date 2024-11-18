@@ -13,5 +13,13 @@ namespace API.Controllers
 
             return Ok(countries);
         }
+
+        [HttpGet("codes/{id}")]
+        public async Task<ActionResult<List<string>>> GetAllCountryCodes(int id)
+        {
+            var countryCodes = await repository.GetAllVisitedCountriesCodes(id);
+
+            return Ok(countryCodes);
+        }
     }
 }

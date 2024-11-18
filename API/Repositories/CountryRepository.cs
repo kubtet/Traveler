@@ -11,5 +11,16 @@ namespace API.Repositories
         {
             return await context.Countries.ToListAsync();
         }
+
+        public async Task<IEnumerable<string>> GetAllVisitedCountriesCodes(int userId)
+        {
+            var countryCodes = await context.Travels
+                .Where(t => t.UserId == userId)
+                .Select(t => t.CountryIso2Code)
+                .Distinct()
+                .ToListAsync();
+
+            return countryCodes;
+        }
     }
 }

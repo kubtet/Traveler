@@ -23,7 +23,6 @@ import { PasswordModule } from 'primeng/password';
   imports: [
     FormsModule,
     InputTextModule,
-    NgClass,
     NgIf,
     PasswordModule,
     ReactiveFormsModule,

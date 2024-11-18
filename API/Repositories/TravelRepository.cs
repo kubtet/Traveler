@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,17 +16,26 @@ namespace API.Repositories
                 .SingleOrDefaultAsync(t => t.Id == travelId);
         }
 
-        async Task<IEnumerable<Travel>> ITravelRepository.GetTravelsAsync(int userId)
+        async Task<PagedList<Travel>> ITravelRepository.GetTravelsAsync(DataParams dataParams)
         {
-            return await context.Travels
-                .Where(t => t.UserId == userId)
+            var query = context.Travels
+                .Where(t => t.UserId == dataParams.UserId)
                 .Include(t => t.Photos)
-                .ToListAsync();
+                .AsQueryable();
+
+            query = query.OrderByDescending(t => t.StartDate);
+
+            return await PagedList<Travel>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
         }
 
-        async Task<IEnumerable<Travel>> ITravelRepository.GetAllTravelsAsync()
+        async Task<PagedList<Travel>> ITravelRepository.GetAllTravelsAsync(DataParams dataParams)
         {
-            return await context.Travels.Include(t => t.Photos).ToListAsync();
+            var query = context.Travels.Include(t => t.Photos).AsQueryable();
+            query = query.Where(t => t.UserId != dataParams.CurrentUserId);
+
+            query = query.OrderByDescending(t => t.CreatedAt);
+
+            return await PagedList<Travel>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
         }
 
         async void ITravelRepository.CreateTravel(Travel travel)

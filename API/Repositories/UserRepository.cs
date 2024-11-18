@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,9 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task<User?> GetUserByIdAsync(int id)
     {
         return await context.Users
-        .Include(x => x.Travels)
-        .Include(u => u.ProfilePhoto)
-        .SingleOrDefaultAsync(x => x.Id == id);
+            .Include(x => x.Travels)
+            .Include(u => u.ProfilePhoto)
+            .SingleOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)
@@ -25,9 +26,9 @@ public class UserRepository(DataContext context) : IUserRepository
             .SingleOrDefaultAsync(x => x.UserName == username);
     }
 
-    public async Task<IEnumerable<User>> GetUsersAsync()
+    public async Task<PagedList<User>> GetUsersAsync(DataParams dataParams)
     {
-        return await context.Users
+        var query = context.Users
             .Include(u => u.ProfilePhoto)
             .Include(u => u.Followers)
             .ThenInclude(f => f.SourceUser)
@@ -36,7 +37,16 @@ public class UserRepository(DataContext context) : IUserRepository
             .Include(u => u.Travels)
             .ThenInclude(t => t.Photos)
             .Include(u => u.Travels)
-            .ToListAsync();
+            .AsQueryable();
+
+        query = query.Where(x => x.Id != dataParams.CurrentUserId);
+
+        if (!string.IsNullOrEmpty(dataParams.Username))
+        {
+            query = query.Where(x => x.UserName.ToUpper().Contains(dataParams.Username.ToUpper()));
+        }
+
+        return await PagedList<User>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
     }
 
     public async Task<bool> SaveAllAsync()
