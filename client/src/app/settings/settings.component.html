@@ -66,10 +66,9 @@
         <small class="error">
           Username cannot be longer than 20 characters.
         </small>
-        } @if(form.controls.username.errors?.['usernameTaken'] && form.controls.username.value != this.user.username){
-        <small class="error">
-          Username is already taken.
-        </small>
+        } @if(form.controls.username.errors?.['usernameTaken'] &&
+        form.controls.username.value != this.user.username){
+        <small class="error"> Username is already taken. </small>
         }
       </div>
       }
@@ -84,7 +83,11 @@
   </div>
   <div class="button-container buttons-decision">
     <app-button
-      [disabled]="!form.dirty || form.invalid"
+      [disabled]="
+        !form.dirty ||
+        (form.controls.username.invalid &&
+          form.controls.username.value !== user.username)
+      "
       label="Save"
       [rounded]="true"
       size="large"

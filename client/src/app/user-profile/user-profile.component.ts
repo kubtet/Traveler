@@ -12,8 +12,8 @@ import { MyTravelsComponent } from '../travels/travel-list/travel-list.component
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
-import { StatisticsComponent } from "../statistics/statistics.component";
-import { MapComponent } from "../map/map.component";
+import { StatisticsComponent } from '../statistics/statistics.component';
+import { MapComponent } from '../map/map.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -29,8 +29,8 @@ import { MapComponent } from "../map/map.component";
     MyTravelsComponent,
     AppLoadingComponent,
     StatisticsComponent,
-    MapComponent
-],
+    MapComponent,
+  ],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
 })
@@ -78,7 +78,15 @@ export class UserProfileComponent implements OnInit {
         this.followsClient.countFollowers(this.user.id)
       );
       this.isFollowedByCurrent = await firstValueFrom(
-        this.followsClient.isFolledStatus(this.user.id)
+        this.followsClient.isFollowedByCurrentStatus(this.user.id)
+      );
+      this.currentUser = await firstValueFrom(
+        this.usersClient.getUserByUsername(
+          this.accountService.currentUser().username
+        )
+      );
+      this.numberOfFollowings = await firstValueFrom(
+        this.followsClient.countFollowings(this.user.id)
       );
       this.isLoading.next(false);
     });
