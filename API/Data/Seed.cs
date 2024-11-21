@@ -9,7 +9,6 @@ namespace API;
 
 public class Seed
 {
-
     public static async Task SeedUsers(DataContext context)
     {
         if (await context.Users.AnyAsync()) return;
@@ -31,21 +30,6 @@ public class Seed
         await context.SaveChangesAsync();
     }
 
-    public static async Task SeedPlaces(DataContext context)
-    {
-        if (await context.Places.AnyAsync()) return;
-        var placesData = await File.ReadAllTextAsync("Data/PlaceSeedData.json");
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var places = JsonSerializer.Deserialize<List<Place>>(placesData, options);
-        if (places == null) return;
-
-        foreach (var place in places)
-        {
-            context.Places.Add(place);
-        }
-        await context.SaveChangesAsync();
-
-    }
     // public static async Task SeedFollows(DataContext context)
     // {
     //     if (await context.Follows.AnyAsync()) return;
@@ -86,23 +70,6 @@ public class Seed
             }
         }
         await context.SaveChangesAsync();
-    }
-
-
-    public static async Task SeedTravelPlace(DataContext context)
-    {
-        if (await context.TravelPlaces.AnyAsync()) return;
-        var travelPlacesData = await File.ReadAllTextAsync("Data/TravelPlaceSeedData.json");
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var travelPlaces = JsonSerializer.Deserialize<List<TravelPlace>>(travelPlacesData, options);
-        if (travelPlaces == null) return;
-
-        foreach (var travelPlace in travelPlaces)
-        {
-            context.TravelPlaces.Add(travelPlace);
-        }
-        await context.SaveChangesAsync();
-
     }
 
     public static async Task SeedCountries(DataContext context)

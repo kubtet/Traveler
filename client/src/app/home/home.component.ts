@@ -48,7 +48,7 @@ export class HomeComponent {
     }
 
     const listOfTravels = await firstValueFrom(
-      this.travelClient.getAllTravels(this.pageNumber, this.pageSize)
+      this.travelClient.getAllTravels(null, null, null, this.pageNumber, this.pageSize)
     );
     if (listOfTravels?.items?.length > 0) {
       this.setResponse(listOfTravels);

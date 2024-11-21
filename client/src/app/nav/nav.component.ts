@@ -50,6 +50,7 @@ export class NavComponent implements OnInit {
         label: '',
         icon: 'pi pi-comment',
         tooltip: 'Chats',
+        routerLink: 'messages',
       },
       {
         label: '',

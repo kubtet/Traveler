@@ -13,6 +13,7 @@ import { ServerErrorComponent } from './errors/server-error/server-error.compone
 import { TravelDetailComponent } from './travels/travel-detail/travel-detail.component';
 import { TravelAddComponent } from './travels/travel-add/travel-add.component';
 import { SearchComponent } from './search/search.component';
+import { MessagesComponent } from './messages/messages.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -22,7 +23,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'example', component: ExampleComponent },
-      { path: 'user-profile/:id', component: UserProfileComponent },
+      { path: 'messages', component: MessagesComponent },
       { path: 'search', component: SearchComponent },
       {
         path: 'settings',
@@ -31,6 +32,7 @@ export const routes: Routes = [
       },
       { path: 'travel/add', component: TravelAddComponent },
       { path: 'travel/:id', component: TravelDetailComponent },
+      { path: 'user-profile/:id', component: UserProfileComponent },
     ],
   },
   { path: 'errors', component: TestErrorsComponent },
