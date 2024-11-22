@@ -19,11 +19,19 @@
     </div>
     <div class="w-full flex row-gap-4 flex-column surface-border p-4">
       <app-input-text placeholder="Search"></app-input-text>
-      <div class="flex flex-row gap-4 md:flex-column overflow-auto">
+      <div
+        class="flex flex-row gap-4 md:flex-column overflow-auto"
+        style="max-height: 53vh"
+      >
         @for(thread of threads; track thread) {
         <div
           tabindex="0"
           class="flex flex-nowrap justify-content-between align-items-center border-1 surface-border border-round p-3 cursor-pointer select-none hover:surface-hover transition-colors transition-duration-150"
+          (click)="
+            thread.senderId === user.id
+              ? loadThread(thread.recipientId)
+              : loadThread(thread.senderId)
+          "
         >
           <div class="flex align-items-center">
             <div class="relative md:mr-3">
@@ -48,9 +56,11 @@
                   ? thread.recipientUsername
                   : thread.senderUsername
               }}</span>
+
               <span
                 class="block text-600 text-overflow-ellipsis overflow-hidden white-space-nowrap w-10rem text-sm"
-                >{{ thread.content }}</span
+                >@if (thread.senderId === user.id) { You: {{ thread.content }} }
+                @else {{{ thread.content }}}</span
               >
             </div>
           </div>
@@ -65,164 +75,134 @@
     </div>
   </div>
   <div class="flex-1 card p-0">
+    <app-loading
+      [isLoading]="isLoadingThread | async"
+      [isOverlay]="true"
+    ></app-loading>
     <div class="flex flex-column h-full">
       <div
         class="flex align-items-center border-bottom-1 surface-border p-3 lg:p-6"
       >
+        @if (currentThread.value === null) {
         <div class="relative flex align-items-center mr-3">
           <img
-            alt="user.name"
             class="w-4rem h-4rem border-circle shadow-4"
-            src="assets/demo/images/avatar/ionibowcher.png"
-          /><span
-            class="w-1rem h-1rem border-circle border-2 surface-border absolute bottom-0 right-0 bg-green-400"
-          ></span>
+            [src]="
+              threadResponderPhotoUrl.value === '' ||
+              threadResponderPhotoUrl.value === null
+                ? '../../assets/defaultProfilePicture.jfif'
+                : threadResponderPhotoUrl.value
+            "
+          />
         </div>
+        }
         <div class="mr-2">
-          <span class="text-900 font-semibold block">Ioni Bowcher</span
-          ><span class="text-700">Last active 1 hour ago</span>
+          <span class="text-900 font-semibold block">{{
+            threadResponderUsername.value
+          }}</span>
         </div>
         <div class="flex align-items-center ml-auto">
-          <button
-            pbutton=""
-            pripple=""
-            type="button"
-            icon="pi pi-phone"
-            class="p-element p-ripple p-button-rounded p-button-outlined p-button-secondary mr-3 p-button p-component p-button-icon-only"
-          >
-            <span class="p-button-icon pi pi-phone" aria-hidden="true"></span
-            ><span
-              class="p-ink"
-              aria-hidden="true"
-              role="presentation"
-            ></span></button
-          ><button
-            pbutton=""
-            pripple=""
-            type="button"
+          <app-button
             icon="pi pi-ellipsis-v"
-            class="p-element p-ripple p-button-rounded p-button-outlined p-button-secondary p-button p-component p-button-icon-only"
-          >
-            <span
-              class="p-button-icon pi pi-ellipsis-v"
-              aria-hidden="true"
-            ></span
-            ><span class="p-ink" aria-hidden="true" role="presentation"></span>
-          </button>
+            severity="secondary"
+            [rounded]="true"
+            [outlined]="true"
+          ></app-button>
         </div>
       </div>
+      @if (currentThread.value.length === 0) {
+      <p>No messages yet</p>
+      } @else {
       <div
+        #scrollContainer
         class="p-3 md:px-4 lg:px-6 lg:py-4 mt-2 overflow-y-auto"
         style="max-height: 53vh"
       >
+        @for (message of currentThread.value; track message.id) { @if
+        (message.recipientId === user.id) {
         <div class="ng-star-inserted">
           <div class="grid grid-nogutter mb-4 ng-star-inserted">
             <div class="mr-3 mt-1">
               <img
-                alt="user.name"
+                [alt]="message.senderUsername"
                 class="w-3rem h-3rem border-circle shadow-4"
-                src="assets/demo/images/avatar/ionibowcher.png"
+                [src]="
+                  message.senderPhotoUrl === '' ||
+                  message.senderPhotoUrl === null
+                    ? '../../assets/defaultProfilePicture.jfif'
+                    : message.senderPhotoUrl
+                "
               />
             </div>
             <div class="col mt-3">
-              <p class="text-900 font-semibold mb-3">Ioni Bowcher</p>
+              <p class="text-900 font-semibold mb-3">
+                {{ message.senderUsername }}
+              </p>
               <span
                 class="text-700 inline-block font-medium border-1 surface-border p-3 white-space-normal border-round"
                 style="word-break: break-word; max-width: 80%"
-                >Lorem ipsum dolor sit amet, consectetur adipiscing elit</span
+                >{{ message.content }}</span
               >
               <p class="text-700 mt-3">
-                22:25<i class="pi pi-check ml-2 text-green-400"></i>
+                {{
+                  isToday(message.messageSent)
+                    ? (message.messageSent | date : "HH:mm")
+                    : (message.messageSent | date : "dd.MM.yyyy")
+                }}@if(message.dateRead) {
+                <i class="pi pi-check ml-2 text-green-400"></i>
+                }
               </p>
             </div>
           </div>
-          <!----><!---->
         </div>
+        } @else {
         <div class="ng-star-inserted">
-          <div class="grid grid-nogutter mb-4 ng-star-inserted">
-            <div class="mr-3 mt-1">
-              <img
-                alt="user.name"
-                class="w-3rem h-3rem border-circle shadow-4"
-                src="assets/demo/images/avatar/ionibowcher.png"
-              />
-            </div>
-            <div class="col mt-3">
-              <p class="text-900 font-semibold mb-3">Ioni Bowcher</p>
-              <span
-                class="text-700 inline-block font-medium border-1 surface-border p-3 white-space-normal border-round"
-                style="word-break: break-word; max-width: 80%"
-                >Sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua</span
-              >
-              <p class="text-700 mt-3">
-                22:26<i class="pi pi-check ml-2 text-green-400"></i>
-              </p>
-            </div>
-          </div>
-          <!----><!---->
-        </div>
-        <div class="ng-star-inserted">
-          <!---->
           <div class="grid grid-nogutter mb-4 ng-star-inserted">
             <div class="col mt-3 text-right">
               <span
                 class="inline-block text-left font-medium border-1 surface-border bg-primary-100 text-primary-900 p-3 white-space-normal border-round"
                 style="word-break: break-word; max-width: 80%"
-                >Sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua</span
+                >{{ message.content }}</span
               >
               <p class="text-700 mt-3">
-                22:26 <i class="pi pi-check ml-2 text-green-400"></i>
+                {{
+                  isToday(message.messageSent)
+                    ? (message.messageSent | date : "HH:mm")
+                    : (message.messageSent | date : "dd.MM.yyyy")
+                }}
+                @if(message.dateRead) {
+                <i class="pi pi-check ml-2 text-green-400"></i>
+                }
               </p>
             </div>
           </div>
-          <!---->
         </div>
-        <!---->
+        } }
       </div>
+      }
       <div
         class="p-3 md:p-4 lg:p-6 flex flex-column sm:flex-row align-items-center mt-auto border-top-1 surface-border gap-3"
       >
-        <input
-          id="message"
-          type="text"
-          pinputtext=""
+        <app-input-text
+          class="flex-1"
+          [control]="newMessage"
           placeholder="Type a message"
-          class="p-inputtext p-component p-element flex-1 w-full sm:w-auto border-round ng-untouched ng-pristine ng-valid"
-        />
+          (enterPressed)="sendMessage()"
+        ></app-input-text>
         <div class="flex w-full sm:w-auto gap-3">
-          <button
-            pripple=""
-            class="p-ripple p-element p-button p-button-secondary w-full sm:w-auto justify-content-center text-xl"
-          >
-            😀<span
-              class="p-ink"
-              aria-hidden="true"
-              role="presentation"
-            ></span></button
-          ><button
-            pbutton=""
-            pripple=""
+          <app-button
             label="Send"
             icon="pi pi-send"
-            class="p-element p-ripple w-full sm:w-auto p-button p-component"
-          >
-            <span
-              class="p-button-icon p-button-icon-left pi pi-send"
-              aria-hidden="true"
-            ></span
-            ><span class="p-button-label">Send</span
-            ><span class="p-ink" aria-hidden="true" role="presentation"></span>
-          </button>
+            [disabled]="newMessage.value === '' || newMessage.value === null"
+            (onClick)="sendMessage()"
+          ></app-button>
         </div>
       </div>
     </div>
     <p-overlayPanel
       styleclass="w-full sm:w-30rem"
       class="p-element ng-tns-c2474639176-93 ng-star-inserted"
-      ><!----></p-overlayPanel
-    >
+    ></p-overlayPanel>
   </div>
 </div>
 }
