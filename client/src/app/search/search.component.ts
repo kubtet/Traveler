@@ -57,7 +57,6 @@ export class SearchComponent {
   }
 
   protected navigateToUserProfile(userId: number) {
-    console.log(userId);
     this.router.navigateByUrl('/user-profile/' + userId);
   }
 

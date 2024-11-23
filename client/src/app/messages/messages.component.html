@@ -18,7 +18,15 @@
       }}</span>
     </div>
     <div class="w-full flex row-gap-4 flex-column surface-border p-4">
-      <app-input-text placeholder="Search"></app-input-text>
+      <span class="p-fluid">
+        <p-autoComplete
+          placeholder="Search"
+          [formControl]="searchedUsername"
+          [suggestions]="listOfUsers"
+          optionLabel="username"
+          (onSelect)="beginNewThread($event.value)"
+        />
+      </span>
       <div
         class="flex flex-row gap-4 md:flex-column overflow-auto"
         style="max-height: 53vh"
@@ -27,12 +35,19 @@
         <div
           tabindex="0"
           class="flex flex-nowrap justify-content-between align-items-center border-1 surface-border border-round p-3 cursor-pointer select-none hover:surface-hover transition-colors transition-duration-150"
+          [ngClass]="{
+            'highlight-notification':
+              !thread.dateRead && user.id === thread.recipientId
+          }"
           (click)="
             thread.senderId === user.id
               ? loadThread(thread.recipientId)
               : loadThread(thread.senderId)
           "
         >
+          @if(!thread.dateRead && user.id === thread.recipientId) {
+          <div class="notification-indicator"></div>
+          }
           <div class="flex align-items-center">
             <div class="relative md:mr-3">
               <img
@@ -83,16 +98,17 @@
       <div
         class="flex align-items-center border-bottom-1 surface-border p-3 lg:p-6"
       >
-        @if (currentThread.value === null) {
+        @if (currentThread.value !== null) {
         <div class="relative flex align-items-center mr-3">
           <img
-            class="w-4rem h-4rem border-circle shadow-4"
+            class="w-4rem h-4rem border-circle shadow-4 cursor-pointer"
             [src]="
               threadResponderPhotoUrl.value === '' ||
               threadResponderPhotoUrl.value === null
                 ? '../../assets/defaultProfilePicture.jfif'
                 : threadResponderPhotoUrl.value
             "
+            (click)="navigateToUserProfile(threadResponderId.value)"
           />
         </div>
         }
@@ -101,20 +117,13 @@
             threadResponderUsername.value
           }}</span>
         </div>
-        <div class="flex align-items-center ml-auto">
-          <app-button
-            icon="pi pi-ellipsis-v"
-            severity="secondary"
-            [rounded]="true"
-            [outlined]="true"
-          ></app-button>
-        </div>
       </div>
       @if (currentThread.value.length === 0) {
       <p>No messages yet</p>
       } @else {
       <div
-        #scrollContainer
+        #scrollMe
+        [scrollTop]="scrollMe.scrollHeight"
         class="p-3 md:px-4 lg:px-6 lg:py-4 mt-2 overflow-y-auto"
         style="max-height: 53vh"
       >
@@ -199,10 +208,6 @@
         </div>
       </div>
     </div>
-    <p-overlayPanel
-      styleclass="w-full sm:w-30rem"
-      class="p-element ng-tns-c2474639176-93 ng-star-inserted"
-    ></p-overlayPanel>
   </div>
 </div>
 }

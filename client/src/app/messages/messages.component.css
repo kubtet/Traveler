@@ -1,0 +1,10 @@
+.highlight-notification {
+  font-weight: bold;
+}
+
+.notification-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #f09915;
+  border-radius: 50%;
+}

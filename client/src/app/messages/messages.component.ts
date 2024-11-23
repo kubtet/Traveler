@@ -1,11 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  ElementRef,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   CreateMessageDto,
   MemberDto,
@@ -13,14 +6,15 @@ import {
   MessagesClient,
   UsersClient,
 } from '../services/api';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, debounceTime, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
 import { AccountService } from '../services/account.service';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @Component({
   selector: 'app-messages',
@@ -28,19 +22,22 @@ import { FormControl } from '@angular/forms';
   imports: [
     AsyncPipe,
     AppLoadingComponent,
-    OverlayPanelModule,
     AppInputTextComponent,
     DatePipe,
     AppButtonComponent,
+    NgClass,
+    AutoCompleteModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.css',
 })
-export class MessagesComponent implements OnInit, AfterViewChecked {
-  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+export class MessagesComponent implements OnInit {
   private accountService = inject(AccountService);
   private messageClient = inject(MessagesClient);
   private usersClient = inject(UsersClient);
+  private router = inject(Router);
   protected isLoading = new BehaviorSubject(false);
   protected isLoadingThread = new BehaviorSubject(false);
   protected threads: MessageDto[] = [];
@@ -55,16 +52,16 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   protected threadResponderId: BehaviorSubject<number> =
     new BehaviorSubject<number>(0);
   protected newMessage: FormControl<string> = new FormControl<string>('');
+  protected searchedUsername: FormControl<string> = new FormControl<string>('');
+  protected listOfUsers: MemberDto[] = [];
 
   public async ngOnInit() {
     await this.loadComponent();
-  }
-
-  public ngAfterViewChecked(): void {
-    if (this.scrollContainer) {
-      this.scrollContainer.nativeElement.scrollTop =
-        this.scrollContainer.nativeElement.scrollHeight;
-    }
+    this.searchedUsername.valueChanges.pipe(debounceTime(500)).subscribe(() => {
+      this.isLoading.next(true);
+      this.loadUsers();
+      this.isLoading.next(false);
+    });
   }
 
   protected async loadComponent() {
@@ -141,6 +138,30 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  protected async beginNewThread(newResponder: MemberDto) {
+    this.isLoadingThread.next(true);
+    this.searchedUsername.setValue('');
+    this.threadResponderPhotoUrl.next(newResponder.profilePhotoUrl);
+    this.threadResponderUsername.next(newResponder.username);
+    this.threadResponderId.next(newResponder.id);
+
+    const result = await firstValueFrom(
+      this.messageClient.getMessageThread(newResponder.id)
+    );
+
+    this.currentThread.next(result);
+    this.isLoadingThread.next(false);
+  }
+
+  protected async loadUsers() {
+    this.isLoading.next(true);
+    const listOfUsers = await firstValueFrom(
+      this.usersClient.getUsers(this.searchedUsername.value)
+    );
+    this.listOfUsers = listOfUsers.items;
+    this.isLoading.next(false);
+  }
+
   protected isToday(date: Date): boolean {
     const today = new Date();
     const messageDate = new Date(date);
@@ -150,5 +171,9 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       today.getMonth() === messageDate.getMonth() &&
       today.getFullYear() === messageDate.getFullYear()
     );
+  }
+
+  protected navigateToUserProfile(userId: number) {
+    this.router.navigateByUrl('/user-profile/' + userId);
   }
 }
