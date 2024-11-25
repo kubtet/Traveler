@@ -103,6 +103,7 @@ export class MessagesComponent implements OnInit {
       return;
     }
     this.isLoadingThread.next(true);
+    this.loadAllThreads();
     const result = await firstValueFrom(
       this.messageClient.getMessageThread(responderId)
     );
