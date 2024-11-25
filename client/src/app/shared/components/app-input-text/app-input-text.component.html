@@ -4,6 +4,8 @@
   >
   <ng-container *ngIf="isPassword; else simpleInput">
     <p-password
+      type="password"
+      autocomplete="new-password"
       [formControl]="control"
       [feedback]="false"
       [toggleMask]="true"
@@ -14,6 +16,7 @@
     <ng-container *ngIf="control; else template">
       <input
         type="text"
+        autocomplete="off"
         [attr.disabled]="disabled"
         [class]="inputClass"
         [class.p-inputtext-lg]="size === 'large'"
@@ -35,6 +38,7 @@
     <ng-template #template>
       <input
         type="text"
+        autocomplete="off"
         [class]="inputClass"
         [class.p-inputtext-lg]="size === 'large'"
         [class.p-inputtext-sm]="size === 'small'"
