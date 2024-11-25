@@ -1063,9 +1063,255 @@ export class CountryClient implements ICountryClient {
     }
 }
 
+export interface IMessagesClient {
+    createMessage(createMessageDto: CreateMessageDto): Observable<MessageDto>;
+    getMessagesForUser(userId?: number | null | undefined, container?: string | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMessageDto>;
+    getMessageThread(userId: number): Observable<MessageDto[]>;
+    getAllMessageThreads(): Observable<MessageDto[]>;
+}
+
+@Injectable()
+export class MessagesClient implements IMessagesClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    createMessage(createMessageDto: CreateMessageDto): Observable<MessageDto> {
+        let url_ = this.baseUrl + "/api/Messages";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(createMessageDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateMessage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateMessage(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MessageDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MessageDto>;
+        }));
+    }
+
+    protected processCreateMessage(response: HttpResponseBase): Observable<MessageDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MessageDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getMessagesForUser(userId?: number | null | undefined, container?: string | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMessageDto> {
+        let url_ = this.baseUrl + "/api/Messages?";
+        if (userId !== undefined && userId !== null)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+        if (container === null)
+            throw new Error("The parameter 'container' cannot be null.");
+        else if (container !== undefined)
+            url_ += "Container=" + encodeURIComponent("" + container) + "&";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMessagesForUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMessagesForUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedResponseOfMessageDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedResponseOfMessageDto>;
+        }));
+    }
+
+    protected processGetMessagesForUser(response: HttpResponseBase): Observable<PaginatedResponseOfMessageDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedResponseOfMessageDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getMessageThread(userId: number): Observable<MessageDto[]> {
+        let url_ = this.baseUrl + "/api/Messages/thread/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMessageThread(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMessageThread(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MessageDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MessageDto[]>;
+        }));
+    }
+
+    protected processGetMessageThread(response: HttpResponseBase): Observable<MessageDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MessageDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getAllMessageThreads(): Observable<MessageDto[]> {
+        let url_ = this.baseUrl + "/api/Messages/threads";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllMessageThreads(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllMessageThreads(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MessageDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MessageDto[]>;
+        }));
+    }
+
+    protected processGetAllMessageThreads(response: HttpResponseBase): Observable<MessageDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MessageDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface ITravelClient {
-    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined): Observable<PaginatedResponseOfTravelDto>;
-    getTravelsByUserId(id: number, pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined): Observable<PaginatedResponseOfTravelDto>;
+    getAllTravels(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
+    getTravelsByUserId(id: number, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
     getTravelDetails(id: number): Observable<TravelDetailDto>;
     createTravel(createTravelDto: CreateTravelDto): Observable<number>;
     removeTravel(id: number): Observable<FileResponse>;
@@ -1083,8 +1329,14 @@ export class TravelClient implements ITravelClient {
         this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
-    getAllTravels(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined): Observable<PaginatedResponseOfTravelDto> {
+    getAllTravels(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto> {
         let url_ = this.baseUrl + "/api/Travel?";
+        if (username !== undefined && username !== null)
+            url_ += "Username=" + encodeURIComponent("" + username) + "&";
+        if (currentUserId !== undefined && currentUserId !== null)
+            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
+        if (userId !== undefined && userId !== null)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
         else if (pageNumber !== undefined)
@@ -1093,12 +1345,6 @@ export class TravelClient implements ITravelClient {
             throw new Error("The parameter 'pageSize' cannot be null.");
         else if (pageSize !== undefined)
             url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
-        if (username !== undefined && username !== null)
-            url_ += "Username=" + encodeURIComponent("" + username) + "&";
-        if (currentUserId !== undefined && currentUserId !== null)
-            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
-        if (userId !== undefined && userId !== null)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1145,11 +1391,17 @@ export class TravelClient implements ITravelClient {
         return _observableOf(null as any);
     }
 
-    getTravelsByUserId(id: number, pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined): Observable<PaginatedResponseOfTravelDto> {
+    getTravelsByUserId(id: number, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto> {
         let url_ = this.baseUrl + "/api/Travel/user/{id}?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (username !== undefined && username !== null)
+            url_ += "Username=" + encodeURIComponent("" + username) + "&";
+        if (currentUserId !== undefined && currentUserId !== null)
+            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
+        if (userId !== undefined && userId !== null)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
         else if (pageNumber !== undefined)
@@ -1158,12 +1410,6 @@ export class TravelClient implements ITravelClient {
             throw new Error("The parameter 'pageSize' cannot be null.");
         else if (pageSize !== undefined)
             url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
-        if (username !== undefined && username !== null)
-            url_ += "Username=" + encodeURIComponent("" + username) + "&";
-        if (currentUserId !== undefined && currentUserId !== null)
-            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
-        if (userId !== undefined && userId !== null)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1431,7 +1677,7 @@ export class TravelClient implements ITravelClient {
 }
 
 export interface IUsersClient {
-    getUsers(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined): Observable<PaginatedResponseOfMemberDto>;
+    getUsers(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMemberDto>;
     getUserById(id: number): Observable<MemberDto>;
     getUserByUsername(username: string): Observable<MemberDto>;
     updateUser(updateUserDto: UpdateUserDto): Observable<FileResponse>;
@@ -1450,8 +1696,14 @@ export class UsersClient implements IUsersClient {
         this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
-    getUsers(pageNumber?: number | undefined, pageSize?: number | undefined, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined): Observable<PaginatedResponseOfMemberDto> {
+    getUsers(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMemberDto> {
         let url_ = this.baseUrl + "/api/Users?";
+        if (username !== undefined && username !== null)
+            url_ += "Username=" + encodeURIComponent("" + username) + "&";
+        if (currentUserId !== undefined && currentUserId !== null)
+            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
+        if (userId !== undefined && userId !== null)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
         else if (pageNumber !== undefined)
@@ -1460,12 +1712,6 @@ export class UsersClient implements IUsersClient {
             throw new Error("The parameter 'pageSize' cannot be null.");
         else if (pageSize !== undefined)
             url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
-        if (username !== undefined && username !== null)
-            url_ += "Username=" + encodeURIComponent("" + username) + "&";
-        if (currentUserId !== undefined && currentUserId !== null)
-            url_ += "CurrentUserId=" + encodeURIComponent("" + currentUserId) + "&";
-        if (userId !== undefined && userId !== null)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2149,6 +2395,8 @@ export class User implements IUser {
     followers?: Follow[];
     following?: Follow[];
     likedTravels?: TravelLike[];
+    messagesSent?: Message[];
+    messagesReceived?: Message[];
 
     constructor(data?: IUser) {
         if (data) {
@@ -2192,6 +2440,16 @@ export class User implements IUser {
                 this.likedTravels = [] as any;
                 for (let item of _data["likedTravels"])
                     this.likedTravels!.push(TravelLike.fromJS(item));
+            }
+            if (Array.isArray(_data["messagesSent"])) {
+                this.messagesSent = [] as any;
+                for (let item of _data["messagesSent"])
+                    this.messagesSent!.push(Message.fromJS(item));
+            }
+            if (Array.isArray(_data["messagesReceived"])) {
+                this.messagesReceived = [] as any;
+                for (let item of _data["messagesReceived"])
+                    this.messagesReceived!.push(Message.fromJS(item));
             }
         }
     }
@@ -2237,6 +2495,16 @@ export class User implements IUser {
             for (let item of this.likedTravels)
                 data["likedTravels"].push(item.toJSON());
         }
+        if (Array.isArray(this.messagesSent)) {
+            data["messagesSent"] = [];
+            for (let item of this.messagesSent)
+                data["messagesSent"].push(item.toJSON());
+        }
+        if (Array.isArray(this.messagesReceived)) {
+            data["messagesReceived"] = [];
+            for (let item of this.messagesReceived)
+                data["messagesReceived"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -2258,6 +2526,8 @@ export interface IUser {
     followers?: Follow[];
     following?: Follow[];
     likedTravels?: TravelLike[];
+    messagesSent?: Message[];
+    messagesReceived?: Message[];
 }
 
 export class Photo implements IPhoto {
@@ -2528,6 +2798,86 @@ export interface IFollow {
     createdAt?: Date;
 }
 
+export class Message implements IMessage {
+    id?: number;
+    senderUsername?: string;
+    recipientUsername?: string;
+    content?: string;
+    dateRead?: Date | undefined;
+    messageSent?: Date;
+    senderDeleted?: boolean;
+    recipientDeleted?: boolean;
+    senderId?: number;
+    sender?: User;
+    recipientId?: number;
+    recipient?: User;
+
+    constructor(data?: IMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.senderUsername = _data["senderUsername"];
+            this.recipientUsername = _data["recipientUsername"];
+            this.content = _data["content"];
+            this.dateRead = _data["dateRead"] ? new Date(_data["dateRead"].toString()) : <any>undefined;
+            this.messageSent = _data["messageSent"] ? new Date(_data["messageSent"].toString()) : <any>undefined;
+            this.senderDeleted = _data["senderDeleted"];
+            this.recipientDeleted = _data["recipientDeleted"];
+            this.senderId = _data["senderId"];
+            this.sender = _data["sender"] ? User.fromJS(_data["sender"]) : <any>undefined;
+            this.recipientId = _data["recipientId"];
+            this.recipient = _data["recipient"] ? User.fromJS(_data["recipient"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Message {
+        data = typeof data === 'object' ? data : {};
+        let result = new Message();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["senderUsername"] = this.senderUsername;
+        data["recipientUsername"] = this.recipientUsername;
+        data["content"] = this.content;
+        data["dateRead"] = this.dateRead ? this.dateRead.toISOString() : <any>undefined;
+        data["messageSent"] = this.messageSent ? this.messageSent.toISOString() : <any>undefined;
+        data["senderDeleted"] = this.senderDeleted;
+        data["recipientDeleted"] = this.recipientDeleted;
+        data["senderId"] = this.senderId;
+        data["sender"] = this.sender ? this.sender.toJSON() : <any>undefined;
+        data["recipientId"] = this.recipientId;
+        data["recipient"] = this.recipient ? this.recipient.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMessage {
+    id?: number;
+    senderUsername?: string;
+    recipientUsername?: string;
+    content?: string;
+    dateRead?: Date | undefined;
+    messageSent?: Date;
+    senderDeleted?: boolean;
+    recipientDeleted?: boolean;
+    senderId?: number;
+    sender?: User;
+    recipientId?: number;
+    recipient?: User;
+}
+
 export class Country implements ICountry {
     id?: number;
     name?: string;
@@ -2570,6 +2920,178 @@ export interface ICountry {
     id?: number;
     name?: string;
     iso2?: string;
+}
+
+export class MessageDto implements IMessageDto {
+    id?: number;
+    senderId?: number;
+    senderUsername?: string;
+    senderPhotoUrl?: string;
+    recipientId?: number;
+    recipientUsername?: string;
+    recipientPhotoUrl?: string;
+    content?: string;
+    dateRead?: Date | undefined;
+    messageSent?: Date;
+
+    constructor(data?: IMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.senderId = _data["senderId"];
+            this.senderUsername = _data["senderUsername"];
+            this.senderPhotoUrl = _data["senderPhotoUrl"];
+            this.recipientId = _data["recipientId"];
+            this.recipientUsername = _data["recipientUsername"];
+            this.recipientPhotoUrl = _data["recipientPhotoUrl"];
+            this.content = _data["content"];
+            this.dateRead = _data["dateRead"] ? new Date(_data["dateRead"].toString()) : <any>undefined;
+            this.messageSent = _data["messageSent"] ? new Date(_data["messageSent"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MessageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["senderId"] = this.senderId;
+        data["senderUsername"] = this.senderUsername;
+        data["senderPhotoUrl"] = this.senderPhotoUrl;
+        data["recipientId"] = this.recipientId;
+        data["recipientUsername"] = this.recipientUsername;
+        data["recipientPhotoUrl"] = this.recipientPhotoUrl;
+        data["content"] = this.content;
+        data["dateRead"] = this.dateRead ? this.dateRead.toISOString() : <any>undefined;
+        data["messageSent"] = this.messageSent ? this.messageSent.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMessageDto {
+    id?: number;
+    senderId?: number;
+    senderUsername?: string;
+    senderPhotoUrl?: string;
+    recipientId?: number;
+    recipientUsername?: string;
+    recipientPhotoUrl?: string;
+    content?: string;
+    dateRead?: Date | undefined;
+    messageSent?: Date;
+}
+
+export class CreateMessageDto implements ICreateMessageDto {
+    content?: string;
+    recipientId?: number;
+
+    constructor(data?: ICreateMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.content = _data["content"];
+            this.recipientId = _data["recipientId"];
+        }
+    }
+
+    static fromJS(data: any): CreateMessageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateMessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["recipientId"] = this.recipientId;
+        return data;
+    }
+}
+
+export interface ICreateMessageDto {
+    content?: string;
+    recipientId?: number;
+}
+
+export class PaginatedResponseOfMessageDto implements IPaginatedResponseOfMessageDto {
+    items?: MessageDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
+
+    constructor(data?: IPaginatedResponseOfMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(MessageDto.fromJS(item));
+            }
+            this.currentPage = _data["currentPage"];
+            this.totalPages = _data["totalPages"];
+            this.pageSize = _data["pageSize"];
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedResponseOfMessageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResponseOfMessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["currentPage"] = this.currentPage;
+        data["totalPages"] = this.totalPages;
+        data["pageSize"] = this.pageSize;
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+}
+
+export interface IPaginatedResponseOfMessageDto {
+    items?: MessageDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
 }
 
 export class PaginatedResponseOfTravelDto implements IPaginatedResponseOfTravelDto {

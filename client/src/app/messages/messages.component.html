@@ -1,0 +1,213 @@
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
+
+@if ((isLoading | async) === false) {
+<div class="flex flex-column md:flex-row gap-5" style="min-height: 81vh">
+  <div class="md:w-25rem card p-0">
+    <div
+      class="flex flex-column align-items-center border-bottom-1 surface-border p-6"
+    >
+      <img
+        [src]="
+          user.profilePhotoUrl === '' || user.profilePhotoUrl === null
+            ? '../../assets/defaultProfilePicture.jfif'
+            : user.profilePhotoUrl
+        "
+        class="w-6rem h-6rem border-circle shadow-4"
+      /><span class="text-900 text-xl font-semibold mt-4">{{
+        user.username
+      }}</span>
+    </div>
+    <div class="w-full flex row-gap-4 flex-column surface-border p-4">
+      <span class="p-fluid">
+        <p-autoComplete
+          placeholder="Search"
+          [formControl]="searchedUsername"
+          [suggestions]="listOfUsers"
+          optionLabel="username"
+          (onSelect)="beginNewThread($event.value)"
+        />
+      </span>
+      <div
+        class="flex flex-row gap-4 md:flex-column overflow-auto"
+        style="max-height: 53vh"
+      >
+        @for(thread of threads; track thread) {
+        <div
+          tabindex="0"
+          class="flex flex-nowrap justify-content-between align-items-center border-1 surface-border border-round p-3 cursor-pointer select-none hover:surface-hover transition-colors transition-duration-150"
+          [ngClass]="{
+            'highlight-notification':
+              !thread.dateRead && user.id === thread.recipientId
+          }"
+          (click)="
+            thread.senderId === user.id
+              ? loadThread(thread.recipientId)
+              : loadThread(thread.senderId)
+          "
+        >
+          @if(!thread.dateRead && user.id === thread.recipientId) {
+          <div class="notification-indicator"></div>
+          }
+          <div class="flex align-items-center">
+            <div class="relative md:mr-3">
+              <img
+                class="w-3rem h-3rem border-circle shadow-4"
+                [src]="
+                  thread.senderId === user.id
+                    ? thread.recipientPhotoUrl === '' ||
+                      thread.recipientPhotoUrl === null
+                      ? '../../assets/defaultProfilePicture.jfif'
+                      : thread.recipientPhotoUrl
+                    : thread.senderPhotoUrl === '' ||
+                      thread.senderPhotoUrl === null
+                    ? '../../assets/defaultProfilePicture.jfif'
+                    : thread.senderPhotoUrl
+                "
+              />
+            </div>
+            <div class="flex-column hidden md:flex">
+              <span class="text-900 font-semibold block">{{
+                thread.senderId === user.id
+                  ? thread.recipientUsername
+                  : thread.senderUsername
+              }}</span>
+
+              <span
+                class="block text-600 text-overflow-ellipsis overflow-hidden white-space-nowrap w-10rem text-sm"
+                >@if (thread.senderId === user.id) { You: {{ thread.content }} }
+                @else {{{ thread.content }}}</span
+              >
+            </div>
+          </div>
+          <span class="text-700 font-semibold ml-auto hidden md:inline">{{
+            isToday(thread.messageSent)
+              ? (thread.messageSent | date : "HH:mm")
+              : (thread.messageSent | date : "dd.MM.yyyy")
+          }}</span>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  <div class="flex-1 card p-0">
+    <app-loading
+      [isLoading]="isLoadingThread | async"
+      [isOverlay]="true"
+    ></app-loading>
+    <div class="flex flex-column h-full">
+      <div
+        class="flex align-items-center border-bottom-1 surface-border p-3 lg:p-6"
+      >
+        @if (currentThread.value !== null) {
+        <div class="relative flex align-items-center mr-3">
+          <img
+            class="w-4rem h-4rem border-circle shadow-4 cursor-pointer"
+            [src]="
+              threadResponderPhotoUrl.value === '' ||
+              threadResponderPhotoUrl.value === null
+                ? '../../assets/defaultProfilePicture.jfif'
+                : threadResponderPhotoUrl.value
+            "
+            (click)="navigateToUserProfile(threadResponderId.value)"
+          />
+        </div>
+        }
+        <div class="mr-2">
+          <span class="text-900 font-semibold block">{{
+            threadResponderUsername.value
+          }}</span>
+        </div>
+      </div>
+      @if (currentThread.value.length === 0) {
+      <p>No messages yet</p>
+      } @else {
+      <div
+        #scrollMe
+        [scrollTop]="scrollMe.scrollHeight"
+        class="p-3 md:px-4 lg:px-6 lg:py-4 mt-2 overflow-y-auto"
+        style="max-height: 53vh"
+      >
+        @for (message of currentThread.value; track message.id) { @if
+        (message.recipientId === user.id) {
+        <div class="ng-star-inserted">
+          <div class="grid grid-nogutter mb-4 ng-star-inserted">
+            <div class="mr-3 mt-1">
+              <img
+                [alt]="message.senderUsername"
+                class="w-3rem h-3rem border-circle shadow-4"
+                [src]="
+                  message.senderPhotoUrl === '' ||
+                  message.senderPhotoUrl === null
+                    ? '../../assets/defaultProfilePicture.jfif'
+                    : message.senderPhotoUrl
+                "
+              />
+            </div>
+            <div class="col mt-3">
+              <p class="text-900 font-semibold mb-3">
+                {{ message.senderUsername }}
+              </p>
+              <span
+                class="text-700 inline-block font-medium border-1 surface-border p-3 white-space-normal border-round"
+                style="word-break: break-word; max-width: 80%"
+                >{{ message.content }}</span
+              >
+              <p class="text-700 mt-3">
+                {{
+                  isToday(message.messageSent)
+                    ? (message.messageSent | date : "HH:mm")
+                    : (message.messageSent | date : "dd.MM.yyyy")
+                }}@if(message.dateRead) {
+                <i class="pi pi-check ml-2 text-green-400"></i>
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+        } @else {
+        <div class="ng-star-inserted">
+          <div class="grid grid-nogutter mb-4 ng-star-inserted">
+            <div class="col mt-3 text-right">
+              <span
+                class="inline-block text-left font-medium border-1 surface-border bg-primary-100 text-primary-900 p-3 white-space-normal border-round"
+                style="word-break: break-word; max-width: 80%"
+                >{{ message.content }}</span
+              >
+              <p class="text-700 mt-3">
+                {{
+                  isToday(message.messageSent)
+                    ? (message.messageSent | date : "HH:mm")
+                    : (message.messageSent | date : "dd.MM.yyyy")
+                }}
+                @if(message.dateRead) {
+                <i class="pi pi-check ml-2 text-green-400"></i>
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+        } }
+      </div>
+      }
+      <div
+        class="p-3 md:p-4 lg:p-6 flex flex-column sm:flex-row align-items-center mt-auto border-top-1 surface-border gap-3"
+      >
+        <app-input-text
+          class="flex-1"
+          [control]="newMessage"
+          placeholder="Type a message"
+          (enterPressed)="sendMessage()"
+        ></app-input-text>
+        <div class="flex w-full sm:w-auto gap-3">
+          <app-button
+            label="Send"
+            icon="pi pi-send"
+            [disabled]="newMessage.value === '' || newMessage.value === null"
+            (onClick)="sendMessage()"
+          ></app-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}

@@ -22,21 +22,19 @@ public class MappingProfiles : Profile
                     Username = f.FollowedUser.UserName,
                     ProfilePhoto = f.FollowedUser.ProfilePhoto != null ? f.FollowedUser.ProfilePhoto.Url : null,
                 }).ToList()));
-
         CreateMap<Travel, TravelDto>()
             .ForMember(d => d.PhotoUrls, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()));
-
         CreateMap<Travel, TravelDetailDto>()
             .ForMember(d => d.Username, opt => opt.MapFrom(src => src.User.UserName))
             .ForMember(d => d.DateOfBirth, opt => opt.MapFrom(src => src.User.DateOfBirth))
             .ForMember(d => d.ProfilePicture, opt => opt.MapFrom(src => src.User.ProfilePhoto != null ? src.User.ProfilePhoto.Url : null))
             .ForMember(d => d.PhotoUrls, o => o.MapFrom(s => s.Photos.Select(p => p.Url).ToList()));
-
-
         CreateMap<Photo, PhotoDto>();
-        CreateMap<Place, PlaceDto>();
         CreateMap<UpdateUserDto, User>();
         CreateMap<CreateTravelDto, Travel>()
             .ForMember(d => d.CreatedAt, opt => opt.MapFrom(x => DateTime.Now));
+        CreateMap<Message, MessageDto>()
+            .ForMember(d => d.SenderPhotoUrl, o => o.MapFrom(s => s.Sender.ProfilePhoto != null ? s.Sender.ProfilePhoto.Url : null))
+            .ForMember(d => d.RecipientPhotoUrl, o => o.MapFrom(s => s.Recipient.ProfilePhoto != null ? s.Recipient.ProfilePhoto.Url : null));
     }
 }

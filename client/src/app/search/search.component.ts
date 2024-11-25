@@ -45,9 +45,11 @@ export class SearchComponent {
     this.isLoading.next(true);
     const listOfUsers = await firstValueFrom(
       this.usersClient.getUsers(
+        this.searchedUsername.value,
+        null,
+        null,
         this.pageNumber,
-        this.pageSize,
-        this.searchedUsername.value
+        this.pageSize
       )
     );
     this.users = listOfUsers;
@@ -55,7 +57,6 @@ export class SearchComponent {
   }
 
   protected navigateToUserProfile(userId: number) {
-    console.log(userId);
     this.router.navigateByUrl('/user-profile/' + userId);
   }
 

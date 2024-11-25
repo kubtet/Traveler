@@ -5,19 +5,17 @@ namespace API.Data;
 
 public class DataContext(DbContextOptions options) : DbContext(options)
 {
-    public DbSet<Country> Countries { get; set; }
-    public DbSet<Follow> Follows { get; set; }
-    public DbSet<TravelLike> TravelLikes { get; set; }
-    public DbSet<Photo> Photos { get; set; } // Maybe unnecessary
-    public DbSet<Place> Places { get; set; }
-    public DbSet<Travel> Travels { get; set; }
-    public DbSet<TravelPlace> TravelPlaces { get; set; }
-    public DbSet<User> Users { get; set; }
-
-    public DbSet<TravelLike> Likes { get; set; }
+    public required DbSet<Country> Countries { get; set; }
+    public required DbSet<Follow> Follows { get; set; }
+    public required DbSet<TravelLike> TravelLikes { get; set; }
+    public required DbSet<Travel> Travels { get; set; }
+    public required DbSet<User> Users { get; set; }
+    public required DbSet<TravelLike> Likes { get; set; }
+    public required DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Follow>()
             .HasKey(f => new { f.SourceUserId, f.FollowedUserId });
@@ -49,12 +47,14 @@ public class DataContext(DbContextOptions options) : DbContext(options)
             .HasForeignKey(f => f.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Message>()
+            .HasOne(x => x.Recipient)
+            .WithMany(x => x.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);
 
-
-
-        modelBuilder.Entity<TravelPlace>()
-            .HasKey(tp => new { tp.TravelId, tp.PlaceId });
+        modelBuilder.Entity<Message>()
+            .HasOne(x => x.Sender)
+            .WithMany(x => x.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
     }
-
-
 }

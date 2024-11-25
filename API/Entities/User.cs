@@ -16,9 +16,11 @@ public class User
     public required DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
     // relationships
-    public List<Travel> Travels { get; set; } = new List<Travel>();
-    public List<Follow> Followers { get; set; } = new List<Follow>(); // followed by 
-    public List<Follow> Following { get; set; } = new List<Follow>(); // followed
-
+    public List<Travel> Travels { get; set; } = [];
+    public List<Follow> Followers { get; set; } = []; // followed by 
+    public List<Follow> Following { get; set; } = []; // followed
     public List<TravelLike> LikedTravels { get; set; } = [];
+    public List<Message> MessagesSent { get; set; } = [];
+    public List<Message> MessagesReceived { get; set; } = [];
+
 }
