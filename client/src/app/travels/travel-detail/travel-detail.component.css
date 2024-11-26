@@ -11,7 +11,6 @@
   margin: 20px;
 }
 
-/* Domyślnie układ na dwa kolumny */
 .two-column-layout {
   display: flex;
   gap: 3rem;
@@ -28,7 +27,7 @@
   justify-content: center;
 }
 
-/* Przełączenie na jedną kolumnę przy mniejszych ekranach */
+/* one column with bigger screens */
 @media (max-width: 768px) {
   .two-column-layout {
     flex-direction: column;
@@ -41,4 +40,53 @@
 
 .pointer {
   cursor: pointer;
+}
+
+.likes-section {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.custom-back-arrow {
+  position: absolute;
+  top: 9.5rem;
+  left: 1.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+.custom-like-icon {
+  font-size: 1.7rem;
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+.left-side-layout {
+  flex: 0 0 50%;
+}
+
+.right-side-layout {
+  flex: 0 0 40%;
+}
+
+.gallery-thumbnails-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.img-thumbnails-custom {
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.img-full-screen-custom {
+  width: 100%;
+  display: block;
 }

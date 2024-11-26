@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { ImageModule } from 'primeng/image';
 import {
+  AccountClient,
   FileParameter,
   MemberDto,
   UpdateUserDto,
@@ -20,6 +21,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
+import { uniqueUsernameValidator } from '../shared/validators/unique-username.validator';
 
 @Component({
   selector: 'app-settings',
@@ -45,11 +47,10 @@ export class SettingsComponent implements OnInit {
       $event.returnValue = true;
     }
   }
-
+  private accountClient = inject(AccountClient);
   private router = inject(Router);
   private accountService = inject(AccountService);
   private usersClient = inject(UsersClient);
-
   protected user: MemberDto;
   protected isLoading = new BehaviorSubject(false);
   protected previewProfilePhotoUrl: string | null = null;
@@ -58,10 +59,11 @@ export class SettingsComponent implements OnInit {
   protected unsavedChangesMessages: Message[] = [];
 
   public form = new FormGroup({
-    username: new FormControl<string>('', [
-      Validators.required,
-      Validators.maxLength(20),
-    ]),
+    username: new FormControl<string>(
+      '',
+      [Validators.required, Validators.maxLength(20)],
+      [uniqueUsernameValidator(this.accountClient)]
+    ),
     bio: new FormControl<string>('', [
       Validators.required,
       Validators.maxLength(200),
@@ -140,7 +142,6 @@ export class SettingsComponent implements OnInit {
       data: file,
       fileName: file.name,
     };
-    console.log('trying');
     try {
       const response = await firstValueFrom(
         this.usersClient.modifyProfilePicture(fileParam)
@@ -218,8 +219,7 @@ export class SettingsComponent implements OnInit {
         console.error('Error updating or deleting profile photo:', e);
       }
     }
-
-    // Reset the form state
+    
     this.form.reset({
       username: this.user.username,
       bio: this.user.bio,
@@ -237,6 +237,12 @@ export class SettingsComponent implements OnInit {
   }
 
   public onDiscardChanges() {
+    this.form.reset({
+      username: this.user.username,
+      bio: this.user.bio,
+    });
+    this.form.markAsPristine();
+    this.unsavedChangesMessages = [];
     this.router.navigateByUrl('/user-profile');
   }
 }

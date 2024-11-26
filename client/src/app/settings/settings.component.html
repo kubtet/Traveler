@@ -60,10 +60,15 @@
       <!-- username input validation -->
       @if(form.controls.username.invalid || form.controls.username.touched){
       <div>
-        @if(form.controls.bio.validator?.['required']){
-        <small class="error"> Bio is required. </small>
-        } @if(form.controls.bio.errors?.['maxlength']){
-        <small class="error"> Bio cannot be longer than 20 characters. </small>
+        @if(form.controls.username.errors?.['required']){
+        <small class="error"> Username is required. </small>
+        } @if(form.controls.username.errors?.['maxlength']){
+        <small class="error">
+          Username cannot be longer than 20 characters.
+        </small>
+        } @if(form.controls.username.errors?.['usernameTaken'] &&
+        form.controls.username.value != this.user.username){
+        <small class="error"> Username is already taken. </small>
         }
       </div>
       }
@@ -78,7 +83,11 @@
   </div>
   <div class="button-container buttons-decision">
     <app-button
-      [disabled]="!form.dirty"
+      [disabled]="
+        !form.dirty ||
+        (form.controls.username.invalid &&
+          form.controls.username.value !== user.username)
+      "
       label="Save"
       [rounded]="true"
       size="large"

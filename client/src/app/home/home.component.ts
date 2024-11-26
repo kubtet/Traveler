@@ -8,6 +8,7 @@ import { AppLoadingComponent } from '../shared/components/app-loading/app-loadin
 import { TravelCardComponent } from '../travels/travel-card/travel-card.component';
 import { Router } from '@angular/router';
 import { PaginatorModule } from 'primeng/paginator';
+import { PageUrl } from '../enums/PageUrl';
 
 @Component({
   selector: 'app-home',
@@ -67,7 +68,9 @@ export class HomeComponent {
   }
 
   protected navigateToTravelDetails(travelId: number) {
-    this.router.navigateByUrl('/travel/' + travelId);
+    this.router.navigateByUrl('/travel/' + travelId, {
+      state: { from: PageUrl.HOME },
+    });
   }
 
   protected async onPageChange(event: any) {

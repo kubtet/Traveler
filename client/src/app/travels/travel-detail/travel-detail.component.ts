@@ -18,6 +18,11 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+import { UserListModalComponent } from '../../modals/user-list-modal/user-list-modal.component';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AppButtonComponent } from "../../shared/components/app-button/app-button.component";
 
 @Component({
   selector: 'app-travel-detail',
@@ -30,14 +35,23 @@ import { ToastModule } from 'primeng/toast';
     GalleriaModule,
     SpeedDialModule,
     ToastModule,
+    AvatarModule,
+    AvatarGroupModule,
+    AppButtonComponent
+],
+  providers: [
+    DialogService,
+    MessageService,
+    ConfirmationService,
+    MessageService,
   ],
   templateUrl: './travel-detail.component.html',
   styleUrl: './travel-detail.component.css',
-  providers: [ConfirmationService, MessageService],
 })
 export class TravelDetailComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
+  private dialogService = inject(DialogService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private photoService = inject(PhotoService);
@@ -46,6 +60,8 @@ export class TravelDetailComponent implements OnInit {
   private likeService = inject(LikesClient);
   protected accountService = inject(AccountService);
   protected photos: PhotoModel[] = [];
+  protected activeIndex: number = 0;
+  protected displayCustom: boolean | undefined;
   protected travel: TravelDetailDto;
   protected travelId: number;
   protected creator: MemberDto = new MemberDto();
@@ -56,6 +72,18 @@ export class TravelDetailComponent implements OnInit {
   protected isLiked: boolean;
   protected numberOfLikes: number;
   protected items: MenuItem[] = [];
+  protected likedBy: MemberDto[];
+  protected ref: DynamicDialogRef;
+
+  imageClick(index: number) {
+    this.activeIndex = index;
+    this.displayCustom = true;
+  }
+
+  goBack() {
+    const previousUrl = history?.state?.from;
+    this.router.navigateByUrl(previousUrl);
+  }
 
   protected async toggleLike() {
     this.isLoading.next(true);
@@ -66,7 +94,23 @@ export class TravelDetailComponent implements OnInit {
     this.numberOfLikes = await firstValueFrom(
       this.likeService.getLikeCountForTravel(this.travelId)
     );
+    this.likedBy = await firstValueFrom(
+      this.likeService.getUsersWhoLikedTravel(this.travelId)
+    );
     this.isLoading.next(false);
+  }
+
+  async openUserListModal() {
+    this.isLoading.next(true);
+    this.likedBy = await firstValueFrom(
+      this.likeService.getUsersWhoLikedTravel(this.travelId)
+    );
+    this.isLoading.next(false);
+    this.ref = this.dialogService.open(UserListModalComponent, {
+      header: 'Users who liked this post',
+      width: '50%',
+      data: { usersToDisplay: this.likedBy },
+    });
   }
 
   public async ngOnInit() {
@@ -102,6 +146,10 @@ export class TravelDetailComponent implements OnInit {
 
     this.isLiked = await firstValueFrom(
       this.likeService.isTravelLikedByUser(this.travelId)
+    );
+
+    this.likedBy = await firstValueFrom(
+      this.likeService.getUsersWhoLikedTravel(this.travelId)
     );
 
     this.isLoading.next(false);
