@@ -88,10 +88,6 @@ export class MessagesComponent implements OnInit {
 
     if (messageThreads !== null && messageThreads.length !== 0) {
       this.threads = messageThreads;
-
-      messageThreads[0].senderId === this.user.id
-        ? this.loadThread(messageThreads[0].recipientId)
-        : this.loadThread(messageThreads[0].senderId);
     }
   }
 
