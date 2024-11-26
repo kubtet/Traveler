@@ -32,8 +32,6 @@ export class LoginComponent {
       this.accountClient.login(input)
     );
 
-    console.log(result);
-
     if (result) {
       this.accountService.setUser(result);
       this.router.navigateByUrl('/');

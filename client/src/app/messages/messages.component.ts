@@ -88,10 +88,6 @@ export class MessagesComponent implements OnInit {
 
     if (messageThreads !== null && messageThreads.length !== 0) {
       this.threads = messageThreads;
-
-      messageThreads[0].senderId === this.user.id
-        ? this.loadThread(messageThreads[0].recipientId)
-        : this.loadThread(messageThreads[0].senderId);
     }
   }
 
@@ -103,6 +99,7 @@ export class MessagesComponent implements OnInit {
       return;
     }
     this.isLoadingThread.next(true);
+    this.loadAllThreads();
     const result = await firstValueFrom(
       this.messageClient.getMessageThread(responderId)
     );

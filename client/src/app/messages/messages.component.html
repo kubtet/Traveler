@@ -36,7 +36,7 @@
           tabindex="0"
           class="flex flex-nowrap justify-content-between align-items-center border-1 surface-border border-round p-3 cursor-pointer select-none hover:surface-hover transition-colors transition-duration-150"
           [ngClass]="{
-            'highlight-notification':
+            'font-bold border-3':
               !thread.dateRead && user.id === thread.recipientId
           }"
           (click)="
@@ -45,9 +45,6 @@
               : loadThread(thread.senderId)
           "
         >
-          @if(!thread.dateRead && user.id === thread.recipientId) {
-          <div class="notification-indicator"></div>
-          }
           <div class="flex align-items-center">
             <div class="relative md:mr-3">
               <img
@@ -66,7 +63,7 @@
               />
             </div>
             <div class="flex-column hidden md:flex">
-              <span class="text-900 font-semibold block">{{
+              <span class="text-900 block">{{
                 thread.senderId === user.id
                   ? thread.recipientUsername
                   : thread.senderUsername
@@ -79,7 +76,7 @@
               >
             </div>
           </div>
-          <span class="text-700 font-semibold ml-auto hidden md:inline">{{
+          <span class="text-700 ml-auto hidden md:inline">{{
             isToday(thread.messageSent)
               ? (thread.messageSent | date : "HH:mm")
               : (thread.messageSent | date : "dd.MM.yyyy")
@@ -98,7 +95,7 @@
       <div
         class="flex align-items-center border-bottom-1 surface-border p-3 lg:p-6"
       >
-        @if (currentThread.value !== null) {
+        @if (threadResponderId.value !== 0) {
         <div class="relative flex align-items-center mr-3">
           <img
             class="w-4rem h-4rem border-circle shadow-4 cursor-pointer"
@@ -111,15 +108,22 @@
             (click)="navigateToUserProfile(threadResponderId.value)"
           />
         </div>
-        }
         <div class="mr-2">
           <span class="text-900 font-semibold block">{{
             threadResponderUsername.value
           }}</span>
         </div>
+        }
       </div>
-      @if (currentThread.value.length === 0) {
-      <p>No messages yet</p>
+      @if (currentThread.value.length === 0 && threadResponderId.value !== 0) {
+      <div class="icon-container p-0">
+        <i class="pi pi-comments" style="font-size: 160px"></i>
+      </div>
+      } @else if (currentThread.value.length === 0 && threadResponderId.value
+      === 0) {
+      <div class="icon-container">
+        <i class="pi pi-comments" style="font-size: 160px"></i>
+      </div>
       } @else {
       <div
         #scrollMe
@@ -188,7 +192,7 @@
         </div>
         } }
       </div>
-      }
+      } @if(threadResponderId.value !== 0) {
       <div
         class="p-3 md:p-4 lg:p-6 flex flex-column sm:flex-row align-items-center mt-auto border-top-1 surface-border gap-3"
       >
@@ -202,11 +206,12 @@
           <app-button
             label="Send"
             icon="pi pi-send"
-            [disabled]="newMessage.value === '' || newMessage.value === null"
+            [disabled]="newMessage.value?.trim() === ''"
             (onClick)="sendMessage()"
           ></app-button>
         </div>
       </div>
+      }
     </div>
   </div>
 </div>
