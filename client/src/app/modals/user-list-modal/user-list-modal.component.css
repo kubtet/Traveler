@@ -1,0 +1,18 @@
+.user-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: row;
+}
+.user-item {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.username {
+  font-weight: 600;
+  padding-left: 1rem;
+}

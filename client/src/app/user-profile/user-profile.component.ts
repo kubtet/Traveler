@@ -14,6 +14,13 @@ import { AppLoadingComponent } from '../shared/components/app-loading/app-loadin
 import { AsyncPipe } from '@angular/common';
 import { StatisticsComponent } from '../statistics/statistics.component';
 import { MapComponent } from '../map/map.component';
+import {
+  DialogService,
+  DynamicDialogModule,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
+import { UserListModalComponent } from '../modals/user-list-modal/user-list-modal.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -30,8 +37,10 @@ import { MapComponent } from '../map/map.component';
     AppLoadingComponent,
     StatisticsComponent,
     MapComponent,
+    DynamicDialogModule,
   ],
   templateUrl: './user-profile.component.html',
+  providers: [DialogService, MessageService],
   styleUrls: ['./user-profile.component.css'],
 })
 export class UserProfileComponent implements OnInit {
@@ -49,6 +58,17 @@ export class UserProfileComponent implements OnInit {
   protected numberOfFollowings: number;
   protected isFollowedByCurrent: boolean;
 
+  // User lists
+  protected followers: MemberDto[] = [];
+  protected followings: MemberDto[] = [];
+
+  constructor(
+    public dialogService: DialogService,
+    public messageService: MessageService
+  ) {}
+
+  ref: DynamicDialogRef;
+
   protected async toggleFollow() {
     this.isLoading.next(true);
 
@@ -60,6 +80,42 @@ export class UserProfileComponent implements OnInit {
       this.followsClient.isFollowedByCurrentStatus(this.user.id)
     );
     this.isLoading.next(false);
+  }
+
+  async showFollowersDialog() {
+    this.isLoading.next(true);
+    await this.loadFollowers();
+    this.isLoading.next(false);
+
+    this.ref = this.dialogService.open(UserListModalComponent, {
+      header: 'Followers',
+      width: '50%',
+      data: { usersToDisplay: this.followers },
+    });
+  }
+  protected async loadFollowers() {
+    const newFollowers = await firstValueFrom(
+      this.followsClient.getFollowers(this.userId)
+    );
+    this.followers = newFollowers;
+  }
+
+  protected async loadFollowing() {
+    const newFollowings = await firstValueFrom(
+      this.followsClient.getFollowing(this.userId)
+    );
+    this.followings = newFollowings;
+  }
+
+  async showFollowingDialog() {
+    this.isLoading.next(true);
+    await this.loadFollowing();
+    this.isLoading.next(false);
+    this.ref = this.dialogService.open(UserListModalComponent, {
+      header: 'Following',
+      width: '50%',
+      data: { usersToDisplay: this.followings },
+    });
   }
 
   async ngOnInit() {
@@ -105,6 +161,10 @@ export class UserProfileComponent implements OnInit {
 
   protected goToSettings() {
     this.router.navigateByUrl('/settings');
+  }
+
+  protected goToUserProfile(userId: number) {
+    this.router.navigateByUrl(`/user-profile/${userId}`);
   }
 
   protected logOut() {

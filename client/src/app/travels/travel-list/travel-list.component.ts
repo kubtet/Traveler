@@ -9,6 +9,7 @@ import { TravelCardComponent } from '../travel-card/travel-card.component';
 import { Router } from '@angular/router';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
+import { PageUrl } from '../../enums/PageUrl';
 
 @Component({
   selector: 'app-travels',
@@ -36,6 +37,9 @@ export class MyTravelsComponent implements OnInit {
   }
 
   protected navigateToTravelDetails(travelId: number) {
-    this.router.navigateByUrl('/travel/' + travelId);
+    const url = PageUrl.USER_PROFILE + this.user().id;
+    this.router.navigateByUrl('/travel/' + travelId, {
+      state: { from: url },
+    });
   }
 }

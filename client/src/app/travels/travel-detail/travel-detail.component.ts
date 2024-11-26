@@ -10,11 +10,15 @@ import {
   TravelDetailDto,
   UsersClient,
 } from '../../services/api';
-import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
 import { GalleriaModule } from 'primeng/galleria';
 import { PhotoModel } from '../../shared/models/photo.model';
 import { PhotoService } from '../../services/photo.service';
 import { AccountService } from '../../services/account.service';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+import { UserListModalComponent } from '../../modals/user-list-modal/user-list-modal.component';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-travel-detail',
@@ -22,31 +26,59 @@ import { AccountService } from '../../services/account.service';
   imports: [
     AppLoadingComponent,
     AsyncPipe,
-    AppButtonComponent,
     DatePipe,
     GalleriaModule,
+    AvatarModule,
+    AvatarGroupModule,
   ],
+  providers: [DialogService, MessageService],
   templateUrl: './travel-detail.component.html',
   styleUrl: './travel-detail.component.css',
 })
 export class TravelDetailComponent implements OnInit {
+  constructor(
+    public dialogService: DialogService,
+    public messageService: MessageService
+  ) {}
+
+  ref: DynamicDialogRef;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+
   private photoService = inject(PhotoService);
   private travelClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
   private likeService = inject(LikesClient);
   protected accountService = inject(AccountService);
+
   protected photos: PhotoModel[] = [];
+  protected activeIndex: number = 0;
+  protected displayCustom: boolean | undefined;
+
   protected travel: TravelDetailDto;
   protected travelId: number;
   protected creator: MemberDto = new MemberDto();
+
   protected user: MemberDto = new MemberDto();
   protected isOwnPost: boolean;
   protected isLikedByUser: boolean = false;
+
   protected isLoading = new BehaviorSubject(false);
+
   protected isLiked;
   protected numberOfLikes: number;
+  protected likedBy: MemberDto[];
+
+  imageClick(index: number) {
+    this.activeIndex = index;
+    this.displayCustom = true;
+  }
+
+  goBack() {
+    const previousUrl = history?.state?.from;
+    this.router.navigateByUrl(previousUrl);
+  }
 
   protected async toggleLike() {
     this.isLoading.next(true);
@@ -57,7 +89,23 @@ export class TravelDetailComponent implements OnInit {
     this.numberOfLikes = await firstValueFrom(
       this.likeService.getLikeCountForTravel(this.travelId)
     );
+    this.likedBy = await firstValueFrom(
+      this.likeService.getUsersWhoLikedTravel(this.travelId)
+    );
     this.isLoading.next(false);
+  }
+
+  async openUserListModal() {
+    this.isLoading.next(true);
+    this.likedBy = await firstValueFrom(
+      this.likeService.getUsersWhoLikedTravel(this.travelId)
+    );
+    this.isLoading.next(false);
+    this.ref = this.dialogService.open(UserListModalComponent, {
+      header: 'Users who liked this post',
+      width: '50%',
+      data: { usersToDisplay: this.likedBy },
+    });
   }
 
   public async ngOnInit() {
@@ -93,6 +141,10 @@ export class TravelDetailComponent implements OnInit {
 
     this.isLiked = await firstValueFrom(
       this.likeService.isTravelLikedByUser(this.travelId)
+    );
+
+    this.likedBy = await firstValueFrom(
+      this.likeService.getUsersWhoLikedTravel(this.travelId)
     );
 
     this.isLoading.next(false);

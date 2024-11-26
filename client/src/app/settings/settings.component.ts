@@ -142,7 +142,6 @@ export class SettingsComponent implements OnInit {
       data: file,
       fileName: file.name,
     };
-    console.log('trying');
     try {
       const response = await firstValueFrom(
         this.usersClient.modifyProfilePicture(fileParam)
