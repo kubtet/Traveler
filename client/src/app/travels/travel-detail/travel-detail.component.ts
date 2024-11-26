@@ -22,7 +22,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { UserListModalComponent } from '../../modals/user-list-modal/user-list-modal.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
+import { AppButtonComponent } from "../../shared/components/app-button/app-button.component";
 
 @Component({
   selector: 'app-travel-detail',
@@ -37,49 +37,43 @@ import { MessageService } from 'primeng/api';
     ToastModule,
     AvatarModule,
     AvatarGroupModule,
+    AppButtonComponent
+],
+  providers: [
+    DialogService,
+    MessageService,
+    ConfirmationService,
+    MessageService,
   ],
-  providers: [DialogService, MessageService],
   templateUrl: './travel-detail.component.html',
   styleUrl: './travel-detail.component.css',
-  providers: [ConfirmationService, MessageService],
 })
 export class TravelDetailComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
-  constructor(
-    public dialogService: DialogService,
-    public messageService: MessageService
-  ) {}
-
-  ref: DynamicDialogRef;
-
+  private dialogService = inject(DialogService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-
   private photoService = inject(PhotoService);
   private travelClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
   private likeService = inject(LikesClient);
   protected accountService = inject(AccountService);
-
   protected photos: PhotoModel[] = [];
   protected activeIndex: number = 0;
   protected displayCustom: boolean | undefined;
-
   protected travel: TravelDetailDto;
   protected travelId: number;
   protected creator: MemberDto = new MemberDto();
-
   protected user: MemberDto = new MemberDto();
   protected isOwnPost: boolean;
   protected isLikedByUser: boolean = false;
-
   protected isLoading = new BehaviorSubject(false);
-
   protected isLiked: boolean;
   protected numberOfLikes: number;
   protected items: MenuItem[] = [];
   protected likedBy: MemberDto[];
+  protected ref: DynamicDialogRef;
 
   imageClick(index: number) {
     this.activeIndex = index;
