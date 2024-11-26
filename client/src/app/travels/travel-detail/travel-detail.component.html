@@ -1,4 +1,6 @@
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
+<p-toast />
+<p-confirmDialog />
 <i class="pi pi-arrow-left mt-10 ml-4 custom-back-arrow" (click)="goBack()"></i>
 <div class="card surface-50 p-4 border-round mt-6 p-6">
   <!-- Section Intro -->
@@ -25,10 +27,14 @@
         (click)="goToUserProfile()"
       />
       } @else{
-      <button class="p-button p-button-rounded p-button-secondary">
-        <!-- Settings icon -->
-        <i class="pi pi-cog"></i>
-      </button>
+      <div [style]="{ marginRight: '3rem' }">
+        <p-speedDial
+          [buttonStyle]="{ width: '3rem', height: '3rem' }"
+          showIcon="pi pi-cog"
+          [model]="items"
+          direction="down"
+        />
+      </div>
       }
     </div>
   </div>

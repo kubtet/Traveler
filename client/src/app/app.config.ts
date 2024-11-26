@@ -16,6 +16,7 @@ import {
   LikesClient,
   UsersClient,
   FollowsClient,
+  MessagesClient,
 } from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
@@ -58,6 +59,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: LikesClient,
       useFactory: (http: HttpClient) => new LikesClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: MessagesClient,
+      useFactory: (http: HttpClient) => new MessagesClient(http),
       deps: [HttpClient],
     },
     {

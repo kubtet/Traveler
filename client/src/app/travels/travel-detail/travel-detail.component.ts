@@ -14,6 +14,10 @@ import { GalleriaModule } from 'primeng/galleria';
 import { PhotoModel } from '../../shared/models/photo.model';
 import { PhotoService } from '../../services/photo.service';
 import { AccountService } from '../../services/account.service';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { UserListModalComponent } from '../../modals/user-list-modal/user-list-modal.component';
@@ -26,16 +30,22 @@ import { MessageService } from 'primeng/api';
   imports: [
     AppLoadingComponent,
     AsyncPipe,
+    ConfirmDialogModule,
     DatePipe,
     GalleriaModule,
+    SpeedDialModule,
+    ToastModule,
     AvatarModule,
     AvatarGroupModule,
   ],
   providers: [DialogService, MessageService],
   templateUrl: './travel-detail.component.html',
   styleUrl: './travel-detail.component.css',
+  providers: [ConfirmationService, MessageService],
 })
 export class TravelDetailComponent implements OnInit {
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
   constructor(
     public dialogService: DialogService,
     public messageService: MessageService
@@ -66,8 +76,9 @@ export class TravelDetailComponent implements OnInit {
 
   protected isLoading = new BehaviorSubject(false);
 
-  protected isLiked;
+  protected isLiked: boolean;
   protected numberOfLikes: number;
+  protected items: MenuItem[] = [];
   protected likedBy: MemberDto[];
 
   imageClick(index: number) {
@@ -149,6 +160,19 @@ export class TravelDetailComponent implements OnInit {
 
     this.isLoading.next(false);
     this.checkIfOwnPost();
+
+    this.items = [
+      {
+        icon: 'pi pi-pencil',
+        command: () => {},
+      },
+      {
+        icon: 'pi pi-trash',
+        command: () => {
+          this.removeTravel();
+        },
+      },
+    ];
   }
 
   protected async checkIfOwnPost() {
@@ -172,5 +196,25 @@ export class TravelDetailComponent implements OnInit {
 
   protected goToUserProfile() {
     this.router.navigateByUrl('/user-profile/' + this.travel.userId.toString());
+  }
+
+  protected removeTravel() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to remove this travel?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: async () => {
+        await firstValueFrom(this.travelClient.removeTravel(this.travelId));
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmed',
+          detail: 'You have accepted',
+        });
+        this.goToUserProfile();
+      },
+    });
   }
 }
