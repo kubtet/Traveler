@@ -24,7 +24,6 @@ public class Seed
         {
             new() {Name = "Member"},
             new() {Name = "Admin"},
-            new() {Name = "Moderator"},
         };
 
         foreach (var role in roles)
@@ -49,7 +48,7 @@ public class Seed
         };
 
         await userManager.CreateAsync(admin, "Abc123");
-        await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);
+        await userManager.AddToRoleAsync(admin, "Admin");
     }
 
     public static async Task SeedFollows(DataContext context)

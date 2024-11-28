@@ -67,9 +67,7 @@ export class NavComponent implements OnInit {
       {
         icon: 'pi pi-address-book',
         routerLink: '/admin',
-        visible:
-          this.accountService.roles().includes('Moderator') ||
-          this.accountService.roles().includes('Admin'),
+        visible: this.accountService.roles().includes('Admin'),
       },
     ];
 

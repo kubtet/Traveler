@@ -8,10 +8,7 @@ export const adminGuard: CanActivateFn = () => {
   const toastr = inject(MessageService);
   const router = inject(Router);
 
-  if (
-    accountService.roles().includes('Admin') ||
-    accountService.roles().includes('Moderator')
-  ) {
+  if (accountService.roles().includes('Admin')) {
     return true;
   } else {
     toastr.add({

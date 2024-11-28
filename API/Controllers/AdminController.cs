@@ -60,11 +60,4 @@ public class AdminController(UserManager<User> userManager) : BaseApiController
 
         return Ok(await userManager.GetRolesAsync(user));
     }
-
-    [Authorize(Policy = "ModeratePhotoRole")]
-    [HttpGet("photos-to-moderate")]
-    public ActionResult GetPhotosForModeration()
-    {
-        return Ok("Admins and moderators can see this");
-    }
 }
