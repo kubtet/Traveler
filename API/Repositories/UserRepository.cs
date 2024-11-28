@@ -21,9 +21,7 @@ public class UserRepository(DataContext context) : IUserRepository
         return await context.Users
             .Include(x => x.Travels)
             .Include(u => u.ProfilePhoto)
-            //.Include(x => x.Followers)
-            //.Include(x => x.Following)
-            .SingleOrDefaultAsync(x => x.UserName == username);
+            .SingleOrDefaultAsync(x => x.UserName!.ToLower() == username.ToLower());
     }
 
     public async Task<PagedList<User>> GetUsersAsync(DataParams dataParams)
@@ -43,7 +41,7 @@ public class UserRepository(DataContext context) : IUserRepository
 
         if (!string.IsNullOrEmpty(dataParams.Username))
         {
-            query = query.Where(x => x.UserName.ToUpper().Contains(dataParams.Username.ToUpper()));
+            query = query.Where(x => x.UserName!.ToUpper().Contains(dataParams.Username.ToUpper()));
         }
 
         return await PagedList<User>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);

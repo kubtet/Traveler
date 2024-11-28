@@ -1,50 +1,56 @@
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
-using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace API;
+namespace API.Data;
 
 public class Seed
 {
-    public static async Task SeedUsers(DataContext context)
+    public static async Task SeedUsers(UserManager<User> userManager, RoleManager<AppRole> roleManager)
     {
-        if (await context.Users.AnyAsync()) return;
+        if (await userManager.Users.AnyAsync()) return;
 
         var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
         var users = JsonSerializer.Deserialize<List<User>>(userData, options);
 
         if (users == null) return;
+
+        var roles = new List<AppRole>
+        {
+            new() {Name = "Member"},
+            new() {Name = "Admin"},
+            new() {Name = "Moderator"},
+        };
+
+        foreach (var role in roles)
+        {
+            await roleManager.CreateAsync(role);
+        }
+
         foreach (var user in users)
         {
-            using var hmac = new HMACSHA512();
-            // user.UserName = user.UserName.ToLower() TODO
-            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("abc123"));
-            user.PasswordSalt = hmac.Key;
-            context.Users.Add(user);
+            await userManager.CreateAsync(user, "Abc123");
+            await userManager.AddToRoleAsync(user, "Member");
         }
-        await context.SaveChangesAsync();
+
+        var admin = new User
+        {
+            UserName = "Admin",
+            Name = "",
+            Surname = "",
+            Gender = "",
+            CreationDate = new DateTime(),
+            DateOfBirth = new DateTime(),
+        };
+
+        await userManager.CreateAsync(admin, "Abc123");
+        await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);
     }
-
-    // public static async Task SeedFollows(DataContext context)
-    // {
-    //     if (await context.Follows.AnyAsync()) return;
-    //     var followsData = await File.ReadAllTextAsync("Data/FollowsSeedData.json");
-    //     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    //     var follows = JsonSerializer.Deserialize<List<Follow>>(followsData, options);
-    //     if (follows == null) return;
-
-    //     foreach (var follow in follows)
-    //     {
-    //         context.Follows.Add(follow);
-    //     }
-    //     await context.SaveChangesAsync();
-
-    // }
 
     public static async Task SeedFollows(DataContext context)
     {

@@ -31,7 +31,6 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
         return Ok(response);
     }
 
-    [AllowAnonymous] //TODO
     [HttpGet("{id}")]
     public async Task<ActionResult<MemberDto>> GetUserById(int id)
     {
@@ -45,7 +44,6 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
         return mapper.Map<MemberDto>(user);
     }
 
-    [AllowAnonymous]
     [HttpGet("username/{username}")]
     public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
     {

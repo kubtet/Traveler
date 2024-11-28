@@ -14,6 +14,8 @@ import { TravelDetailComponent } from './travels/travel-detail/travel-detail.com
 import { TravelAddComponent } from './travels/travel-add/travel-add.component';
 import { SearchComponent } from './search/search.component';
 import { MessagesComponent } from './messages/messages.component';
+import { AdminComponent } from './admin/admin.component';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -22,6 +24,7 @@ export const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [authGuard],
     children: [
+      { path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
       { path: 'example', component: ExampleComponent },
       { path: 'messages', component: MessagesComponent },
       { path: 'search', component: SearchComponent },
