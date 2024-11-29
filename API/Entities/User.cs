@@ -6,7 +6,7 @@ public class User : IdentityUser<int>
 {
     public required string Name { get; set; }
     public required string Surname { get; set; }
-    public required string Gender { get; set; }
+    public string? Gender { get; set; }
     public string? Bio { get; set; }
     public Photo? ProfilePhoto { get; set; }
     public required DateTime DateOfBirth { get; set; }

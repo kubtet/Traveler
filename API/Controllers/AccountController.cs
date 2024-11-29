@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using API.Data;
-using API.DTOs;
+﻿using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
@@ -28,7 +26,7 @@ public class AccountController(UserManager<User> userManager, ITokenService toke
             Name = StringFormatHelper.MakeFirstCapital(registerDto.Name),
             Surname = StringFormatHelper.MakeFirstCapital(registerDto.Surname),
             Email = registerDto.Email,
-            Gender = registerDto.Gender,
+            Gender = registerDto.Gender ?? "",
             DateOfBirth = registerDto.DateOfBirth,
             CreationDate = DateTime.Now,
         };
