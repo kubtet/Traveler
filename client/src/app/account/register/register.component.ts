@@ -16,6 +16,7 @@ import { MessageService } from 'primeng/api';
 import { AccountClient, RegisterDto, UserDto } from '../../services/api';
 import { AccountService } from '../../services/account.service';
 import { firstValueFrom } from 'rxjs';
+import { DigitCapitalValidator } from '../../shared/validators/digit-capital.validator';
 
 @Component({
   selector: 'app-register',
@@ -46,6 +47,7 @@ export class RegisterComponent {
     password: new FormControl<string>('', [
       Validators.required,
       Validators.minLength(6),
+      DigitCapitalValidator(),
     ]),
     surname: new FormControl<string>('', [Validators.required]),
     username: new FormControl<string>('', [Validators.required]),
@@ -62,8 +64,8 @@ export class RegisterComponent {
 
     if (control.password.value !== control.confirmPassword.value) {
       this.messageService.add({
-        severity: 'danger',
-        summary: 'Fail',
+        severity: 'error',
+        summary: 'Failed',
         detail: 'Passwords do not match',
       });
       return;
