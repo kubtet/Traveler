@@ -3,13 +3,14 @@ using System.Security.Claims;
 using System.Text;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration config) : ITokenService
+public class TokenService(IConfiguration config, UserManager<User> userManager) : ITokenService
 {
-    public string CreateToken(User user)
+    public async Task<string> CreateToken(User user)
     {
         var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot access tokenKey from appsettings.");
         if (tokenKey.Length < 64)
@@ -22,6 +23,9 @@ public class TokenService(IConfiguration config) : ITokenService
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString())
         };
+
+        var roles = await userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 

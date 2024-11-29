@@ -1,7 +1,8 @@
-using API;
 using API.Data;
+using API.Entities;
 using API.Extensions;
 using API.Middleware;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,9 +28,11 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
-    await context.Database.MigrateAsync(); // will create db if doesnt exist yeat
+    var userManager = services.GetRequiredService<UserManager<User>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+    await context.Database.MigrateAsync(); // will create db if doesnt exist yet
     // Seed data
-    await Seed.SeedUsers(context);
+    await Seed.SeedUsers(userManager, roleManager);
     await Seed.SeedFollows(context);
     await Seed.SeedCountries(context);
 

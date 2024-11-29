@@ -2,12 +2,12 @@
   <div class="row" style="display: flex">
     <app-input-text
       class="mr-2"
-      label="Username"
+      placeholder="Username"
       [control]="form.controls.username"
     ></app-input-text>
     <app-input-text
       class="ml-2"
-      label="Email"
+      placeholder="Email"
       [control]="form.controls.email"
     ></app-input-text>
   </div>
@@ -15,12 +15,12 @@
   <div class="row" style="display: flex">
     <app-input-text
       class="mr-2"
-      label="Name"
+      placeholder="Name"
       [control]="form.controls.name"
     ></app-input-text>
     <app-input-text
       class="ml-2"
-      label="Surname"
+      placeholder="Surname"
       [control]="form.controls.surname"
     ></app-input-text>
   </div>
@@ -28,19 +28,21 @@
   <div class="row" style="display: flex">
     <app-input-text
       class="mr-2"
-      label="Password"
+      placeholder="Password"
+      tooltip="Password has to have at least 6 characters, at least 1 capital letter and at least 1 number"
       [isPassword]="true"
       [control]="form.controls.password"
     ></app-input-text>
     <app-input-text
       class="ml-2"
-      label="Confirm password"
+      placeholder="Confirm password"
+      tooltip="Password has to have at least 6 characters, at least 1 capital letter and at least 1 number"
       [isPassword]="true"
       [control]="form.controls.confirmPassword"
     ></app-input-text>
   </div>
 
-  <div class="row flex flex-wrap gap-3">
+  <div class="row flex flex-wrap gap-3 mt-5 mb-5">
     <label class="font-bold block"
       >What's your gender?<span> (optional)</span></label
     >
@@ -68,7 +70,7 @@
   <div class="row" style="display: flex">
     <app-calendar
       class="mr-2"
-      label="Date of birth"
+      placeholder="Date of birth"
       [maxDate]="maxDate"
       [minDate]="minDate"
       [defaultDate]="maxDate"

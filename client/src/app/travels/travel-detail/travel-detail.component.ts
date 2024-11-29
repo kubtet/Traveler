@@ -22,7 +22,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { UserListModalComponent } from '../../modals/user-list-modal/user-list-modal.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { AppButtonComponent } from "../../shared/components/app-button/app-button.component";
+import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
 
 @Component({
   selector: 'app-travel-detail',
@@ -37,8 +37,8 @@ import { AppButtonComponent } from "../../shared/components/app-button/app-butto
     ToastModule,
     AvatarModule,
     AvatarGroupModule,
-    AppButtonComponent
-],
+    AppButtonComponent,
+  ],
   providers: [
     DialogService,
     MessageService,
@@ -194,7 +194,7 @@ export class TravelDetailComponent implements OnInit {
 
   protected removeTravel() {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to remove this travel?',
+      message: 'Are you sure that you want to remove this travel permanently?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       acceptIcon: 'none',
@@ -205,7 +205,7 @@ export class TravelDetailComponent implements OnInit {
         this.messageService.add({
           severity: 'info',
           summary: 'Confirmed',
-          detail: 'You have accepted',
+          detail: 'Travel removed',
         });
         this.goToUserProfile();
       },

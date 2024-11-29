@@ -30,48 +30,44 @@ export class NavComponent implements OnInit {
 
     this.items = [
       {
-        label: '',
         icon: 'pi pi-home',
         routerLink: '/',
       },
       {
-        label: '',
         icon: 'pi pi-search',
         routerLink: '/search',
       },
       {
-        label: '',
         icon: 'pi pi-plus',
         tooltip: 'Add new gallery',
         routerLink: 'travel/add',
       },
-
       {
-        label: '',
         icon: 'pi pi-comment',
         tooltip: 'Chats',
         routerLink: 'messages',
       },
       {
-        label: '',
         icon: 'pi pi-bell',
         tooltip: 'Notifications',
       },
       {
-        label: '',
         icon: 'pi pi-hammer',
         tooltip: 'Errors',
         routerLink: '/errors',
       },
       {
-        label: '',
         icon: 'pi pi-user',
         routerLink: '/user-profile/' + this.currentUserId.toString(),
       },
       {
-        label: '',
         icon: 'pi pi-lightbulb',
         routerLink: '/example',
+      },
+      {
+        icon: 'pi pi-address-book',
+        routerLink: '/admin',
+        visible: this.accountService.roles().includes('Admin'),
       },
     ];
 

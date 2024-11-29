@@ -31,7 +31,6 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
         return Ok(response);
     }
 
-    [AllowAnonymous] //TODO
     [HttpGet("{id}")]
     public async Task<ActionResult<MemberDto>> GetUserById(int id)
     {
@@ -45,7 +44,6 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
         return mapper.Map<MemberDto>(user);
     }
 
-    [AllowAnonymous]
     [HttpGet("username/{username}")]
     public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
     {
@@ -76,9 +74,9 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
 
             if (user == null) return BadRequest("Could not find a user");
             mapper.Map(updateUserDto, user);
+            user.NormalizedUserName = user.UserName?.ToUpper();
             if (await userRepository.SaveAllAsync())
             {
-                // tokenService.CreateToken(user);
                 return NoContent();
             }
         }
@@ -133,5 +131,24 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
             return Ok("Profile picture deleted.");
         }
         return BadRequest("Not able to delete profile picture.");
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteUser(int id)
+    {
+        var user = await userRepository.GetUserByIdAsync(id);
+
+        if (user == null)
+        {
+            return BadRequest("The user with provided id doesn't exist");
+        }
+
+        userRepository.RemoveUser(user);
+
+        if (await userRepository.SaveAllAsync())
+        {
+            return Ok("User removed correctly");
+        }
+        return BadRequest("Not able to delete a user.");
     }
 }
