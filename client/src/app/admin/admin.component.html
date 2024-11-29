@@ -1,3 +1,5 @@
+<p-toast />
+<p-confirmDialog />
 <div class="card flex justify-content-center">
   <p-card class="m-3" header="Admin Tab">
     <div>
@@ -69,6 +71,7 @@
                 [text]="true"
                 [rounded]="true"
                 icon="pi pi-trash"
+                (onClick)="removeUser(user.id)"
               ></app-button>
             </td>
           </tr>

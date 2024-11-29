@@ -9,7 +9,10 @@ import { AppButtonComponent } from '../shared/components/app-button/app-button.c
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/paginator';
-import { AppInputTextComponent } from "../shared/components/app-input-text/app-input-text.component";
+import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-admin',
@@ -22,12 +25,17 @@ import { AppInputTextComponent } from "../shared/components/app-input-text/app-i
     DatePipe,
     PaginatorModule,
     TableModule,
-    AppInputTextComponent
-],
+    AppInputTextComponent,
+    ConfirmDialogModule,
+    ToastModule,
+  ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css',
+  providers: [ConfirmationService, MessageService],
 })
 export class AdminComponent implements OnInit {
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
   private router = inject(Router);
   private usersClient = inject(UsersClient);
   protected pageNumber: number = 1;
@@ -69,5 +77,26 @@ export class AdminComponent implements OnInit {
     this.pageNumber = event.page + 1;
     this.pageSize = event.rows;
     await this.loadUsers();
+  }
+
+  protected async removeUser(id: number) {
+    this.confirmationService.confirm({
+      message:
+        "Are you sure that you want to delete this user permanently?",
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: async () => {
+        await firstValueFrom(this.usersClient.deleteUser(id));
+        await this.loadUsers();
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmed',
+          detail: 'User deleted',
+        });
+      },
+    });
   }
 }

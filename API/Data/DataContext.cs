@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using YamlDotNet.Serialization;
 
 namespace API.Data;
 
@@ -21,10 +20,23 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, App
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<User>()
+            .HasMany(u => u.Travels)
+            .WithOne(t => t.User)
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Travel>()
+            .HasMany(t => t.Photos)
+            .WithOne(t => t.Travel)
+            .HasForeignKey(t => t.TravelId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
             .HasMany(ur => ur.UserRoles)
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AppRole>()
             .HasMany(ur => ur.UserRoles)
@@ -65,11 +77,11 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, App
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Recipient)
             .WithMany(x => x.MessagesReceived)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Sender)
             .WithMany(x => x.MessagesSent)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

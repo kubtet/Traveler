@@ -47,6 +47,11 @@ public class UserRepository(DataContext context) : IUserRepository
         return await PagedList<User>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
     }
 
+    public void RemoveUser(User user)
+    {
+        context.Users.Remove(user);
+    }
+
     public async Task<bool> SaveAllAsync()
     {
         return await context.SaveChangesAsync() > 0;

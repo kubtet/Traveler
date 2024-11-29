@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Text.Json;
 using API.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -34,21 +33,12 @@ public class Seed
         foreach (var user in users)
         {
             await userManager.CreateAsync(user, "Abc123");
+            if (user.NormalizedUserName == "LYNDA")
+            {
+                await userManager.AddToRoleAsync(user, "Admin");
+            }
             await userManager.AddToRoleAsync(user, "Member");
         }
-
-        var admin = new User
-        {
-            UserName = "Admin",
-            Name = "",
-            Surname = "",
-            Gender = "",
-            CreationDate = new DateTime(),
-            DateOfBirth = new DateTime(),
-        };
-
-        await userManager.CreateAsync(admin, "Abc123");
-        await userManager.AddToRoleAsync(admin, "Admin");
     }
 
     public static async Task SeedFollows(DataContext context)
