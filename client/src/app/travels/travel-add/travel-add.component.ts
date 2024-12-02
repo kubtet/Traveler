@@ -20,7 +20,6 @@ import { ChipModule } from 'primeng/chip';
 import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
 import { AppInputTextComponent } from '../../shared/components/app-input-text/app-input-text.component';
 import { AppCalendarComponent } from '../../shared/components/app-calendar/app-calendar.component';
-import { HttpEvent } from '@angular/common/http';
 import { MultiSelectModule } from 'primeng/multiselect';
 import {
   CreateTravelDto,
@@ -32,6 +31,7 @@ import { AccountService } from '../../services/account.service';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { PhotoService } from '../../services/photo.service';
+import { UploadEvent } from '../../interfaces/upload-event';
 @Component({
   selector: 'app-travel-add',
   standalone: true,
@@ -177,9 +177,4 @@ export class TravelAddComponent implements OnInit {
     this.form.reset();
     this.uploadedImages = [];
   }
-}
-
-interface UploadEvent {
-  originalEvent: HttpEvent<any>;
-  files: File[];
 }
