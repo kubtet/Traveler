@@ -19,8 +19,9 @@ import {
   DynamicDialogModule,
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { UserListModalComponent } from '../modals/user-list-modal/user-list-modal.component';
+import { SpeedDialModule } from 'primeng/speeddial';
 
 @Component({
   selector: 'app-user-profile',
@@ -38,6 +39,7 @@ import { UserListModalComponent } from '../modals/user-list-modal/user-list-moda
     StatisticsComponent,
     MapComponent,
     DynamicDialogModule,
+    SpeedDialModule,
   ],
   templateUrl: './user-profile.component.html',
   providers: [DialogService, MessageService],
@@ -57,6 +59,8 @@ export class UserProfileComponent implements OnInit {
   protected numberOfFollowers: number;
   protected numberOfFollowings: number;
   protected isFollowedByCurrent: boolean;
+
+  protected items: MenuItem[] | undefined;
 
   // User lists
   protected followers: MemberDto[] = [];
@@ -144,6 +148,27 @@ export class UserProfileComponent implements OnInit {
       this.numberOfFollowings = await firstValueFrom(
         this.followsClient.countFollowings(this.user.id)
       );
+
+      this.items = [
+        {
+          icon: 'pi pi-pencil',
+          command: () => {
+            this.router.navigateByUrl('/settings');
+          },
+        },
+        {
+          icon: 'pi pi-sign-out',
+          command: () => {
+            this.accountService.logOut();
+          },
+        },
+        {
+          icon: 'pi pi-trash',
+          command: () => {
+            //TODO
+          },
+        },
+      ];
       this.isLoading.next(false);
     });
   }

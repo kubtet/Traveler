@@ -46,18 +46,22 @@
 
     <!-- Settings  -->
     @if(isCurrent) {
-    <app-button
-      icon="pi pi-cog"
-      label="Edit profile"
-      class="settings-button"
-      (onClick)="goToSettings()"
-    />
-    <app-button
-      icon="pi pi-sign-out"
-      label="Log out"
-      class="settings-button"
-      (onClick)="logOut()"
-    />
+
+    <div class="spinner-buttom">
+      <p-speedDial
+        [buttonStyle]="{
+          width: '2.4rem',
+          height: '2.4rem',
+          fontSize: '0.2rem'
+        }"
+        transitionDelay="80"
+        showIcon="pi pi-ellipsis-v"
+        hideIcon="pi pi-times"
+        [model]="items"
+        direction="down"
+      ></p-speedDial>
+    </div>
+
     }
   </div>
 </p-card>
