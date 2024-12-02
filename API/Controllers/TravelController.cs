@@ -88,6 +88,23 @@ namespace API.Controllers
                 return BadRequest("No travel with provided id found");
             }
 
+            if (travel.Photos != null && travel.Photos.Count > 0)
+            {
+                foreach (var photo in travel.Photos)
+                {
+                    if (photo?.PublicId == null)
+                    {
+                        return BadRequest("No photo public id.");
+                    }
+
+                    var result = await photoService.DeletePhotoAsync(photo.PublicId);
+                    if (result.Error != null)
+                    {
+                        return BadRequest(result.Error.Message);
+                    }
+                }
+            }
+
             repository.RemoveTravel(travel);
 
             if (await repository.SaveAllAsync())

@@ -80,6 +80,7 @@ export class TravelAddComponent implements OnInit {
   protected cities: City[] = [];
   protected uploadedImages: FileParameter[] = [];
   protected isLoading = new BehaviorSubject(false);
+  protected isLoadingCities = new BehaviorSubject(false);
 
   public async ngOnInit() {
     this.isLoading.next(true);
@@ -96,7 +97,7 @@ export class TravelAddComponent implements OnInit {
     }
 
     this.form.controls.travelCountry.valueChanges.subscribe(async (value) => {
-      this.isLoading.next(true);
+      this.isLoadingCities.next(true);
       this.cities = [];
       this.form.controls.travelCities.setValue(undefined);
       if (value) {
@@ -107,7 +108,7 @@ export class TravelAddComponent implements OnInit {
         }
       }
 
-      this.isLoading.next(false);
+      this.isLoadingCities.next(false);
     });
 
     this.isLoading.next(false);

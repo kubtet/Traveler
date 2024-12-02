@@ -16,6 +16,15 @@ public class UserRepository(DataContext context) : IUserRepository
             .SingleOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<User?> GetUserByIdWithTravelsAndPhotosAsync(int id)
+    {
+        return await context.Users
+            .Include(x => x.Travels)
+            .ThenInclude(t => t.Photos)
+            .Include(u => u.ProfilePhoto)
+            .SingleOrDefaultAsync(x => x.Id == id);
+    }
+
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
         return await context.Users
