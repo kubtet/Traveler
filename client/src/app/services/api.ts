@@ -774,6 +774,134 @@ export class AccountClient implements IAccountClient {
     }
 }
 
+export interface IAdminClient {
+    getUsersWithRoles(): Observable<FileResponse>;
+    editRoles(id: number, roles?: string | undefined): Observable<FileResponse>;
+}
+
+@Injectable()
+export class AdminClient implements IAdminClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    getUsersWithRoles(): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Admin/users-with-roles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUsersWithRoles(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUsersWithRoles(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processGetUsersWithRoles(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    editRoles(id: number, roles?: string | undefined): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Admin/edit-roles/{id}?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (roles === null)
+            throw new Error("The parameter 'roles' cannot be null.");
+        else if (roles !== undefined)
+            url_ += "roles=" + encodeURIComponent("" + roles) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processEditRoles(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEditRoles(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processEditRoles(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IBuggyClient {
     getAuth(): Observable<string>;
     getNotFound(): Observable<User>;
@@ -1733,6 +1861,7 @@ export class TravelClient implements ITravelClient {
 export interface IUsersClient {
     getUsers(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMemberDto>;
     getUserById(id: number): Observable<MemberDto>;
+    deleteUser(id: number): Observable<FileResponse>;
     getUserByUsername(username: string): Observable<MemberDto>;
     updateUser(updateUserDto: UpdateUserDto): Observable<FileResponse>;
     modifyProfilePicture(file?: FileParameter | null | undefined): Observable<PhotoDto>;
@@ -1855,6 +1984,61 @@ export class UsersClient implements IUsersClient {
             result200 = MemberDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    deleteUser(id: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Users/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processDeleteUser(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -2338,7 +2522,7 @@ export class RegisterDto implements IRegisterDto {
     name!: string;
     surname!: string;
     email!: string;
-    gender!: string;
+    gender?: string | undefined;
     dateOfBirth!: Date;
 
     constructor(data?: IRegisterDto) {
@@ -2388,7 +2572,7 @@ export interface IRegisterDto {
     name: string;
     surname: string;
     email: string;
-    gender: string;
+    gender?: string | undefined;
     dateOfBirth: Date;
 }
 
@@ -2432,27 +2616,24 @@ export interface ILoginDto {
     password?: string;
 }
 
-export class User implements IUser {
+export class IdentityUserOfInteger implements IIdentityUserOfInteger {
     id?: number;
-    userName?: string;
-    passwordHash?: string;
-    passwordSalt?: string;
-    name?: string;
-    surname?: string;
-    email?: string;
-    gender?: string;
-    bio?: string | undefined;
-    profilePhoto?: Photo | undefined;
-    dateOfBirth?: Date;
-    creationDate?: Date;
-    travels?: Travel[];
-    followers?: Follow[];
-    following?: Follow[];
-    likedTravels?: TravelLike[];
-    messagesSent?: Message[];
-    messagesReceived?: Message[];
+    userName?: string | undefined;
+    normalizedUserName?: string | undefined;
+    email?: string | undefined;
+    normalizedEmail?: string | undefined;
+    emailConfirmed?: boolean;
+    passwordHash?: string | undefined;
+    securityStamp?: string | undefined;
+    concurrencyStamp?: string | undefined;
+    phoneNumber?: string | undefined;
+    phoneNumberConfirmed?: boolean;
+    twoFactorEnabled?: boolean;
+    lockoutEnd?: Date | undefined;
+    lockoutEnabled?: boolean;
+    accessFailedCount?: number;
 
-    constructor(data?: IUser) {
+    constructor(data?: IIdentityUserOfInteger) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2465,11 +2646,93 @@ export class User implements IUser {
         if (_data) {
             this.id = _data["id"];
             this.userName = _data["userName"];
+            this.normalizedUserName = _data["normalizedUserName"];
+            this.email = _data["email"];
+            this.normalizedEmail = _data["normalizedEmail"];
+            this.emailConfirmed = _data["emailConfirmed"];
             this.passwordHash = _data["passwordHash"];
-            this.passwordSalt = _data["passwordSalt"];
+            this.securityStamp = _data["securityStamp"];
+            this.concurrencyStamp = _data["concurrencyStamp"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.phoneNumberConfirmed = _data["phoneNumberConfirmed"];
+            this.twoFactorEnabled = _data["twoFactorEnabled"];
+            this.lockoutEnd = _data["lockoutEnd"] ? new Date(_data["lockoutEnd"].toString()) : <any>undefined;
+            this.lockoutEnabled = _data["lockoutEnabled"];
+            this.accessFailedCount = _data["accessFailedCount"];
+        }
+    }
+
+    static fromJS(data: any): IdentityUserOfInteger {
+        data = typeof data === 'object' ? data : {};
+        let result = new IdentityUserOfInteger();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["normalizedUserName"] = this.normalizedUserName;
+        data["email"] = this.email;
+        data["normalizedEmail"] = this.normalizedEmail;
+        data["emailConfirmed"] = this.emailConfirmed;
+        data["passwordHash"] = this.passwordHash;
+        data["securityStamp"] = this.securityStamp;
+        data["concurrencyStamp"] = this.concurrencyStamp;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneNumberConfirmed"] = this.phoneNumberConfirmed;
+        data["twoFactorEnabled"] = this.twoFactorEnabled;
+        data["lockoutEnd"] = this.lockoutEnd ? this.lockoutEnd.toISOString() : <any>undefined;
+        data["lockoutEnabled"] = this.lockoutEnabled;
+        data["accessFailedCount"] = this.accessFailedCount;
+        return data;
+    }
+}
+
+export interface IIdentityUserOfInteger {
+    id?: number;
+    userName?: string | undefined;
+    normalizedUserName?: string | undefined;
+    email?: string | undefined;
+    normalizedEmail?: string | undefined;
+    emailConfirmed?: boolean;
+    passwordHash?: string | undefined;
+    securityStamp?: string | undefined;
+    concurrencyStamp?: string | undefined;
+    phoneNumber?: string | undefined;
+    phoneNumberConfirmed?: boolean;
+    twoFactorEnabled?: boolean;
+    lockoutEnd?: Date | undefined;
+    lockoutEnabled?: boolean;
+    accessFailedCount?: number;
+}
+
+export class User extends IdentityUserOfInteger implements IUser {
+    name?: string;
+    surname?: string;
+    gender?: string | undefined;
+    bio?: string | undefined;
+    profilePhoto?: Photo | undefined;
+    dateOfBirth?: Date;
+    creationDate?: Date;
+    travels?: Travel[];
+    followers?: Follow[];
+    following?: Follow[];
+    likedTravels?: TravelLike[];
+    messagesSent?: Message[];
+    messagesReceived?: Message[];
+    userRoles?: UserAppRole[];
+
+    constructor(data?: IUser) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
             this.name = _data["name"];
             this.surname = _data["surname"];
-            this.email = _data["email"];
             this.gender = _data["gender"];
             this.bio = _data["bio"];
             this.profilePhoto = _data["profilePhoto"] ? Photo.fromJS(_data["profilePhoto"]) : <any>undefined;
@@ -2505,25 +2768,25 @@ export class User implements IUser {
                 for (let item of _data["messagesReceived"])
                     this.messagesReceived!.push(Message.fromJS(item));
             }
+            if (Array.isArray(_data["userRoles"])) {
+                this.userRoles = [] as any;
+                for (let item of _data["userRoles"])
+                    this.userRoles!.push(UserAppRole.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): User {
+    static override fromJS(data: any): User {
         data = typeof data === 'object' ? data : {};
         let result = new User();
         result.init(data);
         return result;
     }
 
-    toJSON(data?: any) {
+    override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["passwordHash"] = this.passwordHash;
-        data["passwordSalt"] = this.passwordSalt;
         data["name"] = this.name;
         data["surname"] = this.surname;
-        data["email"] = this.email;
         data["gender"] = this.gender;
         data["bio"] = this.bio;
         data["profilePhoto"] = this.profilePhoto ? this.profilePhoto.toJSON() : <any>undefined;
@@ -2559,19 +2822,20 @@ export class User implements IUser {
             for (let item of this.messagesReceived)
                 data["messagesReceived"].push(item.toJSON());
         }
+        if (Array.isArray(this.userRoles)) {
+            data["userRoles"] = [];
+            for (let item of this.userRoles)
+                data["userRoles"].push(item.toJSON());
+        }
+        super.toJSON(data);
         return data;
     }
 }
 
-export interface IUser {
-    id?: number;
-    userName?: string;
-    passwordHash?: string;
-    passwordSalt?: string;
+export interface IUser extends IIdentityUserOfInteger {
     name?: string;
     surname?: string;
-    email?: string;
-    gender?: string;
+    gender?: string | undefined;
     bio?: string | undefined;
     profilePhoto?: Photo | undefined;
     dateOfBirth?: Date;
@@ -2582,6 +2846,7 @@ export interface IUser {
     likedTravels?: TravelLike[];
     messagesSent?: Message[];
     messagesReceived?: Message[];
+    userRoles?: UserAppRole[];
 }
 
 export class Photo implements IPhoto {
@@ -2930,6 +3195,172 @@ export interface IMessage {
     sender?: User;
     recipientId?: number;
     recipient?: User;
+}
+
+export class IdentityUserRoleOfInteger implements IIdentityUserRoleOfInteger {
+    userId?: number;
+    roleId?: number;
+
+    constructor(data?: IIdentityUserRoleOfInteger) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.roleId = _data["roleId"];
+        }
+    }
+
+    static fromJS(data: any): IdentityUserRoleOfInteger {
+        data = typeof data === 'object' ? data : {};
+        let result = new IdentityUserRoleOfInteger();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["roleId"] = this.roleId;
+        return data;
+    }
+}
+
+export interface IIdentityUserRoleOfInteger {
+    userId?: number;
+    roleId?: number;
+}
+
+export class UserAppRole extends IdentityUserRoleOfInteger implements IUserAppRole {
+    user?: User;
+    role?: AppRole;
+
+    constructor(data?: IUserAppRole) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.user = _data["user"] ? User.fromJS(_data["user"]) : <any>undefined;
+            this.role = _data["role"] ? AppRole.fromJS(_data["role"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): UserAppRole {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserAppRole();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["role"] = this.role ? this.role.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IUserAppRole extends IIdentityUserRoleOfInteger {
+    user?: User;
+    role?: AppRole;
+}
+
+export class IdentityRoleOfInteger implements IIdentityRoleOfInteger {
+    id?: number;
+    name?: string | undefined;
+    normalizedName?: string | undefined;
+    concurrencyStamp?: string | undefined;
+
+    constructor(data?: IIdentityRoleOfInteger) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.normalizedName = _data["normalizedName"];
+            this.concurrencyStamp = _data["concurrencyStamp"];
+        }
+    }
+
+    static fromJS(data: any): IdentityRoleOfInteger {
+        data = typeof data === 'object' ? data : {};
+        let result = new IdentityRoleOfInteger();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["normalizedName"] = this.normalizedName;
+        data["concurrencyStamp"] = this.concurrencyStamp;
+        return data;
+    }
+}
+
+export interface IIdentityRoleOfInteger {
+    id?: number;
+    name?: string | undefined;
+    normalizedName?: string | undefined;
+    concurrencyStamp?: string | undefined;
+}
+
+export class AppRole extends IdentityRoleOfInteger implements IAppRole {
+    userRoles?: UserAppRole[];
+
+    constructor(data?: IAppRole) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            if (Array.isArray(_data["userRoles"])) {
+                this.userRoles = [] as any;
+                for (let item of _data["userRoles"])
+                    this.userRoles!.push(UserAppRole.fromJS(item));
+            }
+        }
+    }
+
+    static override fromJS(data: any): AppRole {
+        data = typeof data === 'object' ? data : {};
+        let result = new AppRole();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.userRoles)) {
+            data["userRoles"] = [];
+            for (let item of this.userRoles)
+                data["userRoles"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAppRole extends IIdentityRoleOfInteger {
+    userRoles?: UserAppRole[];
 }
 
 export class Country implements ICountry {

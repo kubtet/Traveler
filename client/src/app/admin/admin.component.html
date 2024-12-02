@@ -1,0 +1,94 @@
+<p-toast />
+<p-confirmDialog />
+<div class="card flex justify-content-center">
+  <p-card class="m-3" header="Admin Tab">
+    <div>
+      <p-table [value]="users.items" [loading]="isLoading | async">
+        <ng-template pTemplate="caption">
+          <div class="flex">List of users</div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              <app-input-text
+                [control]="searchedUsername"
+                placeholder="Search by username"
+              />
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
+            <th style="min-width: 15rem">
+              <div class="flex align-items-center">User</div>
+            </th>
+            <th style="min-width: 15rem">
+              <div class="flex align-items-center">Full name</div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex align-items-center">Gender</div>
+            </th>
+            <th style="min-width: 15rem">
+              <div class="flex align-items-center">Creation date</div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex align-items-center">Action</div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>
+              <p-avatar
+                [image]="
+                  user.profilePhotoUrl === '' || user.profilePhotoUrl === null
+                    ? '../../assets/defaultProfilePicture.jfif'
+                    : user.profilePhotoUrl
+                "
+                styleClass="profile-picture"
+                size="normal"
+                shape="circle"
+              />
+              <span class="ml-1 vertical-align-middle">
+                {{ user.username }}
+              </span>
+            </td>
+            <td>
+              <span class="ml-1 vertical-align-middle"
+                >{{ user.name }} {{ user.surname }}</span
+              >
+            </td>
+            <td>
+              {{ user.gender ?? "-" }}
+            </td>
+            <td>
+              {{ user.creationDate | date : "dd.MM.yyyy" }}
+            </td>
+            <td>
+              <app-button
+                [text]="true"
+                [rounded]="true"
+                icon="pi pi-trash"
+                (onClick)="removeUser(user.id)"
+              ></app-button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No users found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [first]="(pageNumber - 1) * pageSize"
+        [rows]="pageSize"
+        [totalRecords]="users.totalCount"
+        [rowsPerPageOptions]="[5, 10, 15, 20]"
+      />
+    </div>
+  </p-card>
+</div>

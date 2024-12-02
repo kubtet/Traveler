@@ -1,0 +1,7 @@
+p-avatar {
+  vertical-align: middle;
+}
+
+::ng-deep .p-paginator {
+  border: none;
+}
