@@ -31,6 +31,7 @@ import {
 import { AccountService } from '../../services/account.service';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { PhotoService } from '../../services/photo.service';
 @Component({
   selector: 'app-travel-add',
   standalone: true,
@@ -58,6 +59,7 @@ export class TravelAddComponent implements OnInit {
   private cityService = inject(CityService);
   private countryService = inject(CountryService);
   private messageService = inject(MessageService);
+  private photoService = inject(PhotoService);
   private router = inject(Router);
   private travelsClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
@@ -140,7 +142,8 @@ export class TravelAddComponent implements OnInit {
     this.router.navigateByUrl('/user-profile');
   }
 
-  protected onImageUpload(event: UploadEvent) {
+  protected async onImageUpload(event: UploadEvent) {
+    this.isLoading.next(true);
     const totalImages = this.uploadedImages.length + event.files.length;
 
     if (totalImages > this.maxImages) {
@@ -154,14 +157,20 @@ export class TravelAddComponent implements OnInit {
     }
 
     if (event?.files?.length > 0) {
-      event.files.forEach((file) => {
+      const uploadPromises = event.files.map(async (file) => {
+        if (file.name.toLowerCase().endsWith('.heic')) {
+          file = await this.photoService.convertHeicToJpeg(file);
+        }
         const fileParam: FileParameter = {
           data: file,
           fileName: file.name,
         };
         this.uploadedImages.push(fileParam);
       });
+
+      await Promise.all(uploadPromises);
     }
+    this.isLoading.next(false);
   }
 
   protected clearForm() {

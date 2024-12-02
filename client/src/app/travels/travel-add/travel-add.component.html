@@ -8,12 +8,11 @@
       <div class="grid">
         <div class="col-12 lg:col-8">
           <p-fileUpload
-            class="fileUpload"
             name="demo[]"
             url="https://www.primefaces.org/cdn/api/upload.php"
             [multiple]="true"
-            accept="image/*"
-            maxFileSize="1000000"
+            accept="image/*,.heic"
+            maxFileSize="3000000"
             (onUpload)="onImageUpload($event)"
           >
             <ng-template pTemplate="content">

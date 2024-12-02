@@ -4,18 +4,30 @@ p {
   overflow: hidden;
 }
 
-.photo {
-  overflow: hidden;
+.photo-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden; 
+  position: relative;
+  border-radius: 8px; 
 }
 
-::ng-deep .photo:hover img {
+::ng-deep .photo-container:hover img {
   transform: scale(1.2, 1.2);
   transition-duration: 500ms;
   transition-timing-function: ease-out;
 }
 
-::ng-deep .photo img {
+::ng-deep .photo-container img {
   transform: scale(1, 1);
   transition-duration: 500ms;
   transition-timing-function: ease-out;
+}
+
+::ng-deep .photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center; 
+  display: block;
 }
