@@ -64,10 +64,10 @@
   <div class="two-column-layout">
     <!-- Left side with description and details -->
     <div class="left-side-layout">
-      <div class="flex flex-wrap align-items-left text-sm text-600">
+      <div class="">
         <!-- Description with regular font size -->
-        <p class="text-lg line-height-3 text-900 mt-3 pt-6">
-          {{ travel?.description }}
+        <p class="description text-lg line-height-3 text-900 mt-3 pt-6">
+          {{ travel ? travel.description : "" }}
         </p>
         <div class="likes-section">
           <i
@@ -76,7 +76,7 @@
             [ngClass]="isLiked ? 'pi pi-heart-fill text-danger' : 'pi pi-heart'"
           ></i>
 
-          <div class="card flex justify-content-center align-items-center">
+          <div class="">
             <p-avatarGroup
               styleClass="mb-3"
               (click)="openUserListModal()"
