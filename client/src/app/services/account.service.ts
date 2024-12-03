@@ -7,6 +7,16 @@ import { Router } from '@angular/router';
 })
 export class AccountService {
   private router = inject(Router);
+  public expirationDate = computed(() => {
+    const user = this.currentUser();
+    if (user && user.token) {
+      const expirationDate = JSON.parse(atob(user.token.split('.')[1])).exp;
+      if (expirationDate !== null) {
+        return expirationDate;
+      }
+    }
+    return null;
+  });
   public roles = computed(() => {
     const user = this.currentUser();
     if (user && user.token) {
