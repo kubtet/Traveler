@@ -136,11 +136,41 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteUser(int id)
     {
-        var user = await userRepository.GetUserByIdAsync(id);
+        var user = await userRepository.GetUserByIdWithTravelsAndPhotosAsync(id);
 
         if (user == null)
         {
             return BadRequest("The user with provided id doesn't exist");
+        }
+
+        if (user.ProfilePhoto != null)
+        {
+            if (user.ProfilePhoto?.PublicId == null) return BadRequest("No profile picture public id.");
+            var result = await photoService.DeletePhotoAsync(user.ProfilePhoto.PublicId);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+        }
+
+        if (user.Travels != null && user.Travels.Count > 0)
+        {
+            foreach (var travel in user.Travels)
+            {
+                if (travel.Photos != null && travel.Photos.Count > 0)
+                {
+                    foreach (var photo in travel.Photos)
+                    {
+                        if (photo?.PublicId == null)
+                        {
+                            return BadRequest("No photo public id.");
+                        }
+
+                        var result = await photoService.DeletePhotoAsync(photo.PublicId);
+                        if (result.Error != null)
+                        {
+                            return BadRequest(result.Error.Message);
+                        }
+                    }
+                }
+            }
         }
 
         userRepository.RemoveUser(user);

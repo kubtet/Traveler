@@ -22,6 +22,7 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
 import { uniqueUsernameValidator } from '../shared/validators/unique-username.validator';
+import { PhotoService } from '../services/photo.service';
 
 @Component({
   selector: 'app-settings',
@@ -51,6 +52,7 @@ export class SettingsComponent implements OnInit {
   private router = inject(Router);
   private accountService = inject(AccountService);
   private usersClient = inject(UsersClient);
+  private photoService = inject(PhotoService);
   protected user: MemberDto;
   protected isLoading = new BehaviorSubject(false);
   protected previewProfilePhotoUrl: string | null = null;
@@ -112,26 +114,66 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  public updateProfilePicture() {
+  public async updateProfilePicture() {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.onchange = (event: any) => {
-      const file = event.target.files[0];
-      if (file) {
-        this.isDeleteDisabled = false;
-        this.previewProfilePhotoUrl = URL.createObjectURL(file);
-        this.fileToUpload = file;
-        this.form.markAsDirty();
-        this.unsavedChangesMessages = [
-          {
-            severity: 'warn',
-            summary: 'Unsaved changes',
-            detail: "You've made some changes that haven't been saved.",
-          },
-        ];
+    fileInput.accept = 'image/*,.heic';
+
+    fileInput.onchange = async (event: any) => {
+      this.isLoading.next(true);
+      if (event?.target?.files?.length > 0) {
+        const filesArray = Array.from(event.target.files);
+        try {
+          const validMimeTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+          ];
+
+          const uploadPromises = filesArray.map(async (file: File) => {
+            const isValidType =
+              validMimeTypes.includes(file.type) ||
+              file.name.toLowerCase().endsWith('.heic');
+
+            if (!isValidType) {
+              this.unsavedChangesMessages = [
+                {
+                  severity: 'error',
+                  summary: 'Forbidden',
+                  detail: 'You cannot choose this type of file',
+                },
+              ];
+              return;
+            }
+
+            if (file.name.toLowerCase().endsWith('.heic')) {
+              file = await this.photoService.convertHeicToJpeg(file);
+            }
+            this.isDeleteDisabled = false;
+            this.previewProfilePhotoUrl = URL.createObjectURL(file);
+            this.fileToUpload = file;
+            this.form.markAsDirty();
+            this.unsavedChangesMessages = [
+              {
+                severity: 'warn',
+                summary: 'Unsaved changes',
+                detail: "You've made some changes that haven't been saved.",
+              },
+            ];
+          });
+
+          await Promise.all(uploadPromises);
+        } catch (error) {
+          console.error('Error uploading files:', error);
+        } finally {
+          this.isLoading.next(false);
+        }
+      } else {
+        this.isLoading.next(false);
       }
     };
+
     fileInput.click();
   }
 
@@ -219,7 +261,7 @@ export class SettingsComponent implements OnInit {
         console.error('Error updating or deleting profile photo:', e);
       }
     }
-    
+
     this.form.reset({
       username: this.user.username,
       bio: this.user.bio,

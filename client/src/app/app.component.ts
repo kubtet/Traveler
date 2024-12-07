@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './nav/nav.component';
 import { AccountService } from './services/account.service';
 import { ToastModule } from 'primeng/toast';
+import { PresenceService } from './services/presence.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
+  private presenceService = inject(PresenceService);
   protected accountService = inject(AccountService);
 
   public ngOnInit() {
@@ -23,5 +25,6 @@ export class AppComponent implements OnInit {
     if (!userString) return;
     const user = JSON.parse(userString);
     this.accountService.currentUser.set(user);
+    this.presenceService.createHubConnection(user);
   }
 }

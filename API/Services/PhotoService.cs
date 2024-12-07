@@ -43,7 +43,7 @@ public class PhotoService : IPhotoService
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation().Height(1080).Width(1920),
+                    Transformation = new Transformation().AspectRatio(1).Crop("fill"),
                     Folder = "demo-traveller"
                 };
 

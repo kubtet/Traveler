@@ -9,7 +9,7 @@
     />
   </ng-template>
 </p-menubar>
-} @if(!accountService.currentUser()) {
+} @else {
 <p-menubar [model]="loggedOutItems">
   <ng-template pTemplate="start">
     <img
