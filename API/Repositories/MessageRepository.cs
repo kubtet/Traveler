@@ -19,6 +19,24 @@ namespace API.Repositories
         public void AddMessage(Message message)
         {
             context.Messages.Add(message);
+
+            var messagesInThreadCount = context.Messages
+                .Where(m => m.RecipientId == message.RecipientId && m.SenderId == message.SenderId ||
+                    m.SenderId == message.RecipientId && m.RecipientId == message.SenderId)
+                .Count();
+
+
+            if (messagesInThreadCount > 100)
+            {
+                var messagesToRemove = context.Messages
+                    .Where(m => m.RecipientId == message.RecipientId && m.SenderId == message.SenderId ||
+                        m.SenderId == message.RecipientId && m.RecipientId == message.SenderId)
+                    .OrderBy(m => m.MessageSent)
+                    .Take(messagesInThreadCount - 100)
+                    .ToList();
+
+                context.Messages.RemoveRange(messagesToRemove);
+            }
         }
 
         public void DeleteMessage(Message message)
