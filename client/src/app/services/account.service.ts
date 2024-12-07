@@ -1,12 +1,14 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { UserDto } from './api';
 import { Router } from '@angular/router';
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
   private router = inject(Router);
+  private presenceService = inject(PresenceService);
   public expirationDate = computed(() => {
     const user = this.currentUser();
     if (user && user.token) {
@@ -27,16 +29,16 @@ export class AccountService {
   });
   public currentUser = signal<UserDto>(undefined);
 
-  constructor() {}
-
   public setUser(user: UserDto) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
+    this.presenceService.createHubConnection(user);
   }
 
   public logOut() {
     localStorage.removeItem('user');
     this.currentUser.set(undefined);
     this.router.navigateByUrl('/login');
+    this.presenceService.stopHubConnection();
   }
 }

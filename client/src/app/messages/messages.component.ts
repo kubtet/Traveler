@@ -1,4 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   CreateMessageDto,
   MemberDto,
@@ -15,6 +24,8 @@ import { AppButtonComponent } from '../shared/components/app-button/app-button.c
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { MessageService } from '../services/message.service';
+import { NavbarNotificationService } from '../services/navbar-notification.service';
 
 @Component({
   selector: 'app-messages',
@@ -32,19 +43,20 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
   ],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.css',
+  providers: [MessageService],
 })
-export class MessagesComponent implements OnInit {
+export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
+  @ViewChild('messageScroll') threadView: ElementRef;
   private accountService = inject(AccountService);
+  private navbarNotificationService = inject(NavbarNotificationService);
   private messageClient = inject(MessagesClient);
   private usersClient = inject(UsersClient);
   private router = inject(Router);
+  protected messageService = inject(MessageService);
   protected isLoading = new BehaviorSubject(false);
   protected isLoadingThread = new BehaviorSubject(false);
   protected threads: MessageDto[] = [];
   protected user: MemberDto = new MemberDto();
-  protected currentThread: BehaviorSubject<MessageDto[]> = new BehaviorSubject<
-    MessageDto[]
-  >([]);
   protected threadResponderPhotoUrl: BehaviorSubject<string> =
     new BehaviorSubject<string>('');
   protected threadResponderUsername: BehaviorSubject<string> =
@@ -54,6 +66,23 @@ export class MessagesComponent implements OnInit {
   protected newMessage: FormControl<string> = new FormControl<string>('');
   protected searchedUsername: FormControl<string> = new FormControl<string>('');
   protected listOfUsers: MemberDto[] = [];
+  protected scrollTop: number = 0;
+  protected previousScrollHeight: number = 0;
+  protected currentUnreadThreads: number = 0;
+
+  constructor() {
+    effect(() => {
+      this.navbarNotificationService.messageNotifications();
+      if (
+        this.currentUnreadThreads !==
+        this.navbarNotificationService.messageNotifications()
+      ) {
+        this.loadAllThreads();
+        this.currentUnreadThreads =
+          this.navbarNotificationService.messageNotifications();
+      }
+    });
+  }
 
   public async ngOnInit() {
     await this.loadComponent();
@@ -62,6 +91,24 @@ export class MessagesComponent implements OnInit {
       this.loadUsers();
       this.isLoading.next(false);
     });
+  }
+
+  public ngAfterViewChecked() {
+    const currentScrollHeight =
+      this.threadView?.nativeElement?.scrollHeight || 0;
+
+    if (currentScrollHeight !== this.previousScrollHeight) {
+      this.previousScrollHeight = currentScrollHeight;
+
+      setTimeout(() => {
+        this.scrollTop = currentScrollHeight;
+      }, 0);
+    }
+  }
+
+  public async ngOnDestroy() {
+    this.messageService.stopHubConnection();
+    await this.navbarNotificationService.getMessageNotifications();
   }
 
   protected async loadComponent() {
@@ -99,24 +146,24 @@ export class MessagesComponent implements OnInit {
       return;
     }
     this.isLoadingThread.next(true);
+    this.messageService.stopHubConnection();
     this.loadAllThreads();
-    const result = await firstValueFrom(
-      this.messageClient.getMessageThread(responderId)
+
+    const user = this.accountService.currentUser();
+    if (!user) return;
+    this.messageService.createHubConnection(user, responderId);
+
+    const responder = await firstValueFrom(
+      this.usersClient.getUserById(responderId)
     );
 
-    this.currentThread.next(result);
+    this.threadResponderPhotoUrl.next(responder?.profilePhotoUrl);
+    this.threadResponderUsername.next(responder?.username);
+    this.threadResponderId.next(responder?.id);
 
-    const message = this.currentThread.value[0];
-    if (message.recipientId === this.user.id) {
-      this.threadResponderPhotoUrl.next(message.senderPhotoUrl);
-      this.threadResponderUsername.next(message.senderUsername);
-      this.threadResponderId.next(message.senderId);
-    } else {
-      this.threadResponderPhotoUrl.next(message.recipientPhotoUrl);
-      this.threadResponderUsername.next(message.recipientUsername);
-      this.threadResponderId.next(message.recipientId);
-    }
+    await this.navbarNotificationService.getMessageNotifications();
 
+    this.scrollTop = this.threadView?.nativeElement?.scrollHeight;
     this.isLoadingThread.next(false);
   }
 
@@ -125,14 +172,11 @@ export class MessagesComponent implements OnInit {
       content: this.newMessage.value,
       recipientId: this.threadResponderId.value,
     });
-    const result = await firstValueFrom(
-      this.messageClient.createMessage(createMessage)
-    );
-    if (result) {
-      this.loadThread(this.threadResponderId.value, true);
-      this.loadAllThreads();
+    this.messageService.sendMessage(createMessage).then(() => {
+      this.loadAllThreads(); // maybe unnecessary
       this.newMessage.setValue('');
-    }
+      this.scrollTop = this.threadView.nativeElement?.scrollHeight;
+    });
   }
 
   protected async beginNewThread(newResponder: MemberDto) {
@@ -142,11 +186,10 @@ export class MessagesComponent implements OnInit {
     this.threadResponderUsername.next(newResponder.username);
     this.threadResponderId.next(newResponder.id);
 
-    const result = await firstValueFrom(
-      this.messageClient.getMessageThread(newResponder.id)
-    );
+    const user = this.accountService.currentUser();
+    if (!user) return;
+    this.messageService.createHubConnection(user, newResponder.id);
 
-    this.currentThread.next(result);
     this.isLoadingThread.next(false);
   }
 
