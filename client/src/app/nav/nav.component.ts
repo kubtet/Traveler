@@ -56,7 +56,7 @@ export class NavComponent implements OnInit {
       },
       {
         icon: 'pi pi-search',
-        routerLink: '/search',
+        routerLink: 'search',
       },
       {
         icon: 'pi pi-plus',
@@ -72,23 +72,24 @@ export class NavComponent implements OnInit {
       },
       {
         icon: 'pi pi-bell',
+        routerLink: 'notifications',
         // badge: '3',
       },
       {
         icon: 'pi pi-hammer',
-        routerLink: '/errors',
+        routerLink: 'errors',
       },
       {
         icon: 'pi pi-user',
-        routerLink: '/user-profile/' + this.currentUserId.toString(),
+        routerLink: 'user-profile/' + this.currentUserId.toString(),
       },
       {
         icon: 'pi pi-lightbulb',
-        routerLink: '/example',
+        routerLink: 'example',
       },
       {
         icon: 'pi pi-address-book',
-        routerLink: '/admin',
+        routerLink: 'admin',
         visible: this.accountService.roles().includes('Admin'),
       },
     ];

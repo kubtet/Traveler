@@ -26,7 +26,7 @@ public class NotificationController(IMapper mapper, INotificationRepository noti
 
         if (addNotificationDto.NotificationType == TypeOfNotification.Followed)
         {
-            content = $"{currentUser?.UserName} has followed you";
+            content = $"{currentUser?.UserName} has followed you.";
         }
         else
         {

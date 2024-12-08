@@ -1541,6 +1541,195 @@ export class MessagesClient implements IMessagesClient {
     }
 }
 
+export interface INotificationClient {
+    addNotification(addNotificationDto: AddNotificationDto): Observable<FileResponse>;
+    getNotificationsForUser(userId?: number | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfNotificationDto>;
+    deleteNotification(notificationId: number): Observable<FileResponse>;
+}
+
+@Injectable()
+export class NotificationClient implements INotificationClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    addNotification(addNotificationDto: AddNotificationDto): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Notification";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(addNotificationDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddNotification(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddNotification(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processAddNotification(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getNotificationsForUser(userId?: number | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfNotificationDto> {
+        let url_ = this.baseUrl + "/api/Notification?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetNotificationsForUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetNotificationsForUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedResponseOfNotificationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedResponseOfNotificationDto>;
+        }));
+    }
+
+    protected processGetNotificationsForUser(response: HttpResponseBase): Observable<PaginatedResponseOfNotificationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedResponseOfNotificationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    deleteNotification(notificationId: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Notification/remove/{notificationId}";
+        if (notificationId === undefined || notificationId === null)
+            throw new Error("The parameter 'notificationId' must be defined.");
+        url_ = url_.replace("{notificationId}", encodeURIComponent("" + notificationId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteNotification(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteNotification(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processDeleteNotification(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface ITravelClient {
     getAllTravels(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
     getTravelsByUserId(id: number, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
@@ -3627,6 +3816,175 @@ export interface IPaginatedResponseOfMessageDto {
     totalPages?: number;
     pageSize?: number;
     totalCount?: number;
+}
+
+export class AddNotificationDto implements IAddNotificationDto {
+    notifiedUserId?: number;
+    travelTitle?: string | undefined;
+    notificationType?: TypeOfNotification;
+
+    constructor(data?: IAddNotificationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.notifiedUserId = _data["notifiedUserId"];
+            this.travelTitle = _data["travelTitle"];
+            this.notificationType = _data["notificationType"];
+        }
+    }
+
+    static fromJS(data: any): AddNotificationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddNotificationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["notifiedUserId"] = this.notifiedUserId;
+        data["travelTitle"] = this.travelTitle;
+        data["notificationType"] = this.notificationType;
+        return data;
+    }
+}
+
+export interface IAddNotificationDto {
+    notifiedUserId?: number;
+    travelTitle?: string | undefined;
+    notificationType?: TypeOfNotification;
+}
+
+export enum TypeOfNotification {
+    Followed = 0,
+    Liked = 1,
+}
+
+export class PaginatedResponseOfNotificationDto implements IPaginatedResponseOfNotificationDto {
+    items?: NotificationDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
+
+    constructor(data?: IPaginatedResponseOfNotificationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(NotificationDto.fromJS(item));
+            }
+            this.currentPage = _data["currentPage"];
+            this.totalPages = _data["totalPages"];
+            this.pageSize = _data["pageSize"];
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedResponseOfNotificationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResponseOfNotificationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["currentPage"] = this.currentPage;
+        data["totalPages"] = this.totalPages;
+        data["pageSize"] = this.pageSize;
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+}
+
+export interface IPaginatedResponseOfNotificationDto {
+    items?: NotificationDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
+}
+
+export class NotificationDto implements INotificationDto {
+    id?: number;
+    content?: string;
+    notifiedUserId?: number;
+    notifierId?: number;
+    notifierUsername?: string;
+    notifierProfilePictureUrl?: string;
+    dateOfNotification?: Date;
+
+    constructor(data?: INotificationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.content = _data["content"];
+            this.notifiedUserId = _data["notifiedUserId"];
+            this.notifierId = _data["notifierId"];
+            this.notifierUsername = _data["notifierUsername"];
+            this.notifierProfilePictureUrl = _data["notifierProfilePictureUrl"];
+            this.dateOfNotification = _data["dateOfNotification"] ? new Date(_data["dateOfNotification"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): NotificationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NotificationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["content"] = this.content;
+        data["notifiedUserId"] = this.notifiedUserId;
+        data["notifierId"] = this.notifierId;
+        data["notifierUsername"] = this.notifierUsername;
+        data["notifierProfilePictureUrl"] = this.notifierProfilePictureUrl;
+        data["dateOfNotification"] = this.dateOfNotification ? this.dateOfNotification.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface INotificationDto {
+    id?: number;
+    content?: string;
+    notifiedUserId?: number;
+    notifierId?: number;
+    notifierUsername?: string;
+    notifierProfilePictureUrl?: string;
+    dateOfNotification?: Date;
 }
 
 export class PaginatedResponseOfTravelDto implements IPaginatedResponseOfTravelDto {

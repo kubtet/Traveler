@@ -16,6 +16,7 @@ import { SearchComponent } from './search/search.component';
 import { MessagesComponent } from './messages/messages.component';
 import { AdminComponent } from './admin/admin.component';
 import { adminGuard } from './guards/admin.guard';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,6 +28,7 @@ export const routes: Routes = [
       { path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
       { path: 'example', component: ExampleComponent },
       { path: 'messages', component: MessagesComponent },
+      { path: 'notifications', component: NotificationsComponent },
       { path: 'search', component: SearchComponent },
       {
         path: 'settings',
