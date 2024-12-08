@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241208114536_NotificationsDbSetAdded")]
+    partial class NotificationsDbSetAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -168,18 +171,13 @@ namespace API.Data.Migrations
                     b.Property<DateTime>("DateOfNotification")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("NotifiedUserId")
+                    b.Property<int>("NotifiedBy")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("NotifierId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Read")
+                    b.Property<int>("NotifiedUser")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NotifierId");
 
                     b.ToTable("Notifications");
                 });
@@ -504,17 +502,6 @@ namespace API.Data.Migrations
                     b.Navigation("Recipient");
 
                     b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("API.Entities.Notification", b =>
-                {
-                    b.HasOne("API.Entities.User", "Notifier")
-                        .WithMany()
-                        .HasForeignKey("NotifierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Notifier");
                 });
 
             modelBuilder.Entity("API.Entities.Photo", b =>

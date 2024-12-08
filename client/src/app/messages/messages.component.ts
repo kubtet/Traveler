@@ -72,7 +72,6 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor() {
     effect(() => {
-      this.navbarNotificationService.messageNotifications();
       if (
         this.currentUnreadThreads !==
         this.navbarNotificationService.messageNotifications()

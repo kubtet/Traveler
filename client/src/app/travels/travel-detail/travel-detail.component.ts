@@ -1,13 +1,15 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import {
+  AddNotificationDto,
   LikesClient,
   MemberDto,
   TravelClient,
   TravelDetailDto,
+  TypeOfNotification,
   UsersClient,
 } from '../../services/api';
 import { GalleriaModule } from 'primeng/galleria';
@@ -23,6 +25,7 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { UserListModalComponent } from '../../modals/user-list-modal/user-list-modal.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
+import { PresenceService } from '../../services/presence.service';
 
 @Component({
   selector: 'app-travel-detail',
@@ -49,14 +52,15 @@ import { AppButtonComponent } from '../../shared/components/app-button/app-butto
   styleUrl: './travel-detail.component.css',
 })
 export class TravelDetailComponent implements OnInit {
+  private travelClient = inject(TravelClient);
+  private usersClient = inject(UsersClient);
+  private presenceService = inject(PresenceService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private dialogService = inject(DialogService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private photoService = inject(PhotoService);
-  private travelClient = inject(TravelClient);
-  private usersClient = inject(UsersClient);
   private likeService = inject(LikesClient);
   protected accountService = inject(AccountService);
   protected photos: PhotoModel[] = [];
@@ -97,6 +101,14 @@ export class TravelDetailComponent implements OnInit {
     this.likedBy = await firstValueFrom(
       this.likeService.getUsersWhoLikedTravel(this.travelId)
     );
+    if (this.isLiked) {
+      const addNotificationDto = new AddNotificationDto({
+        notifiedUserId: this.travel.userId,
+        travelTitle: this.travel.title,
+        notificationType: TypeOfNotification.Liked,
+      });
+      this.presenceService.addNotification(addNotificationDto);
+    }
     this.isLoading.next(false);
   }
 

@@ -13,6 +13,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, App
     public required DbSet<Follow> Follows { get; set; }
     public required DbSet<Group> Groups { get; set; }
     public required DbSet<Message> Messages { get; set; }
+    public required DbSet<Notification> Notifications { get; set; }
     public required DbSet<TravelLike> TravelLikes { get; set; }
     public required DbSet<Travel> Travels { get; set; }
 

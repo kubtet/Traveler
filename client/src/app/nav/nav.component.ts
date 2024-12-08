@@ -23,16 +23,24 @@ export class NavComponent implements OnInit {
   protected items: MenuItem[] = [];
   protected loggedOutItems: MenuItem[] = [];
   protected currentUnreadThreads: number = 0;
+  protected currentUnreadNotifications: number = 0;
 
   constructor() {
     effect(() => {
-      if (
-        this.currentUnreadThreads !==
-        this.navbarNotificationService.messageNotifications()
-      ) {
+      const currentUnreadThreads =
+        this.navbarNotificationService.messageNotifications();
+      if (this.currentUnreadThreads !== currentUnreadThreads) {
         this.setMenu();
-        this.currentUnreadThreads =
-          this.navbarNotificationService.messageNotifications();
+        this.currentUnreadThreads = currentUnreadThreads;
+      }
+    });
+
+    effect(() => {
+      const currentUnreadNotifications =
+        this.navbarNotificationService.generalNotifications();
+      if (this.currentUnreadNotifications !== currentUnreadNotifications) {
+        this.setMenu();
+        this.currentUnreadNotifications = currentUnreadNotifications;
       }
     });
   }
@@ -45,6 +53,7 @@ export class NavComponent implements OnInit {
     this.currentUserId = user.id;
 
     await this.navbarNotificationService.getMessageNotifications();
+    await this.navbarNotificationService.getGeneralNotifications();
     this.setMenu();
   }
 
@@ -56,7 +65,7 @@ export class NavComponent implements OnInit {
       },
       {
         icon: 'pi pi-search',
-        routerLink: '/search',
+        routerLink: 'search',
       },
       {
         icon: 'pi pi-plus',
@@ -72,23 +81,27 @@ export class NavComponent implements OnInit {
       },
       {
         icon: 'pi pi-bell',
-        // badge: '3',
+        routerLink: 'notifications',
+        badge:
+          this.navbarNotificationService.generalNotifications() > 0
+            ? this.navbarNotificationService.generalNotifications().toString()
+            : null,
       },
       {
         icon: 'pi pi-hammer',
-        routerLink: '/errors',
+        routerLink: 'errors',
       },
       {
         icon: 'pi pi-user',
-        routerLink: '/user-profile/' + this.currentUserId.toString(),
+        routerLink: 'user-profile/' + this.currentUserId.toString(),
       },
       {
         icon: 'pi pi-lightbulb',
-        routerLink: '/example',
+        routerLink: 'example',
       },
       {
         icon: 'pi pi-address-book',
-        routerLink: '/admin',
+        routerLink: 'admin',
         visible: this.accountService.roles().includes('Admin'),
       },
     ];
