@@ -1,8 +1,7 @@
-namespace API.Enums
+namespace API.Enums;
+
+public enum TypeOfPhoto
 {
-    public enum TypeOfPhoto
-    {
-        Profile,
-        Travel,
-    }
+    Profile,
+    Travel,
 }

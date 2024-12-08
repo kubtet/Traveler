@@ -26,13 +26,13 @@ namespace API.Repositories
                 .Count();
 
 
-            if (messagesInThreadCount > 100)
+            if (messagesInThreadCount >= 100)
             {
                 var messagesToRemove = context.Messages
                     .Where(m => m.RecipientId == message.RecipientId && m.SenderId == message.SenderId ||
                         m.SenderId == message.RecipientId && m.RecipientId == message.SenderId)
                     .OrderBy(m => m.MessageSent)
-                    .Take(messagesInThreadCount - 100)
+                    .Take(messagesInThreadCount - 100 + 1)
                     .ToList();
 
                 context.Messages.RemoveRange(messagesToRemove);

@@ -38,5 +38,8 @@ public class MappingProfiles : Profile
             .ForMember(d => d.RecipientPhotoUrl, o => o.MapFrom(s => s.Recipient.ProfilePhoto != null ? s.Recipient.ProfilePhoto.Url : null));
         CreateMap<Travel, TravelTimelineDto>()
             .ForMember(d => d.Country, o => o.MapFrom(s => s.CountryName));
+        CreateMap<Notification, NotificationDto>()
+            .ForMember(d => d.NotifierUsername, o => o.MapFrom(s => s.Notifier.UserName))
+            .ForMember(d => d.NotifierProfilePictureUrl, o => o.MapFrom(s => s.Notifier.ProfilePhoto != null ? s.Notifier.ProfilePhoto.Url : null));
     }
 }

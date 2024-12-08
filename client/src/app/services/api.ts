@@ -1541,6 +1541,7 @@ export class MessagesClient implements IMessagesClient {
     }
 }
 
+<<<<<<< HEAD
 export interface IStatisticsClient {
     getStatisticsForUser(userId: number): Observable<UserStatisticsDto>;
     getMonthlyTrips(userId: number): Observable<MonthyTripsDto[]>;
@@ -1551,6 +1552,17 @@ export interface IStatisticsClient {
 
 @Injectable()
 export class StatisticsClient implements IStatisticsClient {
+=======
+export interface INotificationClient {
+    addNotification(addNotificationDto: AddNotificationDto): Observable<FileResponse>;
+    getNotificationsForUser(userId?: number | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfNotificationDto>;
+    getUnreadNotificationsCount(): Observable<number>;
+    deleteNotification(notificationId: number): Observable<FileResponse>;
+}
+
+@Injectable()
+export class NotificationClient implements INotificationClient {
+>>>>>>> main
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -1560,11 +1572,84 @@ export class StatisticsClient implements IStatisticsClient {
         this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
+<<<<<<< HEAD
     getStatisticsForUser(userId: number): Observable<UserStatisticsDto> {
         let url_ = this.baseUrl + "/api/Statistics/{userId}";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
         url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+=======
+    addNotification(addNotificationDto: AddNotificationDto): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Notification";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(addNotificationDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddNotification(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddNotification(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processAddNotification(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getNotificationsForUser(userId?: number | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfNotificationDto> {
+        let url_ = this.baseUrl + "/api/Notification?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+>>>>>>> main
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1576,6 +1661,7 @@ export class StatisticsClient implements IStatisticsClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+<<<<<<< HEAD
             return this.processGetStatisticsForUser(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -1590,6 +1676,22 @@ export class StatisticsClient implements IStatisticsClient {
     }
 
     protected processGetStatisticsForUser(response: HttpResponseBase): Observable<UserStatisticsDto> {
+=======
+            return this.processGetNotificationsForUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetNotificationsForUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedResponseOfNotificationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedResponseOfNotificationDto>;
+        }));
+    }
+
+    protected processGetNotificationsForUser(response: HttpResponseBase): Observable<PaginatedResponseOfNotificationDto> {
+>>>>>>> main
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1600,7 +1702,11 @@ export class StatisticsClient implements IStatisticsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+<<<<<<< HEAD
             result200 = UserStatisticsDto.fromJS(resultData200);
+=======
+            result200 = PaginatedResponseOfNotificationDto.fromJS(resultData200);
+>>>>>>> main
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1611,11 +1717,16 @@ export class StatisticsClient implements IStatisticsClient {
         return _observableOf(null as any);
     }
 
+<<<<<<< HEAD
     getMonthlyTrips(userId: number): Observable<MonthyTripsDto[]> {
         let url_ = this.baseUrl + "/api/Statistics/monthly-trips/{userId}";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
         url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+=======
+    getUnreadNotificationsCount(): Observable<number> {
+        let url_ = this.baseUrl + "/api/Notification/numberOfUnread";
+>>>>>>> main
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1627,6 +1738,7 @@ export class StatisticsClient implements IStatisticsClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+<<<<<<< HEAD
             return this.processGetMonthlyTrips(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -1641,6 +1753,22 @@ export class StatisticsClient implements IStatisticsClient {
     }
 
     protected processGetMonthlyTrips(response: HttpResponseBase): Observable<MonthyTripsDto[]> {
+=======
+            return this.processGetUnreadNotificationsCount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUnreadNotificationsCount(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processGetUnreadNotificationsCount(response: HttpResponseBase): Observable<number> {
+>>>>>>> main
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1651,6 +1779,7 @@ export class StatisticsClient implements IStatisticsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+<<<<<<< HEAD
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -1659,6 +1788,10 @@ export class StatisticsClient implements IStatisticsClient {
             else {
                 result200 = <any>null;
             }
+=======
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+>>>>>>> main
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1669,17 +1802,26 @@ export class StatisticsClient implements IStatisticsClient {
         return _observableOf(null as any);
     }
 
+<<<<<<< HEAD
     getTravelsTimeline(userId: number): Observable<TravelTimelineDto[]> {
         let url_ = this.baseUrl + "/api/Statistics/timeline-trips/{userId}";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
         url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+=======
+    deleteNotification(notificationId: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Notification/remove/{notificationId}";
+        if (notificationId === undefined || notificationId === null)
+            throw new Error("The parameter 'notificationId' must be defined.");
+        url_ = url_.replace("{notificationId}", encodeURIComponent("" + notificationId));
+>>>>>>> main
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+<<<<<<< HEAD
                 "Accept": "application/json"
             })
         };
@@ -1699,12 +1841,34 @@ export class StatisticsClient implements IStatisticsClient {
     }
 
     protected processGetTravelsTimeline(response: HttpResponseBase): Observable<TravelTimelineDto[]> {
+=======
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteNotification(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteNotification(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processDeleteNotification(response: HttpResponseBase): Observable<FileResponse> {
+>>>>>>> main
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+<<<<<<< HEAD
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
@@ -1821,6 +1985,19 @@ export class StatisticsClient implements IStatisticsClient {
             result200 = CountriesByContinentDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
+=======
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+>>>>>>> main
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -3918,6 +4095,7 @@ export interface IPaginatedResponseOfMessageDto {
     totalCount?: number;
 }
 
+<<<<<<< HEAD
 export class UserStatisticsDto implements IUserStatisticsDto {
     totalTravels?: number;
     totalCountries?: number;
@@ -3925,6 +4103,14 @@ export class UserStatisticsDto implements IUserStatisticsDto {
     totalContinents?: number;
 
     constructor(data?: IUserStatisticsDto) {
+=======
+export class AddNotificationDto implements IAddNotificationDto {
+    notifiedUserId?: number;
+    travelTitle?: string | undefined;
+    notificationType?: TypeOfNotification;
+
+    constructor(data?: IAddNotificationDto) {
+>>>>>>> main
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3935,6 +4121,7 @@ export class UserStatisticsDto implements IUserStatisticsDto {
 
     init(_data?: any) {
         if (_data) {
+<<<<<<< HEAD
             this.totalTravels = _data["totalTravels"];
             this.totalCountries = _data["totalCountries"];
             this.totalCities = _data["totalCities"];
@@ -3945,20 +4132,38 @@ export class UserStatisticsDto implements IUserStatisticsDto {
     static fromJS(data: any): UserStatisticsDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserStatisticsDto();
+=======
+            this.notifiedUserId = _data["notifiedUserId"];
+            this.travelTitle = _data["travelTitle"];
+            this.notificationType = _data["notificationType"];
+        }
+    }
+
+    static fromJS(data: any): AddNotificationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddNotificationDto();
+>>>>>>> main
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+<<<<<<< HEAD
         data["totalTravels"] = this.totalTravels;
         data["totalCountries"] = this.totalCountries;
         data["totalCities"] = this.totalCities;
         data["totalContinents"] = this.totalContinents;
+=======
+        data["notifiedUserId"] = this.notifiedUserId;
+        data["travelTitle"] = this.travelTitle;
+        data["notificationType"] = this.notificationType;
+>>>>>>> main
         return data;
     }
 }
 
+<<<<<<< HEAD
 export interface IUserStatisticsDto {
     totalTravels?: number;
     totalCountries?: number;
@@ -3973,6 +4178,27 @@ export class MonthyTripsDto implements IMonthyTripsDto {
     tripCount?: number;
 
     constructor(data?: IMonthyTripsDto) {
+=======
+export interface IAddNotificationDto {
+    notifiedUserId?: number;
+    travelTitle?: string | undefined;
+    notificationType?: TypeOfNotification;
+}
+
+export enum TypeOfNotification {
+    Followed = 0,
+    Liked = 1,
+}
+
+export class PaginatedResponseOfNotificationDto implements IPaginatedResponseOfNotificationDto {
+    items?: NotificationDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
+
+    constructor(data?: IPaginatedResponseOfNotificationDto) {
+>>>>>>> main
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3983,6 +4209,7 @@ export class MonthyTripsDto implements IMonthyTripsDto {
 
     init(_data?: any) {
         if (_data) {
+<<<<<<< HEAD
             this.year = _data["year"];
             this.month = _data["month"];
             this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
@@ -3993,20 +4220,50 @@ export class MonthyTripsDto implements IMonthyTripsDto {
     static fromJS(data: any): MonthyTripsDto {
         data = typeof data === 'object' ? data : {};
         let result = new MonthyTripsDto();
+=======
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(NotificationDto.fromJS(item));
+            }
+            this.currentPage = _data["currentPage"];
+            this.totalPages = _data["totalPages"];
+            this.pageSize = _data["pageSize"];
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedResponseOfNotificationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResponseOfNotificationDto();
+>>>>>>> main
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+<<<<<<< HEAD
         data["year"] = this.year;
         data["month"] = this.month;
         data["date"] = this.date ? formatDate(this.date) : <any>undefined;
         data["tripCount"] = this.tripCount;
+=======
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["currentPage"] = this.currentPage;
+        data["totalPages"] = this.totalPages;
+        data["pageSize"] = this.pageSize;
+        data["totalCount"] = this.totalCount;
+>>>>>>> main
         return data;
     }
 }
 
+<<<<<<< HEAD
 export interface IMonthyTripsDto {
     year?: number;
     month?: number;
@@ -4021,6 +4278,27 @@ export class TravelTimelineDto implements ITravelTimelineDto {
     endDate?: Date | undefined;
 
     constructor(data?: ITravelTimelineDto) {
+=======
+export interface IPaginatedResponseOfNotificationDto {
+    items?: NotificationDto[];
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
+    totalCount?: number;
+}
+
+export class NotificationDto implements INotificationDto {
+    id?: number;
+    content?: string;
+    notifiedUserId?: number;
+    notifierId?: number;
+    notifierUsername?: string;
+    notifierProfilePictureUrl?: string;
+    dateOfNotification?: Date;
+    read?: boolean;
+
+    constructor(data?: INotificationDto) {
+>>>>>>> main
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4031,6 +4309,7 @@ export class TravelTimelineDto implements ITravelTimelineDto {
 
     init(_data?: any) {
         if (_data) {
+<<<<<<< HEAD
             this.country = _data["country"];
             this.cities = _data["cities"];
             this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
@@ -4041,20 +4320,48 @@ export class TravelTimelineDto implements ITravelTimelineDto {
     static fromJS(data: any): TravelTimelineDto {
         data = typeof data === 'object' ? data : {};
         let result = new TravelTimelineDto();
+=======
+            this.id = _data["id"];
+            this.content = _data["content"];
+            this.notifiedUserId = _data["notifiedUserId"];
+            this.notifierId = _data["notifierId"];
+            this.notifierUsername = _data["notifierUsername"];
+            this.notifierProfilePictureUrl = _data["notifierProfilePictureUrl"];
+            this.dateOfNotification = _data["dateOfNotification"] ? new Date(_data["dateOfNotification"].toString()) : <any>undefined;
+            this.read = _data["read"];
+        }
+    }
+
+    static fromJS(data: any): NotificationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NotificationDto();
+>>>>>>> main
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+<<<<<<< HEAD
         data["country"] = this.country;
         data["cities"] = this.cities;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+=======
+        data["id"] = this.id;
+        data["content"] = this.content;
+        data["notifiedUserId"] = this.notifiedUserId;
+        data["notifierId"] = this.notifierId;
+        data["notifierUsername"] = this.notifierUsername;
+        data["notifierProfilePictureUrl"] = this.notifierProfilePictureUrl;
+        data["dateOfNotification"] = this.dateOfNotification ? this.dateOfNotification.toISOString() : <any>undefined;
+        data["read"] = this.read;
+>>>>>>> main
         return data;
     }
 }
 
+<<<<<<< HEAD
 export interface ITravelTimelineDto {
     country?: string;
     cities?: string | undefined;
@@ -4168,6 +4475,17 @@ export interface ICountriesByContinentDto {
     countriesNorthAmerica?: number;
     countriesAntarctica?: number;
     countriesOceania?: number;
+=======
+export interface INotificationDto {
+    id?: number;
+    content?: string;
+    notifiedUserId?: number;
+    notifierId?: number;
+    notifierUsername?: string;
+    notifierProfilePictureUrl?: string;
+    dateOfNotification?: Date;
+    read?: boolean;
+>>>>>>> main
 }
 
 export class PaginatedResponseOfTravelDto implements IPaginatedResponseOfTravelDto {

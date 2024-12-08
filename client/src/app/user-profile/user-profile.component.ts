@@ -6,7 +6,13 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
-import { FollowsClient, MemberDto, UsersClient } from '../services/api';
+import {
+  AddNotificationDto,
+  FollowsClient,
+  MemberDto,
+  TypeOfNotification,
+  UsersClient,
+} from '../services/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MyTravelsComponent } from '../travels/travel-list/travel-list.component';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
@@ -21,6 +27,7 @@ import {
 } from 'primeng/dynamicdialog';
 import { MenuItem, MessageService } from 'primeng/api';
 import { UserListModalComponent } from '../modals/user-list-modal/user-list-modal.component';
+import { PresenceService } from '../services/presence.service';
 import { SpeedDialModule } from 'primeng/speeddial';
 
 @Component({
@@ -46,6 +53,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
   styleUrls: ['./user-profile.component.css'],
 })
 export class UserProfileComponent implements OnInit {
+  private presenceService = inject(PresenceService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private usersClient = inject(UsersClient);
@@ -61,6 +69,7 @@ export class UserProfileComponent implements OnInit {
   protected isFollowedByCurrent: boolean;
 
   protected items: MenuItem[] | undefined;
+  protected ref: DynamicDialogRef;
 
   // User lists
   protected followers: MemberDto[] = [];
@@ -70,57 +79,6 @@ export class UserProfileComponent implements OnInit {
     public dialogService: DialogService,
     public messageService: MessageService
   ) {}
-
-  ref: DynamicDialogRef;
-
-  protected async toggleFollow() {
-    this.isLoading.next(true);
-
-    await firstValueFrom(this.followsClient.toggleFollow(this.userId));
-    this.numberOfFollowers = await firstValueFrom(
-      this.followsClient.countFollowers(this.user.id)
-    );
-    this.isFollowedByCurrent = await firstValueFrom(
-      this.followsClient.isFollowedByCurrentStatus(this.user.id)
-    );
-    this.isLoading.next(false);
-  }
-
-  async showFollowersDialog() {
-    this.isLoading.next(true);
-    await this.loadFollowers();
-    this.isLoading.next(false);
-
-    this.ref = this.dialogService.open(UserListModalComponent, {
-      header: 'Followers',
-      width: '50%',
-      data: { usersToDisplay: this.followers },
-    });
-  }
-  protected async loadFollowers() {
-    const newFollowers = await firstValueFrom(
-      this.followsClient.getFollowers(this.userId)
-    );
-    this.followers = newFollowers;
-  }
-
-  protected async loadFollowing() {
-    const newFollowings = await firstValueFrom(
-      this.followsClient.getFollowing(this.userId)
-    );
-    this.followings = newFollowings;
-  }
-
-  async showFollowingDialog() {
-    this.isLoading.next(true);
-    await this.loadFollowing();
-    this.isLoading.next(false);
-    this.ref = this.dialogService.open(UserListModalComponent, {
-      header: 'Following',
-      width: '50%',
-      data: { usersToDisplay: this.followings },
-    });
-  }
 
   async ngOnInit() {
     this.route.paramMap.subscribe(async (params) => {
@@ -170,6 +128,62 @@ export class UserProfileComponent implements OnInit {
         },
       ];
       this.isLoading.next(false);
+    });
+  }
+
+  protected async toggleFollow() {
+    this.isLoading.next(true);
+
+    await firstValueFrom(this.followsClient.toggleFollow(this.userId));
+    this.numberOfFollowers = await firstValueFrom(
+      this.followsClient.countFollowers(this.user.id)
+    );
+    this.isFollowedByCurrent = await firstValueFrom(
+      this.followsClient.isFollowedByCurrentStatus(this.user.id)
+    );
+    if (this.isFollowedByCurrent) {
+      const addNotificationDto = new AddNotificationDto({
+        notifiedUserId: this.userId,
+        notificationType: TypeOfNotification.Followed,
+      });
+      this.presenceService.addNotification(addNotificationDto);
+    }
+    this.isLoading.next(false);
+  }
+
+  async showFollowersDialog() {
+    this.isLoading.next(true);
+    await this.loadFollowers();
+    this.isLoading.next(false);
+
+    this.ref = this.dialogService.open(UserListModalComponent, {
+      header: 'Followers',
+      width: '50%',
+      data: { usersToDisplay: this.followers },
+    });
+  }
+  protected async loadFollowers() {
+    const newFollowers = await firstValueFrom(
+      this.followsClient.getFollowers(this.userId)
+    );
+    this.followers = newFollowers;
+  }
+
+  protected async loadFollowing() {
+    const newFollowings = await firstValueFrom(
+      this.followsClient.getFollowing(this.userId)
+    );
+    this.followings = newFollowings;
+  }
+
+  async showFollowingDialog() {
+    this.isLoading.next(true);
+    await this.loadFollowing();
+    this.isLoading.next(false);
+    this.ref = this.dialogService.open(UserListModalComponent, {
+      header: 'Following',
+      width: '50%',
+      data: { usersToDisplay: this.followings },
     });
   }
 

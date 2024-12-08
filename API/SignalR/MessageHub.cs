@@ -81,8 +81,7 @@ public class MessageHub(IMessageRepository messageRepository, IUserRepository us
             var connections = await PresenceTracker.GetConnectionsForUser(recipient.Id);
             if (connections != null && connections?.Count != null)
             {
-                await presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
-                    new { userId = recipient.Id, username = recipient.UserName, profilePicutre = recipient?.ProfilePhoto?.Url });
+                await presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived", recipient.UserName);
             }
         }
 
