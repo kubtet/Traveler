@@ -4,10 +4,13 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import {
+  AddNotificationDto,
   LikesClient,
   MemberDto,
+  NotificationClient,
   TravelClient,
   TravelDetailDto,
+  TypeOfNotification,
   UsersClient,
 } from '../../services/api';
 import { GalleriaModule } from 'primeng/galleria';
@@ -49,14 +52,15 @@ import { AppButtonComponent } from '../../shared/components/app-button/app-butto
   styleUrl: './travel-detail.component.css',
 })
 export class TravelDetailComponent implements OnInit {
+  private notificationClient = inject(NotificationClient);
+  private travelClient = inject(TravelClient);
+  private usersClient = inject(UsersClient);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private dialogService = inject(DialogService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private photoService = inject(PhotoService);
-  private travelClient = inject(TravelClient);
-  private usersClient = inject(UsersClient);
   private likeService = inject(LikesClient);
   protected accountService = inject(AccountService);
   protected photos: PhotoModel[] = [];
@@ -97,6 +101,16 @@ export class TravelDetailComponent implements OnInit {
     this.likedBy = await firstValueFrom(
       this.likeService.getUsersWhoLikedTravel(this.travelId)
     );
+    if (this.isLiked) {
+      const addNotificationDto = new AddNotificationDto({
+        notifiedUserId: this.travel.userId,
+        travelTitle: this.travel.title,
+        notificationType: TypeOfNotification.Liked,
+      });
+      await firstValueFrom(
+        this.notificationClient.addNotification(addNotificationDto)
+      );
+    }
     this.isLoading.next(false);
   }
 

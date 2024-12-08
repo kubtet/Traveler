@@ -6,7 +6,14 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
-import { FollowsClient, MemberDto, UsersClient } from '../services/api';
+import {
+  AddNotificationDto,
+  FollowsClient,
+  MemberDto,
+  NotificationClient,
+  TypeOfNotification,
+  UsersClient,
+} from '../services/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MyTravelsComponent } from '../travels/travel-list/travel-list.component';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
@@ -44,6 +51,7 @@ import { UserListModalComponent } from '../modals/user-list-modal/user-list-moda
   styleUrls: ['./user-profile.component.css'],
 })
 export class UserProfileComponent implements OnInit {
+  private notificationClient = inject(NotificationClient);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private usersClient = inject(UsersClient);
@@ -57,6 +65,7 @@ export class UserProfileComponent implements OnInit {
   protected numberOfFollowers: number;
   protected numberOfFollowings: number;
   protected isFollowedByCurrent: boolean;
+  protected ref: DynamicDialogRef;
 
   // User lists
   protected followers: MemberDto[] = [];
@@ -67,7 +76,35 @@ export class UserProfileComponent implements OnInit {
     public messageService: MessageService
   ) {}
 
-  ref: DynamicDialogRef;
+  async ngOnInit() {
+    this.route.paramMap.subscribe(async (params) => {
+      this.isLoading.next(true);
+      this.userId = +params.get('id')!;
+      if (!this.userId || this.userId === 0) {
+        this.router.navigateByUrl('/not-found');
+      }
+      this.user = await firstValueFrom(
+        this.usersClient.getUserById(this.userId)
+      );
+      this.checkIfCurrentUser();
+
+      this.numberOfFollowers = await firstValueFrom(
+        this.followsClient.countFollowers(this.user.id)
+      );
+      this.isFollowedByCurrent = await firstValueFrom(
+        this.followsClient.isFollowedByCurrentStatus(this.user.id)
+      );
+      this.currentUser = await firstValueFrom(
+        this.usersClient.getUserByUsername(
+          this.accountService.currentUser().username
+        )
+      );
+      this.numberOfFollowings = await firstValueFrom(
+        this.followsClient.countFollowings(this.user.id)
+      );
+      this.isLoading.next(false);
+    });
+  }
 
   protected async toggleFollow() {
     this.isLoading.next(true);
@@ -79,6 +116,15 @@ export class UserProfileComponent implements OnInit {
     this.isFollowedByCurrent = await firstValueFrom(
       this.followsClient.isFollowedByCurrentStatus(this.user.id)
     );
+    if (this.isFollowedByCurrent) {
+      const addNotificationDto = new AddNotificationDto({
+        notifiedUserId: this.userId,
+        notificationType: TypeOfNotification.Followed,
+      });
+      await firstValueFrom(
+        this.notificationClient.addNotification(addNotificationDto)
+      );
+    }
     this.isLoading.next(false);
   }
 
@@ -115,36 +161,6 @@ export class UserProfileComponent implements OnInit {
       header: 'Following',
       width: '50%',
       data: { usersToDisplay: this.followings },
-    });
-  }
-
-  async ngOnInit() {
-    this.route.paramMap.subscribe(async (params) => {
-      this.isLoading.next(true);
-      this.userId = +params.get('id')!;
-      if (!this.userId || this.userId === 0) {
-        this.router.navigateByUrl('/not-found');
-      }
-      this.user = await firstValueFrom(
-        this.usersClient.getUserById(this.userId)
-      );
-      this.checkIfCurrentUser();
-
-      this.numberOfFollowers = await firstValueFrom(
-        this.followsClient.countFollowers(this.user.id)
-      );
-      this.isFollowedByCurrent = await firstValueFrom(
-        this.followsClient.isFollowedByCurrentStatus(this.user.id)
-      );
-      this.currentUser = await firstValueFrom(
-        this.usersClient.getUserByUsername(
-          this.accountService.currentUser().username
-        )
-      );
-      this.numberOfFollowings = await firstValueFrom(
-        this.followsClient.countFollowings(this.user.id)
-      );
-      this.isLoading.next(false);
     });
   }
 
