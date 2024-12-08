@@ -46,18 +46,22 @@
 
     <!-- Settings  -->
     @if(isCurrent) {
-    <app-button
-      icon="pi pi-cog"
-      label="Edit profile"
-      class="settings-button"
-      (onClick)="goToSettings()"
-    />
-    <app-button
-      icon="pi pi-sign-out"
-      label="Log out"
-      class="settings-button"
-      (onClick)="logOut()"
-    />
+
+    <div class="spinner-buttom">
+      <p-speedDial
+        [buttonStyle]="{
+          width: '2.4rem',
+          height: '2.4rem',
+          fontSize: '0.2rem'
+        }"
+        transitionDelay="80"
+        showIcon="pi pi-ellipsis-v"
+        hideIcon="pi pi-times"
+        [model]="items"
+        direction="down"
+      ></p-speedDial>
+    </div>
+
     }
   </div>
 </p-card>
@@ -66,12 +70,12 @@
 <div class="main-part">
   <p-tabView class="tabs">
     <p-tabPanel header="Feed">
-      <!-- Content for Your Board/Feed tab -->
+      <!-- Content for Feed tab -->
       <app-travels [user]="user"></app-travels>
     </p-tabPanel>
     <p-tabPanel header="Statistics">
       <!-- Content for Statistics tab -->
-      <app-statistics></app-statistics>
+      <app-statistics [userId]="user?.id"></app-statistics>
     </p-tabPanel>
     <p-tabPanel header="Map">
       <!-- Content for Statistics tab -->

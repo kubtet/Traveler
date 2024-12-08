@@ -8,6 +8,7 @@ namespace API.Interfaces
         void CreateTravel(Travel travel);
         Task<PagedList<Travel>> GetAllTravelsAsync(DataParams dataParams);
         Task<PagedList<Travel>> GetTravelsAsync(DataParams dataParams);
+        Task<List<Travel>> GetTravelsAsyncByUserId(int userId);
         Task<Travel?> GetTravelDetailAsync(int travelId);
         Task<bool> SaveAllAsync();
         void RemoveTravel(Travel travel);

@@ -16,6 +16,7 @@ import {
   UsersClient,
   FollowsClient,
   MessagesClient,
+  StatisticsClient,
   NotificationClient,
 } from './services/api';
 import { MessageService } from 'primeng/api';
@@ -81,6 +82,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: UsersClient,
       useFactory: (http: HttpClient) => new UsersClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: StatisticsClient,
+      useFactory: (http: HttpClient) => new StatisticsClient(http),
       deps: [HttpClient],
     },
   ],

@@ -42,12 +42,21 @@
   cursor: pointer;
 }
 
+.description {
+  max-width: 30rem;
+  word-wrap: break-word;
+}
+
 .likes-section {
   display: flex;
   flex-direction: row;
   align-content: center;
-  justify-content: center;
+  justify-content: left;
   gap: 0.6rem;
+}
+
+::ng-deep .card {
+  margin: 0;
 }
 
 .custom-back-arrow {

@@ -83,3 +83,9 @@
 .tabs {
   width: 100%;
 }
+
+.spinner-buttom {
+  padding: 5rem;
+  padding-top: 0rem;
+  margin-top: -3.5rem;
+}

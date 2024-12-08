@@ -29,6 +29,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ITravelRepository, TravelRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IStatisticsRepository, StatisticsRepository>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.AddSignalR();
