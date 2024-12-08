@@ -1,11 +1,18 @@
+using API.DTOs;
+using API.Entities;
+using API.Enums;
 using API.Extensions;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.SignalR;
 
 [Authorize]
-public class PresenceHub(PresenceTracker tracker) : Hub
+public class PresenceHub(INotificationRepository notificationRepository, PresenceTracker tracker,
+    UserManager<User> userManager) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -32,5 +39,45 @@ public class PresenceHub(PresenceTracker tracker) : Hub
         }
 
         await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task AddNotification(AddNotificationDto addNotificationDto)
+    {
+        if (Context.User == null) throw new HubException("Cannot get current user claim");
+
+        var currentUserId = Context.User.GetUserId();
+        var currentUser = await userManager.Users.FirstOrDefaultAsync(u => u.Id == currentUserId);
+
+        string content = "";
+
+        if (addNotificationDto.NotificationType == TypeOfNotification.Followed)
+        {
+            content = $"{currentUser?.UserName} has followed you.";
+        }
+        else
+        {
+            content = $"{currentUser?.UserName} has liked your travel {addNotificationDto?.TravelTitle}.";
+        }
+
+        var notification = new Notification
+        {
+            Content = content,
+            NotifiedUserId = addNotificationDto!.NotifiedUserId,
+            NotifierId = currentUserId,
+            Notifier = currentUser!,
+        };
+
+        notificationRepository.AddNotification(notification);
+
+        if (await notificationRepository.SaveAllAsync())
+        {
+            var connections = await PresenceTracker.GetConnectionsForUser(addNotificationDto.NotifiedUserId);
+            if (connections != null && connections?.Count != null)
+            {
+                await Clients.Clients(connections).SendAsync("NewNotificationReceived", notification);
+            }
+        }
+
+        throw new HubException("Cannot add notification at this time");
     }
 }

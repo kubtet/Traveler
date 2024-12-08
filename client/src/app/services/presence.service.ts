@@ -5,7 +5,7 @@ import {
   HubConnectionBuilder,
   HubConnectionState,
 } from '@microsoft/signalr';
-import { UserDto } from './api';
+import { AddNotificationDto, UserDto } from './api';
 import { NavbarNotificationService } from './navbar-notification.service';
 
 @Injectable()
@@ -40,11 +40,19 @@ export class PresenceService {
     this.hubConnection.on('NewMessageReceived', async () => {
       await this.navbarNotificationService.getMessageNotifications();
     });
+
+    this.hubConnection.on('NewNotificationReceived', async (notification) => {
+      console.log(notification);
+    });
   }
 
   public stopHubConnection() {
     if (this.hubConnection?.state === HubConnectionState.Connected) {
       this.hubConnection.stop().catch((error) => console.log(error));
     }
+  }
+
+  public addNotification(addNotificationDto: AddNotificationDto) {
+    return this.hubConnection?.invoke('AddNotification', addNotificationDto);
   }
 }

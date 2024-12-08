@@ -10,7 +10,6 @@ import {
   AddNotificationDto,
   FollowsClient,
   MemberDto,
-  NotificationClient,
   TypeOfNotification,
   UsersClient,
 } from '../services/api';
@@ -28,6 +27,7 @@ import {
 } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { UserListModalComponent } from '../modals/user-list-modal/user-list-modal.component';
+import { PresenceService } from '../services/presence.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -51,7 +51,7 @@ import { UserListModalComponent } from '../modals/user-list-modal/user-list-moda
   styleUrls: ['./user-profile.component.css'],
 })
 export class UserProfileComponent implements OnInit {
-  private notificationClient = inject(NotificationClient);
+  private presenceService = inject(PresenceService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private usersClient = inject(UsersClient);
@@ -121,9 +121,7 @@ export class UserProfileComponent implements OnInit {
         notifiedUserId: this.userId,
         notificationType: TypeOfNotification.Followed,
       });
-      await firstValueFrom(
-        this.notificationClient.addNotification(addNotificationDto)
-      );
+      this.presenceService.addNotification(addNotificationDto);
     }
     this.isLoading.next(false);
   }

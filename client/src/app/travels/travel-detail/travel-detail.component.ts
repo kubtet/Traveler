@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../../shared/components/app-loading/app-loading.component';
@@ -7,7 +7,6 @@ import {
   AddNotificationDto,
   LikesClient,
   MemberDto,
-  NotificationClient,
   TravelClient,
   TravelDetailDto,
   TypeOfNotification,
@@ -26,6 +25,7 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { UserListModalComponent } from '../../modals/user-list-modal/user-list-modal.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
+import { PresenceService } from '../../services/presence.service';
 
 @Component({
   selector: 'app-travel-detail',
@@ -52,9 +52,9 @@ import { AppButtonComponent } from '../../shared/components/app-button/app-butto
   styleUrl: './travel-detail.component.css',
 })
 export class TravelDetailComponent implements OnInit {
-  private notificationClient = inject(NotificationClient);
   private travelClient = inject(TravelClient);
   private usersClient = inject(UsersClient);
+  private presenceService = inject(PresenceService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private dialogService = inject(DialogService);
@@ -107,9 +107,7 @@ export class TravelDetailComponent implements OnInit {
         travelTitle: this.travel.title,
         notificationType: TypeOfNotification.Liked,
       });
-      await firstValueFrom(
-        this.notificationClient.addNotification(addNotificationDto)
-      );
+      this.presenceService.addNotification(addNotificationDto);
     }
     this.isLoading.next(false);
   }
