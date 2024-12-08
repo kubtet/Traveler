@@ -3919,6 +3919,7 @@ export interface IUserStatisticsDto {
 export class MonthyTripsDto implements IMonthyTripsDto {
     year?: number;
     month?: number;
+    date?: Date;
     tripCount?: number;
 
     constructor(data?: IMonthyTripsDto) {
@@ -3934,6 +3935,7 @@ export class MonthyTripsDto implements IMonthyTripsDto {
         if (_data) {
             this.year = _data["year"];
             this.month = _data["month"];
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
             this.tripCount = _data["tripCount"];
         }
     }
@@ -3949,6 +3951,7 @@ export class MonthyTripsDto implements IMonthyTripsDto {
         data = typeof data === 'object' ? data : {};
         data["year"] = this.year;
         data["month"] = this.month;
+        data["date"] = this.date ? formatDate(this.date) : <any>undefined;
         data["tripCount"] = this.tripCount;
         return data;
     }
@@ -3957,6 +3960,7 @@ export class MonthyTripsDto implements IMonthyTripsDto {
 export interface IMonthyTripsDto {
     year?: number;
     month?: number;
+    date?: Date;
     tripCount?: number;
 }
 
@@ -4482,6 +4486,12 @@ export class PhotoDto implements IPhotoDto {
 export interface IPhotoDto {
     id?: number;
     url?: string | undefined;
+}
+
+function formatDate(d: Date) {
+    return d.getFullYear() + '-' + 
+        (d.getMonth() < 9 ? ('0' + (d.getMonth()+1)) : (d.getMonth()+1)) + '-' +
+        (d.getDate() < 10 ? ('0' + d.getDate()) : d.getDate());
 }
 
 export interface FileParameter {

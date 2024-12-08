@@ -105,6 +105,13 @@
       <img class="logo-img" src="./assets/traveler-logo.png" alt="logo" />
       <span class="subtitle">Activity</span>
     </div>
+    <div class="seasonal-container">
+      <p-chart
+        type="line"
+        [data]="monthlyPlotTripsData"
+        [options]="monthlyPlotTripsOptions"
+      />
+    </div>
     <div class="activity-plot-conainer"></div>
   </div>
 

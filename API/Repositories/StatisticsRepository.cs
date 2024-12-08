@@ -32,7 +32,10 @@ public class StatisticsRepository(ITravelRepository travelRepository, IMapper ma
         foreach (var travel in travels)
         {
             var continent = GeographyMapping.GetContinent(travel.CountryIso2Code);
-            countriesInContinents[continent]++;
+            if (continent != "Unknown")
+            {
+                countriesInContinents[continent]++;
+            }
         }
 
         return new CountriesByContinentDto
@@ -52,7 +55,6 @@ public class StatisticsRepository(ITravelRepository travelRepository, IMapper ma
         var travels = await travelRepository.GetTravelsAsyncByUserId(userId);
         var monthlyTrips = new Dictionary<(int Year, int Month), int>(); // data i wartość
 
-        // kazda travel ma start date i mze miec end date 
         foreach (var travel in travels)
         {
             var startDate = travel.StartDate;
@@ -75,6 +77,7 @@ public class StatisticsRepository(ITravelRepository travelRepository, IMapper ma
         {
             Month = mt.Key.Month,
             Year = mt.Key.Year,
+            Date = new DateOnly(year: mt.Key.Year, month: mt.Key.Month, day: 1),
             TripCount = mt.Value,
         }).OrderBy(mt => mt.Year).ThenBy(mt => mt.Month).ToList();
 
@@ -125,8 +128,8 @@ public class StatisticsRepository(ITravelRepository travelRepository, IMapper ma
             .Distinct()
             .ToList();
         var uniqueCities = travels
-            .Where(t => t.Cities != null)
-            .SelectMany(t => t.Cities.Split(',')
+            .Where(t => t.Cities != null && t.Cities != "")
+            .SelectMany(t => t.Cities!.Split(',')
             .Select(city => city.Trim()))
             .Distinct()
             .ToList();
