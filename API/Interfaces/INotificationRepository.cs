@@ -7,6 +7,7 @@ namespace API.Interfaces;
 public interface INotificationRepository
 {
     void AddNotification(Notification notification);
+    Task<Notification?> GetNotification(int id);
     Task<PagedList<NotificationDto>> GetNotificationsForUser(NotificationParams notificationParams);
     void RemoveNotification(Notification notification);
     void RemoveNotifications(Notification[] notifications);

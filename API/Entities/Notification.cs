@@ -3,8 +3,9 @@ namespace API.Entities;
 public class Notification
 {
     public int Id { get; set; }
-    public int NotifiedUser { get; set; }
-    public int NotifiedBy { get; set; }
     public required string Content { get; set; }
-    public DateTime DateOfNotification { get; set; } = DateTime.UtcNow;
+    public int NotifiedUserId { get; set; }
+    public int NotifierId { get; set; }
+    public User Notifier { get; set; } = null!;
+    public DateTime DateOfNotification { get; set; } = DateTime.Now;
 }

@@ -15,11 +15,18 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
         context.Notifications.Add(notification);
     }
 
+    public async Task<Notification?> GetNotification(int id)
+    {
+        var notification = await context.Notifications.FindAsync(id);
+
+        return notification;
+    }
+
     public async Task<PagedList<NotificationDto>> GetNotificationsForUser(NotificationParams notificationParams)
     {
         var query = context.Notifications
-            .Where(n => n.NotifiedUser == notificationParams.UserId)
-            .OrderBy(n => n.DateOfNotification)
+            .Where(n => n.NotifiedUserId == notificationParams.UserId)
+            .OrderByDescending(n => n.DateOfNotification)
             .AsQueryable();
 
         var notifications = query.ProjectTo<NotificationDto>(mapper.ConfigurationProvider);
