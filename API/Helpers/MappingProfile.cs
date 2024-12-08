@@ -36,5 +36,6 @@ public class MappingProfiles : Profile
         CreateMap<Message, MessageDto>()
             .ForMember(d => d.SenderPhotoUrl, o => o.MapFrom(s => s.Sender.ProfilePhoto != null ? s.Sender.ProfilePhoto.Url : null))
             .ForMember(d => d.RecipientPhotoUrl, o => o.MapFrom(s => s.Recipient.ProfilePhoto != null ? s.Recipient.ProfilePhoto.Url : null));
+        CreateMap<Notification, NotificationDto>();
     }
 }
