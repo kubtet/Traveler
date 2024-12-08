@@ -1,0 +1,127 @@
+<div class="main-container">
+  <!-- header -->
+  <div class="header">
+    <p class="title">Traveler Dashboard</p>
+    <p class="subtitle">Explore your journeys in a whole new way</p>
+  </div>
+
+  <!-- general simple statistics -->
+  <div class="statistics-section">
+    <!-- title -->
+    <div class="progress-container">
+      <div class="progress-label">
+        <img class="logo-img" src="./assets/traveler-logo.png" alt="logo" />
+        <span class="subtitle">Total Progress</span>
+      </div>
+    </div>
+
+    <!-- user statistics -->
+    <div class="statistics-grid">
+      <div class="statistic">
+        <div class="label">Trips</div>
+        <div class="value">{{ statistics.totalTravels }}</div>
+      </div>
+      <div class="statistic">
+        <div class="label">Countries</div>
+        <div class="value">{{ statistics.totalCountries }}</div>
+      </div>
+      <div class="statistic">
+        <div class="label">Towns</div>
+        <div class="value">{{ statistics.totalCities }}</div>
+      </div>
+      <div class="statistic">
+        <div class="label">Continents</div>
+        <div class="value">{{ statistics.totalContinents }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-section">
+    <div class="progress-label">
+      <img class="logo-img" src="./assets/traveler-logo.png" alt="logo" />
+      <span class="subtitle">Your Journey Timeline</span>
+    </div>
+    <div class="card">
+      <p-timeline [value]="travelsTimeline">
+        <ng-template pTemplate="content" let-event>
+          <small class="p-text-secondary">{{
+            event.startDate | date : "dd.MM.yyyy"
+          }}</small>
+        </ng-template>
+        <ng-template pTemplate="opposite" let-event>
+          {{ event.country }}
+          <br />
+          <small class="p-text-secondary">
+            {{ event.cities }}
+          </small>
+        </ng-template>
+      </p-timeline>
+    </div>
+  </div>
+
+  <!-- Countries by continents -->
+  <div class="progress-label">
+    <img class="logo-img" src="./assets/traveler-logo.png" alt="logo" />
+    <span class="subtitle">Countries shares</span>
+  </div>
+  <!-- plots -->
+  <div class="progress-section">
+    <!-- total countries -->
+
+    <div class="plots-continents-element">
+      <div class="continent-progress-label">
+        <span>General</span>
+        <br />
+        <small>
+          {{ statistics.totalCountries }}/{{ totalCountries }} ({{
+            seenCountriesShare
+          }}%)
+        </small>
+      </div>
+      <p-progressBar [value]="seenCountriesShare">
+        <ng-template pTemplate="content" let-value> </ng-template>
+      </p-progressBar>
+    </div>
+    @for (item of continentsProgress; track $index) {
+    <div class="plots-continents-element">
+      <div class="continent-progress-label">
+        <span>{{ item.name }}</span>
+        <br />
+        <small>
+          {{ item.visited }}/{{ item.total }} ({{ item.progress }}%)
+        </small>
+      </div>
+      <p-progressBar [value]="item.progress" styleClass="custom-progressbar">
+        <ng-template pTemplate="content" let-value> </ng-template>
+      </p-progressBar>
+    </div>
+    }
+  </div>
+
+  <!-- Activity plot -->
+  <div class="activity-plot-section">
+    <div class="progress-label">
+      <img class="logo-img" src="./assets/traveler-logo.png" alt="logo" />
+      <span class="subtitle">Activity</span>
+    </div>
+    <div class="activity-plot-conainer"></div>
+  </div>
+
+  <!-- Seasonal data -->
+  <div class="seasonal-section">
+    <div class="progress-label">
+      <img class="logo-img" src="./assets/traveler-logo.png" alt="logo" />
+      <span class="subtitle">Trips by season</span>
+    </div>
+    <div class="seasonal-container">
+      <p-chart
+        type="bar"
+        [data]="basicSeasonData"
+        [options]="basicSeasonOptions"
+      />
+    </div>
+  </div>
+</div>
+
+<!--  -->

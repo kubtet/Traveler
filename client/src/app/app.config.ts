@@ -17,6 +17,7 @@ import {
   UsersClient,
   FollowsClient,
   MessagesClient,
+  StatisticsClient,
 } from './services/api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
@@ -33,6 +34,7 @@ export const appConfig: ApplicationConfig = {
     PhotoService,
     LikesClient,
     FollowsClient,
+    StatisticsClient,
     provideRouter(routes),
     provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor])),
     provideAnimations(),
@@ -74,6 +76,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: UsersClient,
       useFactory: (http: HttpClient) => new UsersClient(http),
+      deps: [HttpClient],
+    },
+    {
+      provide: StatisticsClient,
+      useFactory: (http: HttpClient) => new StatisticsClient(http),
       deps: [HttpClient],
     },
   ],

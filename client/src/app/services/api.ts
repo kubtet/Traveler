@@ -1491,6 +1491,295 @@ export class MessagesClient implements IMessagesClient {
     }
 }
 
+export interface IStatisticsClient {
+    getStatisticsForUser(userId: number): Observable<UserStatisticsDto>;
+    getMonthlyTrips(userId: number): Observable<MonthyTripsDto[]>;
+    getTravelsTimeline(userId: number): Observable<TravelTimelineDto[]>;
+    getSeasonalTrips(userId: number): Observable<SeasonalTravelsDto>;
+    getCountriesByContinent(userId: number): Observable<CountriesByContinentDto>;
+}
+
+@Injectable()
+export class StatisticsClient implements IStatisticsClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
+    }
+
+    getStatisticsForUser(userId: number): Observable<UserStatisticsDto> {
+        let url_ = this.baseUrl + "/api/Statistics/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStatisticsForUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStatisticsForUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserStatisticsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserStatisticsDto>;
+        }));
+    }
+
+    protected processGetStatisticsForUser(response: HttpResponseBase): Observable<UserStatisticsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserStatisticsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getMonthlyTrips(userId: number): Observable<MonthyTripsDto[]> {
+        let url_ = this.baseUrl + "/api/Statistics/monthly-trips/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMonthlyTrips(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMonthlyTrips(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MonthyTripsDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MonthyTripsDto[]>;
+        }));
+    }
+
+    protected processGetMonthlyTrips(response: HttpResponseBase): Observable<MonthyTripsDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MonthyTripsDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getTravelsTimeline(userId: number): Observable<TravelTimelineDto[]> {
+        let url_ = this.baseUrl + "/api/Statistics/timeline-trips/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTravelsTimeline(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTravelsTimeline(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TravelTimelineDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TravelTimelineDto[]>;
+        }));
+    }
+
+    protected processGetTravelsTimeline(response: HttpResponseBase): Observable<TravelTimelineDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TravelTimelineDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getSeasonalTrips(userId: number): Observable<SeasonalTravelsDto> {
+        let url_ = this.baseUrl + "/api/Statistics/seasonal-trips/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSeasonalTrips(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSeasonalTrips(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SeasonalTravelsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SeasonalTravelsDto>;
+        }));
+    }
+
+    protected processGetSeasonalTrips(response: HttpResponseBase): Observable<SeasonalTravelsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SeasonalTravelsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getCountriesByContinent(userId: number): Observable<CountriesByContinentDto> {
+        let url_ = this.baseUrl + "/api/Statistics/continents-trips/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCountriesByContinent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCountriesByContinent(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CountriesByContinentDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CountriesByContinentDto>;
+        }));
+    }
+
+    protected processGetCountriesByContinent(response: HttpResponseBase): Observable<CountriesByContinentDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CountriesByContinentDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface ITravelClient {
     getAllTravels(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
     getTravelsByUserId(id: number, username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto>;
@@ -3577,6 +3866,254 @@ export interface IPaginatedResponseOfMessageDto {
     totalPages?: number;
     pageSize?: number;
     totalCount?: number;
+}
+
+export class UserStatisticsDto implements IUserStatisticsDto {
+    totalTravels?: number;
+    totalCountries?: number;
+    totalCities?: number;
+    totalContinents?: number;
+
+    constructor(data?: IUserStatisticsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalTravels = _data["totalTravels"];
+            this.totalCountries = _data["totalCountries"];
+            this.totalCities = _data["totalCities"];
+            this.totalContinents = _data["totalContinents"];
+        }
+    }
+
+    static fromJS(data: any): UserStatisticsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserStatisticsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalTravels"] = this.totalTravels;
+        data["totalCountries"] = this.totalCountries;
+        data["totalCities"] = this.totalCities;
+        data["totalContinents"] = this.totalContinents;
+        return data;
+    }
+}
+
+export interface IUserStatisticsDto {
+    totalTravels?: number;
+    totalCountries?: number;
+    totalCities?: number;
+    totalContinents?: number;
+}
+
+export class MonthyTripsDto implements IMonthyTripsDto {
+    year?: number;
+    month?: number;
+    tripCount?: number;
+
+    constructor(data?: IMonthyTripsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.year = _data["year"];
+            this.month = _data["month"];
+            this.tripCount = _data["tripCount"];
+        }
+    }
+
+    static fromJS(data: any): MonthyTripsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MonthyTripsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["year"] = this.year;
+        data["month"] = this.month;
+        data["tripCount"] = this.tripCount;
+        return data;
+    }
+}
+
+export interface IMonthyTripsDto {
+    year?: number;
+    month?: number;
+    tripCount?: number;
+}
+
+export class TravelTimelineDto implements ITravelTimelineDto {
+    country?: string;
+    cities?: string | undefined;
+    startDate?: Date;
+    endDate?: Date | undefined;
+
+    constructor(data?: ITravelTimelineDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.country = _data["country"];
+            this.cities = _data["cities"];
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TravelTimelineDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TravelTimelineDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["country"] = this.country;
+        data["cities"] = this.cities;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ITravelTimelineDto {
+    country?: string;
+    cities?: string | undefined;
+    startDate?: Date;
+    endDate?: Date | undefined;
+}
+
+export class SeasonalTravelsDto implements ISeasonalTravelsDto {
+    totalTravelsSpring?: number;
+    totalTravelsSummer?: number;
+    totalTravelsAutumn?: number;
+    totalTravelsWinter?: number;
+
+    constructor(data?: ISeasonalTravelsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalTravelsSpring = _data["totalTravelsSpring"];
+            this.totalTravelsSummer = _data["totalTravelsSummer"];
+            this.totalTravelsAutumn = _data["totalTravelsAutumn"];
+            this.totalTravelsWinter = _data["totalTravelsWinter"];
+        }
+    }
+
+    static fromJS(data: any): SeasonalTravelsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SeasonalTravelsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalTravelsSpring"] = this.totalTravelsSpring;
+        data["totalTravelsSummer"] = this.totalTravelsSummer;
+        data["totalTravelsAutumn"] = this.totalTravelsAutumn;
+        data["totalTravelsWinter"] = this.totalTravelsWinter;
+        return data;
+    }
+}
+
+export interface ISeasonalTravelsDto {
+    totalTravelsSpring?: number;
+    totalTravelsSummer?: number;
+    totalTravelsAutumn?: number;
+    totalTravelsWinter?: number;
+}
+
+export class CountriesByContinentDto implements ICountriesByContinentDto {
+    countriesEurope?: number;
+    countriesAsia?: number;
+    countriesAfrica?: number;
+    countriesSouthAmerica?: number;
+    countriesNorthAmerica?: number;
+    countriesAntarctica?: number;
+    countriesOceania?: number;
+
+    constructor(data?: ICountriesByContinentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.countriesEurope = _data["countriesEurope"];
+            this.countriesAsia = _data["countriesAsia"];
+            this.countriesAfrica = _data["countriesAfrica"];
+            this.countriesSouthAmerica = _data["countriesSouthAmerica"];
+            this.countriesNorthAmerica = _data["countriesNorthAmerica"];
+            this.countriesAntarctica = _data["countriesAntarctica"];
+            this.countriesOceania = _data["countriesOceania"];
+        }
+    }
+
+    static fromJS(data: any): CountriesByContinentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CountriesByContinentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countriesEurope"] = this.countriesEurope;
+        data["countriesAsia"] = this.countriesAsia;
+        data["countriesAfrica"] = this.countriesAfrica;
+        data["countriesSouthAmerica"] = this.countriesSouthAmerica;
+        data["countriesNorthAmerica"] = this.countriesNorthAmerica;
+        data["countriesAntarctica"] = this.countriesAntarctica;
+        data["countriesOceania"] = this.countriesOceania;
+        return data;
+    }
+}
+
+export interface ICountriesByContinentDto {
+    countriesEurope?: number;
+    countriesAsia?: number;
+    countriesAfrica?: number;
+    countriesSouthAmerica?: number;
+    countriesNorthAmerica?: number;
+    countriesAntarctica?: number;
+    countriesOceania?: number;
 }
 
 export class PaginatedResponseOfTravelDto implements IPaginatedResponseOfTravelDto {

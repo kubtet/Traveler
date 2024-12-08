@@ -52,5 +52,15 @@ namespace API.Repositories
         {
             context.Travels.Remove(travel);
         }
+
+        async public Task<List<Travel>> GetTravelsAsyncByUserId(int userId)
+        {
+            var query = context.Travels.Include(t => t.Photos).AsQueryable();
+            query = query.Where(t => t.UserId == userId);
+
+            query = query.OrderByDescending(t => t.CreatedAt);
+
+            return await query.ToListAsync();
+        }
     }
 }
