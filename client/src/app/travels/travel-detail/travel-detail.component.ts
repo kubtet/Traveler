@@ -201,6 +201,7 @@ export class TravelDetailComponent implements OnInit {
       rejectIcon: 'none',
       rejectButtonStyleClass: 'p-button-text',
       accept: async () => {
+        this.isLoading.next(true);
         await firstValueFrom(this.travelClient.removeTravel(this.travelId));
         this.messageService.add({
           severity: 'info',
@@ -208,6 +209,7 @@ export class TravelDetailComponent implements OnInit {
           detail: 'Travel removed',
         });
         this.goToUserProfile();
+        this.isLoading.next(false);
       },
     });
   }

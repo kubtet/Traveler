@@ -1,6 +1,5 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import {
   HttpClient,
@@ -25,16 +24,17 @@ import { jwtInterceptor } from './interceptors/jwt.interceptor';
 import { PhotoService } from './services/photo.service';
 import { CountryService } from './services/country.service';
 import { CityService } from './services/city.service';
+import { PresenceService } from './services/presence.service';
+import { NavbarNotificationService } from './services/navbar-notification.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     CityService,
     CountryService,
     MessageService,
+    NavbarNotificationService,
     PhotoService,
-    LikesClient,
-    FollowsClient,
-    StatisticsClient,
+    PresenceService,
     provideRouter(routes),
     provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor])),
     provideAnimations(),

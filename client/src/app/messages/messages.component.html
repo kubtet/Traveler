@@ -115,23 +115,24 @@
         </div>
         }
       </div>
-      @if (currentThread.value.length === 0 && threadResponderId.value !== 0) {
+      @if (messageService.messageThread().length === 0 &&
+      threadResponderId.value !== 0) {
       <div class="icon-container p-0">
         <i class="pi pi-comments" style="font-size: 160px"></i>
       </div>
-      } @else if (currentThread.value.length === 0 && threadResponderId.value
-      === 0) {
+      } @else if (messageService.messageThread().length === 0 &&
+      threadResponderId.value === 0) {
       <div class="icon-container">
         <i class="pi pi-comments" style="font-size: 160px"></i>
       </div>
       } @else {
       <div
-        #scrollMe
-        [scrollTop]="scrollMe.scrollHeight"
+        #messageScroll
+        [scrollTop]="scrollTop"
         class="p-3 md:px-4 lg:px-6 lg:py-4 mt-2 overflow-y-auto"
         style="max-height: 53vh"
       >
-        @for (message of currentThread.value; track message.id) { @if
+        @for (message of messageService.messageThread(); track message.id) { @if
         (message.recipientId === user.id) {
         <div class="ng-star-inserted">
           <div class="grid grid-nogutter mb-4 ng-star-inserted">

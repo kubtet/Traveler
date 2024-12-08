@@ -81,14 +81,14 @@ export class AdminComponent implements OnInit {
 
   protected async removeUser(id: number) {
     this.confirmationService.confirm({
-      message:
-        "Are you sure that you want to delete this user permanently?",
+      message: 'Are you sure that you want to delete this user permanently?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       acceptIcon: 'none',
       rejectIcon: 'none',
       rejectButtonStyleClass: 'p-button-text',
       accept: async () => {
+        this.isLoading.next(true);
         await firstValueFrom(this.usersClient.deleteUser(id));
         await this.loadUsers();
         this.messageService.add({
@@ -96,6 +96,7 @@ export class AdminComponent implements OnInit {
           summary: 'Confirmed',
           detail: 'User deleted',
         });
+        this.isLoading.next(false);
       },
     });
   }

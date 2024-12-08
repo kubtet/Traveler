@@ -8,12 +8,13 @@ namespace API.Data;
 public class DataContext(DbContextOptions options) : IdentityDbContext<User, AppRole, int, IdentityUserClaim<int>, UserAppRole,
     IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>(options)
 {
+    public required DbSet<Connection> Connections { get; set; }
     public required DbSet<Country> Countries { get; set; }
     public required DbSet<Follow> Follows { get; set; }
+    public required DbSet<Group> Groups { get; set; }
+    public required DbSet<Message> Messages { get; set; }
     public required DbSet<TravelLike> TravelLikes { get; set; }
     public required DbSet<Travel> Travels { get; set; }
-    public required DbSet<TravelLike> Likes { get; set; }
-    public required DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

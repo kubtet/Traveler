@@ -43,8 +43,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           case 401:
             toastr.add({
               severity: 'error',
-              summary: 'Failed',
-              detail: 'Incorrect username or password',
+              summary: '401',
+              detail: 'Unauthorized',
             });
             break;
 

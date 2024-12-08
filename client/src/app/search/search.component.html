@@ -10,9 +10,8 @@
 </div>
 <div class="row mb-5">
   @if (users?.items.length === 0) {
-    <p class="">No users found</p>
-  }
-  @for (user of users?.items; track user) {
+  <p class="">No users found</p>
+  } @for (user of users?.items; track user) {
   <div
     class="surface-50 cursor-pointer z-index border-round"
     (click)="navigateToUserProfile(user.id)"

@@ -82,4 +82,12 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
 
         return Ok(await messageRepository.GetAllMessageThreads(currentUserId));
     }
+
+    [HttpGet("numberOfUnread")]
+    public async Task<ActionResult<int>> GetNumberOfUnreadThreads()
+    {
+        var currentUserId = User.GetUserId();
+
+        return Ok(await messageRepository.GetNumberOfUnreadThreads(currentUserId));
+    }
 }
