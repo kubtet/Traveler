@@ -77,7 +77,5 @@ public class PresenceHub(INotificationRepository notificationRepository, Presenc
                 await Clients.Clients(connections).SendAsync("NewNotificationReceived", notification);
             }
         }
-
-        throw new HubException("Cannot add notification at this time");
     }
 }

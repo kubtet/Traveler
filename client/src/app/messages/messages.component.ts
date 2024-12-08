@@ -69,19 +69,9 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
   protected scrollTop: number = 0;
   protected previousScrollHeight: number = 0;
   protected currentUnreadThreads: number = 0;
-  protected currentUnreadNotifications: number = 0;
 
   constructor() {
     effect(() => {
-      if (
-        this.currentUnreadNotifications !==
-        this.navbarNotificationService.generalNotifications()
-      ) {
-        this.loadAllThreads();
-        this.currentUnreadNotifications =
-          this.navbarNotificationService.generalNotifications();
-      }
-
       if (
         this.currentUnreadThreads !==
         this.navbarNotificationService.messageNotifications()

@@ -13,6 +13,21 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
     public void AddNotification(Notification notification)
     {
         context.Notifications.Add(notification);
+
+        var userNotificationCount = context.Notifications
+            .Where(n => n.NotifiedUserId == notification.NotifiedUserId)
+            .Count();
+
+        if (userNotificationCount >= 50)
+        {
+            var notificationsToRemove = context.Notifications
+                .Where(n => n.NotifiedUserId == notification.NotifiedUserId)
+                .OrderBy(n => n.DateOfNotification)
+                .Take(userNotificationCount - 50 + 1)
+                .ToList();
+
+            context.Notifications.RemoveRange(notificationsToRemove);
+        }
     }
 
     public async Task<Notification?> GetNotification(int id)

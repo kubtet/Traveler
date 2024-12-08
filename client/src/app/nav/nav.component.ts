@@ -27,22 +27,20 @@ export class NavComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      if (
-        this.currentUnreadThreads !==
-        this.navbarNotificationService.messageNotifications()
-      ) {
+      const currentUnreadThreads =
+        this.navbarNotificationService.messageNotifications();
+      if (this.currentUnreadThreads !== currentUnreadThreads) {
         this.setMenu();
-        this.currentUnreadThreads =
-          this.navbarNotificationService.messageNotifications();
+        this.currentUnreadThreads = currentUnreadThreads;
       }
+    });
 
-      if (
-        this.currentUnreadNotifications !==
-        this.navbarNotificationService.generalNotifications()
-      ) {
+    effect(() => {
+      const currentUnreadNotifications =
+        this.navbarNotificationService.generalNotifications();
+      if (this.currentUnreadNotifications !== currentUnreadNotifications) {
         this.setMenu();
-        this.currentUnreadNotifications =
-          this.navbarNotificationService.generalNotifications();
+        this.currentUnreadNotifications = currentUnreadNotifications;
       }
     });
   }
