@@ -5,6 +5,7 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories;
 
@@ -33,6 +34,14 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
 
         var pagedList = await PagedList<NotificationDto>.CreateAsync(notifications,
             notificationParams.PageNumber, notificationParams.PageSize);
+
+        var unreadNotifications = query.Where(n => n.Read == false).ToList();
+        
+        if (unreadNotifications.Count() >= 0)
+        {
+            unreadNotifications.ForEach(n => n.Read = true);
+            await context.SaveChangesAsync();
+        }
 
         return pagedList;
     }

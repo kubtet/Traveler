@@ -9,6 +9,7 @@ import { TableModule } from 'primeng/table';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
 import { PaginatorModule } from 'primeng/paginator';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-notifications',
@@ -20,6 +21,7 @@ import { PaginatorModule } from 'primeng/paginator';
     DatePipe,
     PaginatorModule,
     TableModule,
+    TagModule,
   ],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.css',
@@ -46,6 +48,7 @@ export class NotificationsComponent implements OnInit {
       )
     );
     this.notifications = listOfNotifications;
+    console.log(listOfNotifications.items[0]?.read);
     this.isLoading.next(false);
   }
 

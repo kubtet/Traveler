@@ -3935,6 +3935,7 @@ export class NotificationDto implements INotificationDto {
     notifierUsername?: string;
     notifierProfilePictureUrl?: string;
     dateOfNotification?: Date;
+    read?: boolean;
 
     constructor(data?: INotificationDto) {
         if (data) {
@@ -3954,6 +3955,7 @@ export class NotificationDto implements INotificationDto {
             this.notifierUsername = _data["notifierUsername"];
             this.notifierProfilePictureUrl = _data["notifierProfilePictureUrl"];
             this.dateOfNotification = _data["dateOfNotification"] ? new Date(_data["dateOfNotification"].toString()) : <any>undefined;
+            this.read = _data["read"];
         }
     }
 
@@ -3973,6 +3975,7 @@ export class NotificationDto implements INotificationDto {
         data["notifierUsername"] = this.notifierUsername;
         data["notifierProfilePictureUrl"] = this.notifierProfilePictureUrl;
         data["dateOfNotification"] = this.dateOfNotification ? this.dateOfNotification.toISOString() : <any>undefined;
+        data["read"] = this.read;
         return data;
     }
 }
@@ -3985,6 +3988,7 @@ export interface INotificationDto {
     notifierUsername?: string;
     notifierProfilePictureUrl?: string;
     dateOfNotification?: Date;
+    read?: boolean;
 }
 
 export class PaginatedResponseOfTravelDto implements IPaginatedResponseOfTravelDto {

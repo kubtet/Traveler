@@ -8,4 +8,5 @@ public class Notification
     public int NotifierId { get; set; }
     public User Notifier { get; set; } = null!;
     public DateTime DateOfNotification { get; set; } = DateTime.Now;
+    public bool Read { get; set; } = false;
 }

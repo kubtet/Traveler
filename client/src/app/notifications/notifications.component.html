@@ -23,6 +23,11 @@
               }}</span>
             </td>
             <td style="min-width: 10rem">
+              @if (!notification.read) {
+              <p-tag value="New" />
+              }
+            </td>
+            <td style="min-width: 10rem">
               {{ notification.dateOfNotification | date : "dd.MM.yyyy" }}
             </td>
           </tr>

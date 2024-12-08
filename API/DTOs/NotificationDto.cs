@@ -8,5 +8,6 @@ public class NotificationDto
     public int NotifierId { get; set; }
     public required string NotifierUsername { get; set; }
     public required string NotifierProfilePictureUrl { get; set; }
-    public DateTime DateOfNotification { get; set; } = DateTime.UtcNow;
+    public DateTime DateOfNotification { get; set; }
+    public bool Read { get; set; }
 }
