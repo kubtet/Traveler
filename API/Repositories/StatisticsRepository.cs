@@ -26,7 +26,6 @@ public class StatisticsRepository(ITravelRepository travelRepository, IMapper ma
             {"South America", 0},
             {"Africa", 0},
             {"Oceania", 0},
-            {"Antarctica", 0}
         };
 
         foreach (var travel in travels)
@@ -42,7 +41,6 @@ public class StatisticsRepository(ITravelRepository travelRepository, IMapper ma
         {
             countriesEurope = countriesInContinents["Europe"],
             countriesAfrica = countriesInContinents["Africa"],
-            countriesAntarctica = countriesInContinents["Antarctica"],
             countriesNorthAmerica = countriesInContinents["North America"],
             countriesSouthAmerica = countriesInContinents["South America"],
             countriesAsia = countriesInContinents["Asia"],
@@ -87,7 +85,10 @@ public class StatisticsRepository(ITravelRepository travelRepository, IMapper ma
     public async Task<List<TravelTimelineDto>> GetTravelTimelineDtosForUserAsync(int userId)
     {
         var travels = await travelRepository.GetTravelsAsyncByUserId(userId);
-        var travelsTimelines = travels.Select(t => mapper.Map<TravelTimelineDto>(t)).ToList();
+        var travelsTimelines = travels.Select(t => mapper.Map<TravelTimelineDto>(t))
+            .OrderBy(t => t.StartDate)
+            .ToList();
+            
         return travelsTimelines;
     }
 

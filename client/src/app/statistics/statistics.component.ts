@@ -30,7 +30,6 @@ const COUNTRIES_IN_CONTINENTS: { [key: string]: number } = {
   NorthAmerica: 23,
   SouthAmerica: 12,
   Oceania: 14,
-  Antarctica: 1,
 };
 
 const totalCountries = Object.values(COUNTRIES_IN_CONTINENTS).reduce(
