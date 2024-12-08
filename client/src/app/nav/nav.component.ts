@@ -23,6 +23,7 @@ export class NavComponent implements OnInit {
   protected items: MenuItem[] = [];
   protected loggedOutItems: MenuItem[] = [];
   protected currentUnreadThreads: number = 0;
+  protected currentUnreadNotifications: number = 0;
 
   constructor() {
     effect(() => {
@@ -33,6 +34,15 @@ export class NavComponent implements OnInit {
         this.setMenu();
         this.currentUnreadThreads =
           this.navbarNotificationService.messageNotifications();
+      }
+
+      if (
+        this.currentUnreadNotifications !==
+        this.navbarNotificationService.generalNotifications()
+      ) {
+        this.setMenu();
+        this.currentUnreadNotifications =
+          this.navbarNotificationService.generalNotifications();
       }
     });
   }
@@ -45,6 +55,7 @@ export class NavComponent implements OnInit {
     this.currentUserId = user.id;
 
     await this.navbarNotificationService.getMessageNotifications();
+    await this.navbarNotificationService.getGeneralNotifications();
     this.setMenu();
   }
 
@@ -73,7 +84,10 @@ export class NavComponent implements OnInit {
       {
         icon: 'pi pi-bell',
         routerLink: 'notifications',
-        // badge: '3',
+        badge:
+          this.navbarNotificationService.generalNotifications() > 0
+            ? this.navbarNotificationService.generalNotifications().toString()
+            : null,
       },
       {
         icon: 'pi pi-hammer',

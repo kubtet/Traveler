@@ -71,6 +71,14 @@ public class NotificationController(IMapper mapper, INotificationRepository noti
         return Ok(response);
     }
 
+    [HttpGet("numberOfUnread")]
+    public async Task<ActionResult<int>> GetUnreadNotificationsCount()
+    {
+        var currentUserId = User.GetUserId();
+
+        return Ok(await notificationRepository.GetNumberOfUnreadNotifications(currentUserId));
+    }
+
     [HttpDelete("remove/{notificationId}")]
     public async Task<ActionResult> DeleteNotification(int notificationId)
     {

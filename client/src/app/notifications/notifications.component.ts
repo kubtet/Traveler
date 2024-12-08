@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   NotificationClient,
   PaginatedResponseOfNotificationDto,
@@ -10,6 +10,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
 import { PaginatorModule } from 'primeng/paginator';
 import { TagModule } from 'primeng/tag';
+import { NavbarNotificationService } from '../services/navbar-notification.service';
 
 @Component({
   selector: 'app-notifications',
@@ -26,7 +27,8 @@ import { TagModule } from 'primeng/tag';
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.css',
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
+  private navbarNotificationService = inject(NavbarNotificationService);
   private notificationClient = inject(NotificationClient);
   protected isLoading = new BehaviorSubject(false);
   protected pageNumber: number = 1;
@@ -36,6 +38,10 @@ export class NotificationsComponent implements OnInit {
 
   public async ngOnInit() {
     await this.loadNotifications();
+  }
+
+  public async ngOnDestroy() {
+    await this.navbarNotificationService.getGeneralNotifications();
   }
 
   protected async loadNotifications() {

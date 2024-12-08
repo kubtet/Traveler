@@ -41,8 +41,8 @@ export class PresenceService {
       await this.navbarNotificationService.getMessageNotifications();
     });
 
-    this.hubConnection.on('NewNotificationReceived', async (notification) => {
-      console.log(notification);
+    this.hubConnection.on('NewNotificationReceived', async () => {
+      await this.navbarNotificationService.getGeneralNotifications();
     });
   }
 

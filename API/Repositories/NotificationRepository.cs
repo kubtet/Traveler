@@ -5,7 +5,6 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories;
 
@@ -36,7 +35,7 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
             notificationParams.PageNumber, notificationParams.PageSize);
 
         var unreadNotifications = query.Where(n => n.Read == false).ToList();
-        
+
         if (unreadNotifications.Count() >= 0)
         {
             unreadNotifications.ForEach(n => n.Read = true);
@@ -44,6 +43,15 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
         }
 
         return pagedList;
+    }
+
+    public Task<int> GetNumberOfUnreadNotifications(int currentUserId)
+    {
+        var unreadNotificationsCount = context.Notifications
+            .Where(n => n.NotifiedUserId == currentUserId && n.Read == false)
+            .Count();
+
+        return Task.FromResult(unreadNotificationsCount);
     }
 
     public void RemoveNotification(Notification notification)
