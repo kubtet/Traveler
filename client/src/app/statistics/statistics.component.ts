@@ -113,14 +113,16 @@ export class StatisticsComponent implements OnInit {
     this.endDateActivity =
       this.monthlyTravels[this.monthlyTravels.length - 1]?.date;
 
-    const { labels, data } = this.generateLabelsAndDataForMonths(
-      this.startDateActivity,
-      this.endDateActivity,
-      this.monthlyTravels
-    );
+    if (this.monthlyTravels.length > 0) {
+      const { labels, data } = this.generateLabelsAndDataForMonths(
+        this.startDateActivity,
+        this.endDateActivity,
+        this.monthlyTravels
+      );
 
-    this.monthlyTripsLabels = labels;
-    this.monthlyTripsData = data;
+      this.monthlyTripsLabels = labels;
+      this.monthlyTripsData = data;
+    }
 
     this.basicSeasonData = {
       labels: ['Winter', 'Spring', 'Summer', 'Autumn'],

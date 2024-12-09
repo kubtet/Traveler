@@ -5,7 +5,11 @@
       <div class="user-info" (click)="goToUserProfile(user.id)">
         <div class="user-details">
           <p-avatar
-            image="{{ user.profilePhotoUrl }}"
+            [image]="
+              user.profilePhotoUrl === '' || user.profilePhotoUrl === null
+                ? '../../assets/defaultProfilePicture.jfif'
+                : user.profilePhotoUrl
+            "
             size="xlarge"
             shape="circle"
           />
