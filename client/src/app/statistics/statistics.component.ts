@@ -8,34 +8,12 @@ import {
   TravelTimelineDto,
   UserStatisticsDto,
 } from '../services/api';
-import { first, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { TimelineModule } from 'primeng/timeline';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { ChartModule } from 'primeng/chart';
-
-interface EventItem {
-  label?: string;
-  date?: string;
-  icon?: string;
-  color?: string;
-  image?: string;
-}
-
-const COUNTRIES_IN_CONTINENTS: { [key: string]: number } = {
-  Africa: 54,
-  Asia: 49,
-  Europe: 44,
-  NorthAmerica: 23,
-  SouthAmerica: 12,
-  Oceania: 14,
-};
-
-const totalCountries = Object.values(COUNTRIES_IN_CONTINENTS).reduce(
-  (sum, count) => sum + count,
-  0
-);
 
 @Component({
   selector: 'app-statistics',
@@ -59,15 +37,26 @@ export class StatisticsComponent implements OnInit {
   protected monthlyTravels: MonthyTripsDto[] = null;
   protected seasonalTravels: SeasonalTravelsDto = null;
   protected countriesByContinent: CountriesByContinentDto = null;
-  protected totalCountries = totalCountries;
+  protected COUNTRIES_IN_CONTINENTS: { [key: string]: number } = {
+    Africa: 54,
+    Asia: 49,
+    Europe: 44,
+    NorthAmerica: 23,
+    SouthAmerica: 12,
+    Oceania: 14,
+  };
+  protected totalCountries = Object.values(this.COUNTRIES_IN_CONTINENTS).reduce(
+    (sum, count) => sum + count,
+    0
+  );
   // seasonal plot
-  basicSeasonData: any;
-  basicSeasonOptions: any;
+  protected basicSeasonData: any;
+  protected basicSeasonOptions: any;
   // activity plot
-  monthlyPlotTripsData: any;
-  monthlyPlotTripsOptions: any;
-  protected startDateActivity;
-  protected endDateActivity;
+  protected monthlyPlotTripsData: any;
+  protected monthlyPlotTripsOptions: any;
+  protected startDateActivity: Date | null;
+  protected endDateActivity: Date | null;
   protected monthlyTripsLabels: String[] = [];
   protected monthlyTripsData: Number[] = [];
 
@@ -96,10 +85,10 @@ export class StatisticsComponent implements OnInit {
       this.statisticsClient.getCountriesByContinent(this.userId())
     );
     this.seenCountriesShare = Math.round(
-      (this.statistics.totalCountries / totalCountries) * 100
+      (this.statistics.totalCountries / this.totalCountries) * 100
     );
 
-    this.continentsProgress = Object.entries(COUNTRIES_IN_CONTINENTS).map(
+    this.continentsProgress = Object.entries(this.COUNTRIES_IN_CONTINENTS).map(
       ([continent, total]) => {
         const countriesByContinentJSON = JSON.parse(
           JSON.stringify(this.countriesByContinent)
@@ -115,9 +104,9 @@ export class StatisticsComponent implements OnInit {
       }
     );
 
-    this.startDateActivity = this.monthlyTravels[0].date;
+    this.startDateActivity = this.monthlyTravels[0]?.date;
     this.endDateActivity =
-      this.monthlyTravels[this.monthlyTravels.length - 1].date;
+      this.monthlyTravels[this.monthlyTravels.length - 1]?.date;
 
     const { labels, data } = this.generateLabelsAndDataForMonths(
       this.startDateActivity,
@@ -127,9 +116,6 @@ export class StatisticsComponent implements OnInit {
 
     this.monthlyTripsLabels = labels;
     this.monthlyTripsData = data;
-
-    console.log(this.monthlyTripsLabels + 'labels');
-    console.log(this.monthlyTripsData + 'data');
 
     this.basicSeasonData = {
       labels: ['Winter', 'Spring', 'Summer', 'Autumn'],
@@ -274,8 +260,7 @@ export class StatisticsComponent implements OnInit {
 
       labels.push(formattedLabel);
     }
-    console.log(labels);
-    console.log(data);
+
     return { labels, data };
   }
 }

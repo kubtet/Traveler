@@ -19,19 +19,19 @@
     <div class="statistics-grid">
       <div class="statistic">
         <div class="label">Trips</div>
-        <div class="value">{{ statistics.totalTravels }}</div>
+        <div class="value">{{ statistics?.totalTravels }}</div>
       </div>
       <div class="statistic">
         <div class="label">Countries</div>
-        <div class="value">{{ statistics.totalCountries }}</div>
+        <div class="value">{{ statistics?.totalCountries }}</div>
       </div>
       <div class="statistic">
         <div class="label">Towns</div>
-        <div class="value">{{ statistics.totalCities }}</div>
+        <div class="value">{{ statistics?.totalCities }}</div>
       </div>
       <div class="statistic">
         <div class="label">Continents</div>
-        <div class="value">{{ statistics.totalContinents }}</div>
+        <div class="value">{{ statistics?.totalContinents }}</div>
       </div>
     </div>
   </div>
@@ -74,7 +74,7 @@
         <span>General</span>
         <br />
         <small>
-          {{ statistics.totalCountries }}/{{ totalCountries }} ({{
+          {{ statistics?.totalCountries }}/{{ totalCountries }} ({{
             seenCountriesShare
           }}%)
         </small>

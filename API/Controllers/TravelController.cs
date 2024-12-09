@@ -97,10 +97,13 @@ namespace API.Controllers
                         return BadRequest("No photo public id.");
                     }
 
-                    var result = await photoService.DeletePhotoAsync(photo.PublicId);
-                    if (result.Error != null)
+                    if (photo?.PublicId != "Seed")
                     {
-                        return BadRequest(result.Error.Message);
+                        var result = await photoService.DeletePhotoAsync(photo!.PublicId);
+                        if (result.Error != null)
+                        {
+                            return BadRequest(result.Error.Message);
+                        }
                     }
                 }
             }
