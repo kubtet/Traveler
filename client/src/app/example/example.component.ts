@@ -5,7 +5,7 @@ import { AppCalendarComponent } from '../shared/components/app-calendar/app-cale
 import { AppDropdownComponent } from '../shared/components/app-dropdown/app-dropdown.component';
 import { FormControl, FormsModule } from '@angular/forms';
 import { AppCheckboxComponent } from '../shared/components/app-checkbox/app-checkbox.component';
-import { Country, CountryClient } from '../services/api';
+import { Country, CountryClient } from '../../api';
 import { firstValueFrom } from 'rxjs';
 import { NgIf } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';

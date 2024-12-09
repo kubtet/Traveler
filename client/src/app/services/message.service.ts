@@ -5,7 +5,7 @@ import {
   HubConnectionBuilder,
   HubConnectionState,
 } from '@microsoft/signalr';
-import { CreateMessageDto, MessageDto, UserDto } from './api';
+import { CreateMessageDto, MessageDto, UserDto } from '../../api';
 import { Group } from '../models/group';
 
 @Injectable()

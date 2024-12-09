@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaginatedResponseOfMemberDto, UsersClient } from '../services/api';
+import { PaginatedResponseOfMemberDto, UsersClient } from '../../api';
 import { BehaviorSubject, debounceTime, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';

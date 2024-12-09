@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { BehaviorSubject, debounceTime, firstValueFrom } from 'rxjs';
-import { UsersClient, PaginatedResponseOfMemberDto } from '../services/api';
+import { UsersClient, PaginatedResponseOfMemberDto } from '../../api';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { CardModule } from 'primeng/card';

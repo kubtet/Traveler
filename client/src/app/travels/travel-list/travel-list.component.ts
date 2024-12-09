@@ -3,7 +3,7 @@ import {
   MemberDto,
   PaginatedResponseOfTravelDto,
   TravelClient,
-} from '../../services/api';
+} from '../../../api';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { TravelCardComponent } from '../travel-card/travel-card.component';
 import { Router } from '@angular/router';

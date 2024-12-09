@@ -18,7 +18,7 @@ import {
   MessagesClient,
   StatisticsClient,
   NotificationClient,
-} from './services/api';
+} from '../api';
 import { MessageService } from 'primeng/api';
 import { errorInterceptor } from './interceptors/error.interceptor';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';

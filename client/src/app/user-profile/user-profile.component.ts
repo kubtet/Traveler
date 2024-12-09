@@ -12,7 +12,7 @@ import {
   MemberDto,
   TypeOfNotification,
   UsersClient,
-} from '../services/api';
+} from '../../api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MyTravelsComponent } from '../travels/travel-list/travel-list.component';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';

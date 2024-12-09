@@ -39,7 +39,6 @@ try
     await Seed.SeedUsers(userManager, roleManager);
     await Seed.SeedFollows(context);
     await Seed.SeedCountries(context);
-
 }
 catch (Exception ex)
 {

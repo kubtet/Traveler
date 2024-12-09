@@ -1,7 +1,7 @@
 import { AbstractControl, AsyncValidatorFn } from '@angular/forms';
 import { debounceTime, map, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { AccountClient } from '../../services/api';
+import { AccountClient } from '../../../api';
 
 export function uniqueUsernameValidator(
   accountClient: AccountClient

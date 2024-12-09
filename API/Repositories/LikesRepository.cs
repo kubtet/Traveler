@@ -1,9 +1,10 @@
-using API;
 using API.Data;
 using API.DTOs;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+
+namespace API.Repositories;
 
 public class LikesRepository(DataContext context, IMapper mapper) : ILikesRepository
 {

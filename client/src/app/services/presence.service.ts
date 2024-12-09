@@ -5,7 +5,7 @@ import {
   HubConnectionBuilder,
   HubConnectionState,
 } from '@microsoft/signalr';
-import { AddNotificationDto, UserDto } from './api';
+import { AddNotificationDto, UserDto } from '../../api';
 import { NavbarNotificationService } from './navbar-notification.service';
 import { MessageService } from 'primeng/api';
 

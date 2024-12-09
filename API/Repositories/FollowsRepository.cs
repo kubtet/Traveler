@@ -1,10 +1,11 @@
-using API;
 using API.Data;
 using API.DTOs;
 using API.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+
+namespace API.Repositories;
 
 public class FollowsRepository(DataContext context, IMapper mapper) : IFollowsRepository
 {

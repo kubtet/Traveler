@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, input } from '@angular/core';
-import { MemberDto } from '../../services/api';
+import { Component, OnInit, inject } from '@angular/core';
+import { MemberDto } from '../../../api';
 import { Router } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';

@@ -3,24 +3,23 @@ using API.Entities;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Repositories
+namespace API.Repositories;
+
+public class CountryRepository(DataContext context) : ICountryRepository
 {
-    public class CountryRepository(DataContext context) : ICountryRepository
+    public async Task<IEnumerable<Country>> GetAllCountriesAsync()
     {
-        public async Task<IEnumerable<Country>> GetAllCountriesAsync()
-        {
-            return await context.Countries.ToListAsync();
-        }
+        return await context.Countries.ToListAsync();
+    }
 
-        public async Task<IEnumerable<string>> GetAllVisitedCountriesCodes(int userId)
-        {
-            var countryCodes = await context.Travels
-                .Where(t => t.UserId == userId)
-                .Select(t => t.CountryIso2Code)
-                .Distinct()
-                .ToListAsync();
+    public async Task<IEnumerable<string>> GetAllVisitedCountriesCodes(int userId)
+    {
+        var countryCodes = await context.Travels
+            .Where(t => t.UserId == userId)
+            .Select(t => t.CountryIso2Code)
+            .Distinct()
+            .ToListAsync();
 
-            return countryCodes;
-        }
+        return countryCodes;
     }
 }

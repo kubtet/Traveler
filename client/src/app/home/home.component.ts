@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AccountService } from '../services/account.service';
 import { LoginComponent } from '../account/login/login.component';
-import { PaginatedResponseOfTravelDto, TravelClient } from '../services/api';
+import { PaginatedResponseOfTravelDto, TravelClient } from '../../api';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { TravelCardComponent } from '../travels/travel-card/travel-card.component';
 import { Router } from '@angular/router';

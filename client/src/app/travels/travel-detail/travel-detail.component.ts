@@ -11,7 +11,7 @@ import {
   TravelDetailDto,
   TypeOfNotification,
   UsersClient,
-} from '../../services/api';
+} from '../../../api';
 import { GalleriaModule } from 'primeng/galleria';
 import { PhotoModel } from '../../shared/models/photo.model';
 import { PhotoService } from '../../services/photo.service';

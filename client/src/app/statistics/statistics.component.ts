@@ -7,7 +7,7 @@ import {
   StatisticsClient,
   TravelTimelineDto,
   UserStatisticsDto,
-} from '../services/api';
+} from '../../api';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { TimelineModule } from 'primeng/timeline';
