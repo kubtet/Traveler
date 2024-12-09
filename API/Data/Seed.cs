@@ -11,7 +11,7 @@ public class Seed
     {
         if (await userManager.Users.AnyAsync()) return;
 
-        var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
+        var userData = await File.ReadAllTextAsync("Data/JSONs/UserSeedData.json");
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
@@ -45,7 +45,7 @@ public class Seed
     {
         if (await context.Follows.AnyAsync()) return; // Sprawdza, czy istnieją już jakieś rekordy
 
-        var followsData = await File.ReadAllTextAsync("Data/FollowsSeedData.json");
+        var followsData = await File.ReadAllTextAsync("Data/JSONs/FollowsSeedData.json");
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var follows = JsonSerializer.Deserialize<List<Follow>>(followsData, options);
 
@@ -70,7 +70,7 @@ public class Seed
     public static async Task SeedCountries(DataContext context)
     {
         if (await context.Countries.AnyAsync()) return;
-        var countriesData = await File.ReadAllTextAsync("Data/CountriesSeedData.json");
+        var countriesData = await File.ReadAllTextAsync("Data/JSONs/CountriesSeedData.json");
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var countries = JsonSerializer.Deserialize<List<Country>>(countriesData, options);
         if (countries == null) return;

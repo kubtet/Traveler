@@ -24,6 +24,16 @@ export class CountryService {
     return this.countries;
   }
 
+  public mapCountries(allCountries: any): Country[] {
+    return allCountries.map((country: any) => {
+      return {
+        id: country?.id,
+        name: country?.name,
+        code: country?.iso2,
+      };
+    });
+  }
+
   private async getCountries(): Promise<Country[]> {
     let options: any = {
       responseType: 'json',
@@ -37,15 +47,5 @@ export class CountryService {
     const countries = await firstValueFrom(this.http.get(this.url, options));
     const result = this.mapCountries(countries);
     return result;
-  }
-
-  private mapCountries(allCountries: any): Country[] {
-    return allCountries.map((country: any) => {
-      return {
-        id: country?.id,
-        name: country?.name,
-        code: country?.iso2,
-      };
-    });
   }
 }
