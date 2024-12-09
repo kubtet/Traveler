@@ -6,7 +6,6 @@ namespace API.Interfaces;
 public interface IUserRepository
 {
     void Update(User user);
-    Task<bool> SaveAllAsync();
     Task<PagedList<User>> GetUsersAsync(DataParams dataParams);
     Task<User?> GetUserByIdAsync(int id);
     Task<User?> GetUserByIdWithTravelsAndPhotosAsync(int id);

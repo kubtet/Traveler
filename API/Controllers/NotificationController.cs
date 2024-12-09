@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 [Authorize]
-public class NotificationController(IMapper mapper, INotificationRepository notificationRepository,
+public class NotificationController(IUnitOfWork unitOfWork, IMapper mapper,
     UserManager<User> userManager) : BaseApiController
 {
     [HttpPost]
@@ -41,9 +41,9 @@ public class NotificationController(IMapper mapper, INotificationRepository noti
             Notifier = currentUser!,
         };
 
-        notificationRepository.AddNotification(notification);
+        unitOfWork.NotificationRepository.AddNotification(notification);
 
-        if (await notificationRepository.SaveAllAsync())
+        if (await unitOfWork.Complete())
         {
             return Ok("Notification added correctly");
         }
@@ -56,7 +56,9 @@ public class NotificationController(IMapper mapper, INotificationRepository noti
     {
         notificationParams.UserId = User.GetUserId();
 
-        var notifications = await notificationRepository.GetNotificationsForUser(notificationParams);
+        var notifications = await unitOfWork.NotificationRepository.GetNotificationsForUser(notificationParams);
+
+        if (unitOfWork.HasChanges()) await unitOfWork.Complete();
 
         var notificationDtos = notifications.Select(mapper.Map<NotificationDto>).ToList();
 
@@ -76,22 +78,22 @@ public class NotificationController(IMapper mapper, INotificationRepository noti
     {
         var currentUserId = User.GetUserId();
 
-        return Ok(await notificationRepository.GetNumberOfUnreadNotifications(currentUserId));
+        return Ok(await unitOfWork.NotificationRepository.GetNumberOfUnreadNotifications(currentUserId));
     }
 
     [HttpDelete("remove/{notificationId}")]
     public async Task<ActionResult> DeleteNotification(int notificationId)
     {
-        var notification = await notificationRepository.GetNotification(notificationId);
+        var notification = await unitOfWork.NotificationRepository.GetNotification(notificationId);
 
         if (notification == null)
         {
             return BadRequest("Notification with provided id was not found");
         }
 
-        notificationRepository.RemoveNotification(notification);
+        unitOfWork.NotificationRepository.RemoveNotification(notification);
 
-        if (await notificationRepository.SaveAllAsync())
+        if (await unitOfWork.Complete())
         {
             return Ok("Notification removed correctly");
         }

@@ -1,28 +1,27 @@
-using API;
-using API.Controllers;
-using API.Data;
 using API.DTOs;
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-public class LikesController(DataContext context, ILikesRepository likesRepository, IUserRepository userRepository) : BaseApiController
+namespace API.Controllers;
+
+public class LikesController(IUnitOfWork unitOfWork) : BaseApiController
 {
     [HttpPost("{targetTravelId:int}")]
     [Authorize]
     public async Task<ActionResult> ToggleLikeTravel(int targetTravelId)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null)
         {
             throw new Exception("no user found based on id from claims.");
         }
         var sourceUserId = user.Id;
-        var travel = await context.Travels.FindAsync(targetTravelId);
+        var travel = await unitOfWork.TravelRepository.GetTravelDetailAsync(targetTravelId);
         if (travel == null) return NotFound("Travel not found.");
 
-        var existingLike = await likesRepository.GetTravelLikeByUser(targetTravelId, sourceUserId);
+        var existingLike = await unitOfWork.LikesRepository.GetTravelLikeByUser(targetTravelId, sourceUserId);
 
         if (existingLike == null)
         {
@@ -31,14 +30,14 @@ public class LikesController(DataContext context, ILikesRepository likesReposito
                 UserId = sourceUserId,
                 TravelId = targetTravelId
             };
-            likesRepository.AddLike(like);
+            unitOfWork.LikesRepository.AddLike(like);
         }
         else
         {
-            likesRepository.DeleteLike(existingLike);
+            unitOfWork.LikesRepository.DeleteLike(existingLike);
         }
 
-        if (await likesRepository.SaveChanges())
+        if (await unitOfWork.Complete())
         {
             return Ok(new { message = "You have unliked this travel post." });
         }
@@ -48,13 +47,13 @@ public class LikesController(DataContext context, ILikesRepository likesReposito
     [HttpGet("{travelId:int}/likedbyuser")]
     public async Task<ActionResult<bool>> IsTravelLikedByUser(int travelId)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null)
         {
             throw new Exception("no user found based on id from claims.");
         }
         var userId = user.Id;
-        var existingLike = await likesRepository.GetTravelLikeByUser(travelId, userId);
+        var existingLike = await unitOfWork.LikesRepository.GetTravelLikeByUser(travelId, userId);
 
         if (existingLike != null)
         {
@@ -69,14 +68,14 @@ public class LikesController(DataContext context, ILikesRepository likesReposito
     [HttpGet("{travelId:int}/likecount")]
     public async Task<ActionResult<int>> GetLikeCountForTravel(int travelId)
     {
-        var likeCount = await likesRepository.CountLikesForTravel(travelId);
+        var likeCount = await unitOfWork.LikesRepository.CountLikesForTravel(travelId);
         return likeCount;
     }
 
     [HttpGet("{travelId:int}/userswholiked")]
     public async Task<IEnumerable<MemberDto>> GetUsersWhoLikedTravel(int travelId)
     {
-        var usersWhoLiked = await likesRepository.GetUsersWhoLikedTravel(travelId);
+        var usersWhoLiked = await unitOfWork.LikesRepository.GetUsersWhoLikedTravel(travelId);
         return usersWhoLiked;
 
     }

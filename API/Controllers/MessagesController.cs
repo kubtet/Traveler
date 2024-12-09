@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class MessagesController(IMessageRepository messageRepository, IUserRepository userRepository, IMapper mapper) : BaseApiController
+public class MessagesController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
 {
     [HttpPost]
     public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
@@ -22,8 +22,8 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
             return BadRequest("You cannot message yourself");
         }
 
-        var sender = await userRepository.GetUserByIdAsync(userId);
-        var recipient = await userRepository.GetUserByIdAsync(createMessageDto.RecipientId);
+        var sender = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        var recipient = await unitOfWork.UserRepository.GetUserByIdAsync(createMessageDto.RecipientId);
 
         if (sender == null || recipient == null || sender.UserName == null || recipient.UserName == null)
         {
@@ -39,9 +39,9 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
             Content = createMessageDto.Content
         };
 
-        messageRepository.AddMessage(message);
+        unitOfWork.MessageRepository.AddMessage(message);
 
-        if (await messageRepository.SaveAllAsync())
+        if (await unitOfWork.Complete())
         {
             return Ok(mapper.Map<MessageDto>(message));
         }
@@ -54,7 +54,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
     {
         messageParams.UserId = User.GetUserId();
 
-        var messages = await messageRepository.GetMessagesForUser(messageParams);
+        var messages = await unitOfWork.MessageRepository.GetMessagesForUser(messageParams);
 
         var messageDtos = messages.Select(mapper.Map<MessageDto>).ToList();
 
@@ -74,7 +74,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
     {
         var currentUserId = User.GetUserId();
 
-        return Ok(await messageRepository.GetMessageThread(currentUserId, userId));
+        return Ok(await unitOfWork.MessageRepository.GetMessageThread(currentUserId, userId));
     }
 
     [HttpGet("threads")]
@@ -82,7 +82,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
     {
         var currentUserId = User.GetUserId();
 
-        return Ok(await messageRepository.GetAllMessageThreads(currentUserId));
+        return Ok(await unitOfWork.MessageRepository.GetAllMessageThreads(currentUserId));
     }
 
     [HttpGet("numberOfUnread")]
@@ -90,6 +90,6 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
     {
         var currentUserId = User.GetUserId();
 
-        return Ok(await messageRepository.GetNumberOfUnreadThreads(currentUserId));
+        return Ok(await unitOfWork.MessageRepository.GetNumberOfUnreadThreads(currentUserId));
     }
 }

@@ -115,7 +115,6 @@ namespace API.Repositories
             if (unreadMessages.Count != 0)
             {
                 unreadMessages.ForEach(m => m.DateRead = DateTime.Now);
-                await context.SaveChangesAsync();
             }
 
             return await query.ProjectTo<MessageDto>(mapper.ConfigurationProvider).ToListAsync();
@@ -144,11 +143,6 @@ namespace API.Repositories
         public void RemoveConnection(Connection connection)
         {
             context.Connections.Remove(connection);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await context.SaveChangesAsync() > 0;
         }
     }
 }

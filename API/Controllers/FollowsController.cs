@@ -1,12 +1,12 @@
-using API;
-using API.Controllers;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-public class FollowsController(IFollowsRepository followsRepository, IUserRepository userRepository) : BaseApiController
+namespace API.Controllers;
+
+public class FollowsController(IUnitOfWork unitOfWork) : BaseApiController
 {
     [HttpPost("{targetUserId:int}")]
     public async Task<ActionResult> ToggleFollow(int targetUserId)
@@ -15,7 +15,7 @@ public class FollowsController(IFollowsRepository followsRepository, IUserReposi
 
         if (sourceUserId == targetUserId) return BadRequest("You cannot follow yourself!");
 
-        var existingFollow = await followsRepository.GetFollow(sourceUserId, targetUserId);
+        var existingFollow = await unitOfWork.FollowsRepository.GetFollow(sourceUserId, targetUserId);
 
         if (existingFollow == null)
         {
@@ -26,14 +26,14 @@ public class FollowsController(IFollowsRepository followsRepository, IUserReposi
                 CreatedAt = DateTime.UtcNow,
             };
 
-            followsRepository.AddFollow(follow);
+            unitOfWork.FollowsRepository.AddFollow(follow);
         }
         else
         {
-            followsRepository.DeleteFollow(existingFollow);
+            unitOfWork.FollowsRepository.DeleteFollow(existingFollow);
         }
 
-        if (await followsRepository.SaveChangesAsync())
+        if (await unitOfWork.Complete())
         {
             return Ok("Followed/unfollowed a user.");
         }
@@ -43,14 +43,14 @@ public class FollowsController(IFollowsRepository followsRepository, IUserReposi
     [HttpGet("{userId:int}/followers")]
     public async Task<IEnumerable<MemberDto>> GetFollowers(int userId)
     {
-        var followers = await followsRepository.GetFollowers(userId);
+        var followers = await unitOfWork.FollowsRepository.GetFollowers(userId);
         return followers;
     }
 
     [HttpGet("{userId:int}/following")]
     public async Task<IEnumerable<MemberDto>> GetFollowing(int userId)
     {
-        var followings = await followsRepository.GetFollowings(userId);
+        var followings = await unitOfWork.FollowsRepository.GetFollowings(userId);
         return followings;
     }
 
@@ -58,27 +58,27 @@ public class FollowsController(IFollowsRepository followsRepository, IUserReposi
     [HttpGet("{userId:int}/following/count")]
     public async Task<ActionResult<int>> CountFollowings(int userId)
     {
-        var count = await followsRepository.CountFollowings(userId);
+        var count = await unitOfWork.FollowsRepository.CountFollowings(userId);
         return Ok(count);
     }
 
     [HttpGet("{userId:int}/followers/count")]
     public async Task<ActionResult<int>> CountFollowers(int userId)
     {
-        var count = await followsRepository.CountFollowers(userId);
+        var count = await unitOfWork.FollowsRepository.CountFollowers(userId);
         return Ok(count);
     }
 
     [HttpGet("{targetUserId:int}/followedBy")]
     public async Task<ActionResult<bool>> IsFollowedByCurrentStatus(int targetUserId)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null)
         {
             throw new Exception("no user found based on id from claims.");
         }
         var userId = user.Id;
-        var existingFollow = await followsRepository.GetFollow(userId, targetUserId);
+        var existingFollow = await unitOfWork.FollowsRepository.GetFollow(userId, targetUserId);
 
         if (existingFollow != null)
         {

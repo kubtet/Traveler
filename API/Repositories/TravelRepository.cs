@@ -43,11 +43,6 @@ namespace API.Repositories
             await context.Travels.AddAsync(travel);
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await context.SaveChangesAsync() > 0;
-        }
-
         public void RemoveTravel(Travel travel)
         {
             context.Travels.Remove(travel);

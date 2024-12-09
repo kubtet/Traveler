@@ -52,9 +52,4 @@ public class FollowsRepository(DataContext context, IMapper mapper) : IFollowsRe
         .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
         .ToListAsync();
     }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

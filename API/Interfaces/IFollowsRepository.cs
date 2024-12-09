@@ -12,5 +12,4 @@ public interface IFollowsRepository
     Task<IEnumerable<MemberDto>> GetFollowings(int userId);
     Task<int> CountFollowers(int userId);
     Task<int> CountFollowings(int userId);
-    Task<bool> SaveChangesAsync();
 }

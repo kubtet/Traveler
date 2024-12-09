@@ -25,11 +25,12 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ILikesRepository, LikesRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
-        services.AddScoped<IPhotoService, PhotoService>();
-        services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ITravelRepository, TravelRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IPhotoService, PhotoService>();
+        services.AddScoped<ITokenService, TokenService>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.AddSignalR();

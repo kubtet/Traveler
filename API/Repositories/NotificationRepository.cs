@@ -54,7 +54,6 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
         if (unreadNotifications.Count() >= 0)
         {
             unreadNotifications.ForEach(n => n.Read = true);
-            await context.SaveChangesAsync();
         }
 
         return pagedList;
@@ -77,10 +76,5 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
     public void RemoveNotifications(Notification[] notifications)
     {
         context.Notifications.RemoveRange(notifications);
-    }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }

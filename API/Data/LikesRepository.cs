@@ -46,9 +46,4 @@ public class LikesRepository(DataContext context, IMapper mapper) : ILikesReposi
         .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
         .ToListAsync();
     }
-
-    public async Task<bool> SaveChanges()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }
