@@ -65,7 +65,7 @@
       "templateDirectory": null,
       "serviceHost": "",
       "serviceSchemes": null,
-      "output": "src/app/services/api.ts",
+      "output": "src/api.ts",
       "newLineBehavior": "Auto"
     }
   }

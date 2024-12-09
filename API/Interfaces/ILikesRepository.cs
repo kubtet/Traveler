@@ -22,7 +22,5 @@ namespace API
         // Pobiera listę użytkowników, którzy polubili dany post
         Task<IEnumerable<MemberDto>> GetUsersWhoLikedTravel(int travelId);
 
-        // Zapisuje zmiany do bazy danych
-        Task<bool> SaveChanges();
     }
 }

@@ -1,3 +1,4 @@
+<p-confirmDialog />
 <app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
 @if(!(isLoading | async)) {
 <!-- Row 1: photo and username and settings -->
@@ -80,10 +81,6 @@
     <p-tabPanel header="Map">
       <!-- Content for Statistics tab -->
       <app-map [userId]="user?.id"></app-map>
-    </p-tabPanel>
-    <p-tabPanel header="Wishlist">
-      <!-- Content for Wishlist tab -->
-      <p>Content for Wishlist</p>
     </p-tabPanel>
   </p-tabView>
 </div>

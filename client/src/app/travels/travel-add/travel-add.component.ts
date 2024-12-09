@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 import { AppDropdownComponent } from '../../shared/components/app-dropdown/app-dropdown.component';
 import { CountryService } from '../../services/country.service';
-import { Country } from '../../models/country';
 import { CityService } from '../../services/city.service';
 import { City } from '../../models/city';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
@@ -22,16 +21,18 @@ import { AppInputTextComponent } from '../../shared/components/app-input-text/ap
 import { AppCalendarComponent } from '../../shared/components/app-calendar/app-calendar.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import {
+  CountryClient,
   CreateTravelDto,
   FileParameter,
   TravelClient,
   UsersClient,
-} from '../../services/api';
+} from '../../../api';
 import { AccountService } from '../../services/account.service';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { PhotoService } from '../../services/photo.service';
 import { UploadEvent } from '../../interfaces/upload-event';
+import { Country } from '../../models/country';
 @Component({
   selector: 'app-travel-add',
   standalone: true,
@@ -57,6 +58,7 @@ import { UploadEvent } from '../../interfaces/upload-event';
 export class TravelAddComponent implements OnInit {
   private accountService = inject(AccountService);
   private cityService = inject(CityService);
+  private countryClient = inject(CountryClient);
   private countryService = inject(CountryService);
   private messageService = inject(MessageService);
   private photoService = inject(PhotoService);
@@ -91,9 +93,11 @@ export class TravelAddComponent implements OnInit {
     );
     this.userId = user.id;
 
-    const allCountries = await this.countryService.getAllCountries();
+    const allCountries = await firstValueFrom(
+      this.countryClient.getAllCountries()
+    );
     if (allCountries?.length > 0) {
-      this.countries = allCountries;
+      this.countries = this.countryService.mapCountries(allCountries);
     }
 
     this.form.controls.travelCountry.valueChanges.subscribe(async (value) => {
@@ -101,7 +105,6 @@ export class TravelAddComponent implements OnInit {
       this.cities = [];
       this.form.controls.travelCities.setValue(undefined);
       if (value) {
-        console.log(value);
         const cities = await this.cityService.getCitiesForCountry(value?.code);
         if (cities.length > 0) {
           this.cities = cities;

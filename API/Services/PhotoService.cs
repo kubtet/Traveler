@@ -16,8 +16,6 @@ public class PhotoService : IPhotoService
         _cloudinary = new Cloudinary(acc);
     }
 
-
-
     public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file, TypeOfPhoto type)
     {
         var uploadResult = new ImageUploadResult();

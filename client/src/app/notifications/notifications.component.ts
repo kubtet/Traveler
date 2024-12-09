@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   NotificationClient,
   PaginatedResponseOfNotificationDto,
-} from '../services/api';
+} from '../../api';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
@@ -54,7 +54,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       )
     );
     this.notifications = listOfNotifications;
-    console.log(listOfNotifications.items[0]?.read);
     this.isLoading.next(false);
   }
 

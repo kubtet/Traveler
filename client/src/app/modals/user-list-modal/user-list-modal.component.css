@@ -8,10 +8,12 @@
   display: flex;
   flex-direction: row;
 }
+
 .user-item {
   margin-bottom: 10px;
   cursor: pointer;
 }
+
 .username {
   font-weight: 600;
   padding-left: 1rem;

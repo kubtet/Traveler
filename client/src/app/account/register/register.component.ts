@@ -13,7 +13,7 @@ import {
 import { AppCalendarComponent } from '../../shared/components/app-calendar/app-calendar.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { MessageService } from 'primeng/api';
-import { AccountClient, RegisterDto, UserDto } from '../../services/api';
+import { AccountClient, RegisterDto, UserDto } from '../../../api';
 import { AccountService } from '../../services/account.service';
 import { firstValueFrom } from 'rxjs';
 import { DigitCapitalValidator } from '../../shared/validators/digit-capital.validator';

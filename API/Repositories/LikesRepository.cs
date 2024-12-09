@@ -1,9 +1,10 @@
-using API;
 using API.Data;
 using API.DTOs;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+
+namespace API.Repositories;
 
 public class LikesRepository(DataContext context, IMapper mapper) : ILikesRepository
 {
@@ -45,10 +46,5 @@ public class LikesRepository(DataContext context, IMapper mapper) : ILikesReposi
         .Select(x => x.User)
         .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
         .ToListAsync();
-    }
-
-    public async Task<bool> SaveChanges()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }

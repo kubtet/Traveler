@@ -5,11 +5,6 @@
     "iso2": "AF"
   },
   {
-    "id": 2,
-    "name": "Aland Islands",
-    "iso2": "AX"
-  },
-  {
     "id": 3,
     "name": "Albania",
     "iso2": "AL"
@@ -20,11 +15,6 @@
     "iso2": "DZ"
   },
   {
-    "id": 5,
-    "name": "American Samoa",
-    "iso2": "AS"
-  },
-  {
     "id": 6,
     "name": "Andorra",
     "iso2": "AD"
@@ -33,16 +23,6 @@
     "id": 7,
     "name": "Angola",
     "iso2": "AO"
-  },
-  {
-    "id": 8,
-    "name": "Anguilla",
-    "iso2": "AI"
-  },
-  {
-    "id": 9,
-    "name": "Antarctica",
-    "iso2": "AQ"
   },
   {
     "id": 10,
@@ -58,11 +38,6 @@
     "id": 12,
     "name": "Armenia",
     "iso2": "AM"
-  },
-  {
-    "id": 13,
-    "name": "Aruba",
-    "iso2": "AW"
   },
   {
     "id": 14,
@@ -115,11 +90,6 @@
     "iso2": "BJ"
   },
   {
-    "id": 25,
-    "name": "Bermuda",
-    "iso2": "BM"
-  },
-  {
     "id": 26,
     "name": "Bhutan",
     "iso2": "BT"
@@ -128,11 +98,6 @@
     "id": 27,
     "name": "Bolivia",
     "iso2": "BO"
-  },
-  {
-    "id": 155,
-    "name": "Bonaire, Sint Eustatius and Saba",
-    "iso2": "BQ"
   },
   {
     "id": 28,
@@ -145,19 +110,9 @@
     "iso2": "BW"
   },
   {
-    "id": 30,
-    "name": "Bouvet Island",
-    "iso2": "BV"
-  },
-  {
     "id": 31,
     "name": "Brazil",
     "iso2": "BR"
-  },
-  {
-    "id": 32,
-    "name": "British Indian Ocean Territory",
-    "iso2": "IO"
   },
   {
     "id": 33,
@@ -200,11 +155,6 @@
     "iso2": "CV"
   },
   {
-    "id": 41,
-    "name": "Cayman Islands",
-    "iso2": "KY"
-  },
-  {
     "id": 42,
     "name": "Central African Republic",
     "iso2": "CF"
@@ -225,16 +175,6 @@
     "iso2": "CN"
   },
   {
-    "id": 46,
-    "name": "Christmas Island",
-    "iso2": "CX"
-  },
-  {
-    "id": 47,
-    "name": "Cocos (Keeling) Islands",
-    "iso2": "CC"
-  },
-  {
     "id": 48,
     "name": "Colombia",
     "iso2": "CO"
@@ -248,11 +188,6 @@
     "id": 50,
     "name": "Congo",
     "iso2": "CG"
-  },
-  {
-    "id": 52,
-    "name": "Cook Islands",
-    "iso2": "CK"
   },
   {
     "id": 53,
@@ -273,11 +208,6 @@
     "id": 56,
     "name": "Cuba",
     "iso2": "CU"
-  },
-  {
-    "id": 249,
-    "name": "Curaçao",
-    "iso2": "CW"
   },
   {
     "id": 57,
@@ -355,16 +285,6 @@
     "iso2": "ET"
   },
   {
-    "id": 71,
-    "name": "Falkland Islands",
-    "iso2": "FK"
-  },
-  {
-    "id": 72,
-    "name": "Faroe Islands",
-    "iso2": "FO"
-  },
-  {
     "id": 73,
     "name": "Fiji Islands",
     "iso2": "FJ"
@@ -378,21 +298,6 @@
     "id": 75,
     "name": "France",
     "iso2": "FR"
-  },
-  {
-    "id": 76,
-    "name": "French Guiana",
-    "iso2": "GF"
-  },
-  {
-    "id": 77,
-    "name": "French Polynesia",
-    "iso2": "PF"
-  },
-  {
-    "id": 78,
-    "name": "French Southern Territories",
-    "iso2": "TF"
   },
   {
     "id": 79,
@@ -415,19 +320,9 @@
     "iso2": "GH"
   },
   {
-    "id": 84,
-    "name": "Gibraltar",
-    "iso2": "GI"
-  },
-  {
     "id": 85,
     "name": "Greece",
     "iso2": "GR"
-  },
-  {
-    "id": 86,
-    "name": "Greenland",
-    "iso2": "GL"
   },
   {
     "id": 87,
@@ -435,24 +330,9 @@
     "iso2": "GD"
   },
   {
-    "id": 88,
-    "name": "Guadeloupe",
-    "iso2": "GP"
-  },
-  {
-    "id": 89,
-    "name": "Guam",
-    "iso2": "GU"
-  },
-  {
     "id": 90,
     "name": "Guatemala",
     "iso2": "GT"
-  },
-  {
-    "id": 91,
-    "name": "Guernsey and Alderney",
-    "iso2": "GG"
   },
   {
     "id": 92,
@@ -475,19 +355,9 @@
     "iso2": "HT"
   },
   {
-    "id": 96,
-    "name": "Heard Island and McDonald Islands",
-    "iso2": "HM"
-  },
-  {
     "id": 97,
     "name": "Honduras",
     "iso2": "HN"
-  },
-  {
-    "id": 98,
-    "name": "Hong Kong S.A.R.",
-    "iso2": "HK"
   },
   {
     "id": 99,
@@ -543,11 +413,6 @@
     "id": 109,
     "name": "Japan",
     "iso2": "JP"
-  },
-  {
-    "id": 110,
-    "name": "Jersey",
-    "iso2": "JE"
   },
   {
     "id": 111,
@@ -630,11 +495,6 @@
     "iso2": "LU"
   },
   {
-    "id": 128,
-    "name": "Macau S.A.R.",
-    "iso2": "MO"
-  },
-  {
     "id": 130,
     "name": "Madagascar",
     "iso2": "MG"
@@ -665,19 +525,9 @@
     "iso2": "MT"
   },
   {
-    "id": 136,
-    "name": "Man (Isle of)",
-    "iso2": "IM"
-  },
-  {
     "id": 137,
     "name": "Marshall Islands",
     "iso2": "MH"
-  },
-  {
-    "id": 138,
-    "name": "Martinique",
-    "iso2": "MQ"
   },
   {
     "id": 139,
@@ -688,11 +538,6 @@
     "id": 140,
     "name": "Mauritius",
     "iso2": "MU"
-  },
-  {
-    "id": 141,
-    "name": "Mayotte",
-    "iso2": "YT"
   },
   {
     "id": 142,
@@ -723,11 +568,6 @@
     "id": 147,
     "name": "Montenegro",
     "iso2": "ME"
-  },
-  {
-    "id": 148,
-    "name": "Montserrat",
-    "iso2": "MS"
   },
   {
     "id": 149,
@@ -765,11 +605,6 @@
     "iso2": "NL"
   },
   {
-    "id": 157,
-    "name": "New Caledonia",
-    "iso2": "NC"
-  },
-  {
     "id": 158,
     "name": "New Zealand",
     "iso2": "NZ"
@@ -790,16 +625,6 @@
     "iso2": "NG"
   },
   {
-    "id": 162,
-    "name": "Niue",
-    "iso2": "NU"
-  },
-  {
-    "id": 163,
-    "name": "Norfolk Island",
-    "iso2": "NF"
-  },
-  {
     "id": 115,
     "name": "North Korea",
     "iso2": "KP"
@@ -808,11 +633,6 @@
     "id": 129,
     "name": "North Macedonia",
     "iso2": "MK"
-  },
-  {
-    "id": 164,
-    "name": "Northern Mariana Islands",
-    "iso2": "MP"
   },
   {
     "id": 165,
@@ -870,19 +690,9 @@
     "iso2": "PT"
   },
   {
-    "id": 178,
-    "name": "Puerto Rico",
-    "iso2": "PR"
-  },
-  {
     "id": 179,
     "name": "Qatar",
     "iso2": "QA"
-  },
-  {
-    "id": 180,
-    "name": "Reunion",
-    "iso2": "RE"
   },
   {
     "id": 181,
@@ -900,11 +710,6 @@
     "iso2": "RW"
   },
   {
-    "id": 184,
-    "name": "Saint Helena",
-    "iso2": "SH"
-  },
-  {
     "id": 185,
     "name": "Saint Kitts and Nevis",
     "iso2": "KN"
@@ -915,24 +720,9 @@
     "iso2": "LC"
   },
   {
-    "id": 187,
-    "name": "Saint Pierre and Miquelon",
-    "iso2": "PM"
-  },
-  {
     "id": 188,
     "name": "Saint Vincent and the Grenadines",
     "iso2": "VC"
-  },
-  {
-    "id": 189,
-    "name": "Saint-Barthelemy",
-    "iso2": "BL"
-  },
-  {
-    "id": 190,
-    "name": "Saint-Martin (French part)",
-    "iso2": "MF"
   },
   {
     "id": 191,
@@ -980,11 +770,6 @@
     "iso2": "SG"
   },
   {
-    "id": 250,
-    "name": "Sint Maarten (Dutch part)",
-    "iso2": "SX"
-  },
-  {
     "id": 200,
     "name": "Slovakia",
     "iso2": "SK"
@@ -1008,11 +793,6 @@
     "id": 204,
     "name": "South Africa",
     "iso2": "ZA"
-  },
-  {
-    "id": 205,
-    "name": "South Georgia",
-    "iso2": "GS"
   },
   {
     "id": 116,
@@ -1043,11 +823,6 @@
     "id": 210,
     "name": "Suriname",
     "iso2": "SR"
-  },
-  {
-    "id": 211,
-    "name": "Svalbard and Jan Mayen Islands",
-    "iso2": "SJ"
   },
   {
     "id": 213,
@@ -1105,11 +880,6 @@
     "iso2": "TG"
   },
   {
-    "id": 221,
-    "name": "Tokelau",
-    "iso2": "TK"
-  },
-  {
     "id": 222,
     "name": "Tonga",
     "iso2": "TO"
@@ -1133,11 +903,6 @@
     "id": 226,
     "name": "Turkmenistan",
     "iso2": "TM"
-  },
-  {
-    "id": 227,
-    "name": "Turks and Caicos Islands",
-    "iso2": "TC"
   },
   {
     "id": 228,
@@ -1170,11 +935,6 @@
     "iso2": "US"
   },
   {
-    "id": 234,
-    "name": "United States Minor Outlying Islands",
-    "iso2": "UM"
-  },
-  {
     "id": 235,
     "name": "Uruguay",
     "iso2": "UY"
@@ -1203,26 +963,6 @@
     "id": 240,
     "name": "Vietnam",
     "iso2": "VN"
-  },
-  {
-    "id": 241,
-    "name": "Virgin Islands (British)",
-    "iso2": "VG"
-  },
-  {
-    "id": 242,
-    "name": "Virgin Islands (US)",
-    "iso2": "VI"
-  },
-  {
-    "id": 243,
-    "name": "Wallis and Futuna Islands",
-    "iso2": "WF"
-  },
-  {
-    "id": 244,
-    "name": "Western Sahara",
-    "iso2": "EH"
   },
   {
     "id": 245,

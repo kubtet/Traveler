@@ -12,5 +12,4 @@ public interface INotificationRepository
     Task<int> GetNumberOfUnreadNotifications(int currentUserId);
     void RemoveNotification(Notification notification);
     void RemoveNotifications(Notification[] notifications);
-    Task<bool> SaveAllAsync();
 }

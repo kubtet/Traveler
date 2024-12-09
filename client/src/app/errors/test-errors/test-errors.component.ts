@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AccountClient, BuggyClient, RegisterDto } from '../../services/api';
+import { AccountClient, BuggyClient, RegisterDto } from '../../../api';
 import { AppButtonComponent } from '../../shared/components/app-button/app-button.component';
 import { firstValueFrom } from 'rxjs';
 

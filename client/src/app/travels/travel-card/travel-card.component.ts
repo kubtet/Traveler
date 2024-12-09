@@ -1,10 +1,5 @@
 import { Component, inject, input, OnInit } from '@angular/core';
-import {
-  MemberDto,
-  TravelDto,
-  UsersClient,
-  LikesClient,
-} from '../../services/api';
+import { MemberDto, TravelDto, UsersClient, LikesClient } from '../../../api';
 import { DatePipe } from '@angular/common';
 import { ImageModule } from 'primeng/image';
 import { firstValueFrom } from 'rxjs';

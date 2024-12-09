@@ -61,11 +61,6 @@ public class UserRepository(DataContext context) : IUserRepository
         context.Users.Remove(user);
     }
 
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
-
     public void Update(User user)
     {
         context.Entry(user).State = EntityState.Modified;

@@ -4,9 +4,9 @@ import { AppInputTextComponent } from '../../shared/components/app-input-text/ap
 import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { AccountClient, LoginDto, UserDto } from '../../services/api';
 import { AccountService } from '../../services/account.service';
 import { firstValueFrom } from 'rxjs';
+import { AccountClient, LoginDto, UserDto } from '../../../api';
 
 @Component({
   selector: 'app-login',

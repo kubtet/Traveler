@@ -4,7 +4,7 @@ import { MenuItem } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../services/account.service';
-import { UsersClient } from '../services/api';
+import { UsersClient } from '../../api';
 import { firstValueFrom } from 'rxjs';
 import { NavbarNotificationService } from '../services/navbar-notification.service';
 
@@ -88,16 +88,8 @@ export class NavComponent implements OnInit {
             : null,
       },
       {
-        icon: 'pi pi-hammer',
-        routerLink: 'errors',
-      },
-      {
         icon: 'pi pi-user',
         routerLink: 'user-profile/' + this.currentUserId.toString(),
-      },
-      {
-        icon: 'pi pi-lightbulb',
-        routerLink: 'example',
       },
       {
         icon: 'pi pi-address-book',

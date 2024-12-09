@@ -3,7 +3,7 @@ import {
   MemberDto,
   PaginatedResponseOfTravelDto,
   TravelClient,
-} from '../../services/api';
+} from '../../../api';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { TravelCardComponent } from '../travel-card/travel-card.component';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ import { PageUrl } from '../../enums/PageUrl';
   templateUrl: './travel-list.component.html',
   styleUrl: './travel-list.component.css',
 })
-export class MyTravelsComponent implements OnInit {
+export class TravelListComponent implements OnInit {
   private router = inject(Router);
   private travelClient = inject(TravelClient);
   public user = input.required<MemberDto>();

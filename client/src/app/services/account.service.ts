@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { UserDto } from './api';
+import { UserDto } from '../../api';
 import { Router } from '@angular/router';
 import { PresenceService } from './presence.service';
 

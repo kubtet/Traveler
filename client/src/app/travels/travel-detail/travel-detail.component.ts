@@ -11,7 +11,7 @@ import {
   TravelDetailDto,
   TypeOfNotification,
   UsersClient,
-} from '../../services/api';
+} from '../../../api';
 import { GalleriaModule } from 'primeng/galleria';
 import { PhotoModel } from '../../shared/models/photo.model';
 import { PhotoService } from '../../services/photo.service';
@@ -168,10 +168,6 @@ export class TravelDetailComponent implements OnInit {
     this.checkIfOwnPost();
 
     this.items = [
-      {
-        icon: 'pi pi-pencil',
-        command: () => {},
-      },
       {
         icon: 'pi pi-trash',
         command: () => {

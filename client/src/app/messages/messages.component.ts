@@ -14,7 +14,7 @@ import {
   MessageDto,
   MessagesClient,
   UsersClient,
-} from '../services/api';
+} from '../../api';
 import { BehaviorSubject, debounceTime, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe, DatePipe, NgClass } from '@angular/common';

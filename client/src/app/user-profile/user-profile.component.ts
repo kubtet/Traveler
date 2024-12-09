@@ -12,9 +12,9 @@ import {
   MemberDto,
   TypeOfNotification,
   UsersClient,
-} from '../services/api';
+} from '../../api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MyTravelsComponent } from '../travels/travel-list/travel-list.component';
+import { TravelListComponent } from '../travels/travel-list/travel-list.component';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
@@ -25,10 +25,11 @@ import {
   DynamicDialogModule,
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
-import { MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { UserListModalComponent } from '../modals/user-list-modal/user-list-modal.component';
 import { PresenceService } from '../services/presence.service';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-user-profile',
@@ -41,18 +42,20 @@ import { SpeedDialModule } from 'primeng/speeddial';
     CardModule,
     ButtonModule,
     TabViewModule,
-    MyTravelsComponent,
+    TravelListComponent,
     AppLoadingComponent,
     StatisticsComponent,
     MapComponent,
     DynamicDialogModule,
     SpeedDialModule,
+    ConfirmDialogModule,
   ],
   templateUrl: './user-profile.component.html',
-  providers: [DialogService, MessageService],
+  providers: [ConfirmationService, DialogService, MessageService],
   styleUrls: ['./user-profile.component.css'],
 })
 export class UserProfileComponent implements OnInit {
+  private confirmationService = inject(ConfirmationService);
   private presenceService = inject(PresenceService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -123,7 +126,21 @@ export class UserProfileComponent implements OnInit {
         {
           icon: 'pi pi-trash',
           command: () => {
-            //TODO
+            this.confirmationService.confirm({
+              message:
+                'Are you sure that you want to delete your account permanently?',
+              header: 'Confirmation',
+              icon: 'pi pi-exclamation-triangle',
+              acceptIcon: 'none',
+              rejectIcon: 'none',
+              rejectButtonStyleClass: 'p-button-text',
+              accept: async () => {
+                this.isLoading.next(true);
+                await firstValueFrom(this.usersClient.deleteUser(this.userId));
+                this.accountService.logOut();
+                this.isLoading.next(false);
+              },
+            });
           },
         },
       ];
@@ -162,6 +179,7 @@ export class UserProfileComponent implements OnInit {
       data: { usersToDisplay: this.followers },
     });
   }
+  
   protected async loadFollowers() {
     const newFollowers = await firstValueFrom(
       this.followsClient.getFollowers(this.userId)

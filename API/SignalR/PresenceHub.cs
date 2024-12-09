@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.SignalR;
 
 [Authorize]
-public class PresenceHub(INotificationRepository notificationRepository, PresenceTracker tracker,
+public class PresenceHub(IUnitOfWork unitOfWork, PresenceTracker tracker,
     UserManager<User> userManager) : Hub
 {
     public override async Task OnConnectedAsync()
@@ -67,9 +67,9 @@ public class PresenceHub(INotificationRepository notificationRepository, Presenc
             Notifier = currentUser!,
         };
 
-        notificationRepository.AddNotification(notification);
+        unitOfWork.NotificationRepository.AddNotification(notification);
 
-        if (await notificationRepository.SaveAllAsync())
+        if (await unitOfWork.Complete())
         {
             var connections = await PresenceTracker.GetConnectionsForUser(addNotificationDto.NotifiedUserId);
             if (connections != null && connections?.Count != null)

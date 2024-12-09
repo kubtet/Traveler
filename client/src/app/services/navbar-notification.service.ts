@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { MessagesClient, NotificationClient } from './api';
+import { MessagesClient, NotificationClient } from '../../api';
 
 @Injectable()
 export class NavbarNotificationService {

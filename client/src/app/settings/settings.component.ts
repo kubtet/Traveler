@@ -7,7 +7,7 @@ import {
   UpdateUserDto,
   UserDto,
   UsersClient,
-} from '../services/api';
+} from '../../api';
 import { AccountService } from '../services/account.service';
 import { AppButtonComponent } from '../shared/components/app-button/app-button.component';
 import { AppInputTextComponent } from '../shared/components/app-input-text/app-input-text.component';
