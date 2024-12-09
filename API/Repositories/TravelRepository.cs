@@ -30,10 +30,16 @@ public class TravelRepository(DataContext context) : ITravelRepository
 
     async Task<PagedList<Travel>> ITravelRepository.GetAllTravelsAsync(DataParams dataParams)
     {
-        var query = context.Travels.Include(t => t.Photos).AsQueryable();
-        query = query.Where(t => t.UserId != dataParams.CurrentUserId);
+        var followingIds = await context.Follows
+            .Where(f => f.SourceUserId == dataParams.CurrentUserId)
+            .Select(f => f.FollowedUser.Id)
+            .ToListAsync();
 
-        query = query.OrderByDescending(t => t.CreatedAt);
+        var query = context.Travels
+            .Include(t => t.Photos)
+            .Where(t => t.UserId != dataParams.CurrentUserId)
+            .OrderBy(t => followingIds.Contains(t.UserId) ? 0 : 1)
+            .ThenByDescending(t => t.CreatedAt);
 
         return await PagedList<Travel>.CreateAsync(query, dataParams.PageNumber, dataParams.PageSize);
     }

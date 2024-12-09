@@ -26,31 +26,31 @@ public class FollowsRepository(DataContext context, IMapper mapper) : IFollowsRe
     public async Task<int> CountFollowers(int userId)
     {
         return await context.Follows
-        .CountAsync(f => f.FollowedUserId == userId);
+            .CountAsync(f => f.FollowedUserId == userId);
 
     }
 
     public async Task<int> CountFollowings(int userId)
     {
         return await context.Follows
-        .CountAsync(f => f.SourceUserId == userId);
+            .CountAsync(f => f.SourceUserId == userId);
     }
 
     public async Task<IEnumerable<MemberDto>> GetFollowers(int userId)
     {
         return await context.Follows
-        .Where(f => f.FollowedUserId == userId)
-        .Select(f => f.SourceUser)
-        .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-        .ToListAsync();
+            .Where(f => f.FollowedUserId == userId)
+            .Select(f => f.SourceUser)
+            .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<MemberDto>> GetFollowings(int userId)
     {
         return await context.Follows
-        .Where(f => f.SourceUserId == userId)
-        .Select(f => f.FollowedUser)
-        .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-        .ToListAsync();
+            .Where(f => f.SourceUserId == userId)
+            .Select(f => f.FollowedUser)
+            .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
     }
 }

@@ -14,7 +14,7 @@ import {
   UsersClient,
 } from '../../api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MyTravelsComponent } from '../travels/travel-list/travel-list.component';
+import { TravelListComponent } from '../travels/travel-list/travel-list.component';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 import { AsyncPipe } from '@angular/common';
@@ -42,7 +42,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     CardModule,
     ButtonModule,
     TabViewModule,
-    MyTravelsComponent,
+    TravelListComponent,
     AppLoadingComponent,
     StatisticsComponent,
     MapComponent,
@@ -179,6 +179,7 @@ export class UserProfileComponent implements OnInit {
       data: { usersToDisplay: this.followers },
     });
   }
+  
   protected async loadFollowers() {
     const newFollowers = await firstValueFrom(
       this.followsClient.getFollowers(this.userId)

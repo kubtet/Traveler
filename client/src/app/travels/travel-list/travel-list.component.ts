@@ -18,7 +18,7 @@ import { PageUrl } from '../../enums/PageUrl';
   templateUrl: './travel-list.component.html',
   styleUrl: './travel-list.component.css',
 })
-export class MyTravelsComponent implements OnInit {
+export class TravelListComponent implements OnInit {
   private router = inject(Router);
   private travelClient = inject(TravelClient);
   public user = input.required<MemberDto>();
