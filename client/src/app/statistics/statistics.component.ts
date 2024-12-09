@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, input } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import {
   CountriesByContinentDto,
   MonthyTripsDto,
@@ -8,12 +8,13 @@ import {
   TravelTimelineDto,
   UserStatisticsDto,
 } from '../services/api';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { TimelineModule } from 'primeng/timeline';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { ChartModule } from 'primeng/chart';
+import { AppLoadingComponent } from '../shared/components/app-loading/app-loading.component';
 
 @Component({
   selector: 'app-statistics',
@@ -25,6 +26,8 @@ import { ChartModule } from 'primeng/chart';
     ProgressBarModule,
     ToastModule,
     ChartModule,
+    AppLoadingComponent,
+    AsyncPipe,
   ],
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.css',
@@ -59,6 +62,7 @@ export class StatisticsComponent implements OnInit {
   protected endDateActivity: Date | null;
   protected monthlyTripsLabels: String[] = [];
   protected monthlyTripsData: Number[] = [];
+  protected isLoading = new BehaviorSubject(false);
 
   public seenCountriesShare = 0; // percentage of visited countries
   public continentsProgress: {
@@ -69,6 +73,7 @@ export class StatisticsComponent implements OnInit {
   }[];
 
   public async ngOnInit() {
+    this.isLoading.next(true);
     this.statistics = await firstValueFrom(
       this.statisticsClient.getStatisticsForUser(this.userId())
     );
@@ -229,6 +234,7 @@ export class StatisticsComponent implements OnInit {
         },
       },
     };
+    this.isLoading.next(false);
   }
 
   generateLabelsAndDataForMonths(
@@ -239,26 +245,38 @@ export class StatisticsComponent implements OnInit {
     var labels: String[] = [];
     var data: Number[] = [];
 
-    for (
-      let date = startDate;
-      date <= endDate;
-      date.setMonth(date.getMonth() + 1)
-    ) {
-      const foundTravel = monthlyTravels.find(
-        (travel) =>
-          date.getFullYear() === travel.year &&
-          date.getMonth() + 1 === travel.month
-      );
-      if (foundTravel) {
-        data.push(foundTravel.tripCount);
-      } else {
-        data.push(0);
+    if (startDate !== endDate) {
+      for (
+        let date = startDate;
+        startDate.getFullYear() < endDate.getFullYear() ||
+        (startDate.getFullYear() === endDate.getFullYear() &&
+          startDate.getMonth() <= endDate.getMonth());
+        date.setMonth(date.getMonth() + 1)
+      ) {
+        const foundTravel = monthlyTravels.find(
+          (travel) =>
+            date.getFullYear() === travel.year &&
+            date.getMonth() + 1 === travel.month
+        );
+        if (foundTravel) {
+          data.push(foundTravel.tripCount);
+        } else {
+          data.push(0);
+        }
+        const formattedLabel = `${date.getFullYear()}-${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, '0')}`;
+
+        labels.push(formattedLabel);
       }
-      const formattedLabel = `${date.getFullYear()}-${(date.getMonth() + 1)
+    } else {
+      const formattedLabel = `${startDate.getFullYear()}-${(
+        startDate.getMonth() + 1
+      )
         .toString()
         .padStart(2, '0')}`;
-
       labels.push(formattedLabel);
+      data.push(monthlyTravels[0].tripCount);
     }
 
     return { labels, data };

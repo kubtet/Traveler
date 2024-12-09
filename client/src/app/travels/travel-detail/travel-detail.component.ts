@@ -169,10 +169,6 @@ export class TravelDetailComponent implements OnInit {
 
     this.items = [
       {
-        icon: 'pi pi-pencil',
-        command: () => {},
-      },
-      {
         icon: 'pi pi-trash',
         command: () => {
           this.removeTravel();

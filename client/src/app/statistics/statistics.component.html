@@ -1,3 +1,4 @@
+<app-loading [isLoading]="isLoading | async" [isOverlay]="true"></app-loading>
 <div class="main-container">
   <!-- header -->
   <div class="header">
@@ -46,14 +47,14 @@
       <p-timeline [value]="travelsTimeline">
         <ng-template pTemplate="content" let-event>
           <small class="p-text-secondary">{{
-            event.startDate | date : "dd.MM.yyyy"
+            event?.startDate | date : "dd.MM.yyyy"
           }}</small>
         </ng-template>
         <ng-template pTemplate="opposite" let-event>
-          {{ event.country }}
+          {{ event?.country }}
           <br />
           <small class="p-text-secondary">
-            {{ event.cities }}
+            {{ event?.cities }}
           </small>
         </ng-template>
       </p-timeline>
@@ -86,13 +87,13 @@
     @for (item of continentsProgress; track $index) {
     <div class="plots-continents-element">
       <div class="continent-progress-label">
-        <span>{{ item.name }}</span>
+        <span>{{ item?.name }}</span>
         <br />
         <small>
-          {{ item.visited }}/{{ item.total }} ({{ item.progress }}%)
+          {{ item?.visited }}/{{ item?.total }} ({{ item?.progress }}%)
         </small>
       </div>
-      <p-progressBar [value]="item.progress" styleClass="custom-progressbar">
+      <p-progressBar [value]="item?.progress" styleClass="custom-progressbar">
         <ng-template pTemplate="content" let-value> </ng-template>
       </p-progressBar>
     </div>
