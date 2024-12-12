@@ -43,7 +43,7 @@ export class StatisticsComponent implements OnInit {
   protected COUNTRIES_IN_CONTINENTS: { [key: string]: number } = {
     Africa: 54,
     Asia: 49,
-    Europe: 44,
+    Europe: 45,
     NorthAmerica: 23,
     SouthAmerica: 12,
     Oceania: 14,
