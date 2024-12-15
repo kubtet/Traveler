@@ -59,7 +59,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, App
             .HasOne(f => f.FollowedUser)
             .WithMany(u => u.Followers)
             .HasForeignKey(f => f.FollowedUserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<TravelLike>()
             .HasKey(l => new { l.UserId, l.TravelId });
@@ -74,16 +74,17 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, App
             .HasOne(s => s.User)
             .WithMany(l => l.LikedTravels)
             .HasForeignKey(f => f.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Recipient)
             .WithMany(x => x.MessagesReceived)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Sender)
             .WithMany(x => x.MessagesSent)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }
