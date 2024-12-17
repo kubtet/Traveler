@@ -55,7 +55,7 @@
       "generateConstructorInterface": true,
       "convertConstructorInterfaceData": false,
       "importRequiredTypes": true,
-      "useGetBaseUrlMethod": false,
+      "useGetBaseUrlMethod": true,
       "baseUrlTokenName": "API_BASE_URL",
       "queryNullValue": "",
       "useAbortSignal": false,
