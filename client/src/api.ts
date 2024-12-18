@@ -45,7 +45,7 @@ export class AccountClient implements IAccountClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'api';
+    this.baseUrl = baseUrl ?? 'https://localhost:5001';
   }
 
   register(registerDto: RegisterDto): Observable<UserDto> {
