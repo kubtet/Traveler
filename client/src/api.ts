@@ -45,7 +45,9 @@ export class AccountClient implements IAccountClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   register(registerDto: RegisterDto): Observable<UserDto> {
@@ -304,7 +306,9 @@ export class AdminClient implements IAdminClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   getUsersWithRoles(): Observable<FileResponse> {
@@ -528,7 +532,9 @@ export class BuggyClient implements IBuggyClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   getAuth(): Observable<string> {
@@ -853,7 +859,9 @@ export class CountryClient implements ICountryClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   getAllCountries(): Observable<Country[]> {
@@ -1046,7 +1054,9 @@ export class FollowsClient implements IFollowsClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   toggleFollow(targetUserId: number): Observable<FileResponse> {
@@ -1594,7 +1604,9 @@ export class LikesClient implements ILikesClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   toggleLikeTravel(targetTravelId: number): Observable<FileResponse> {
@@ -1976,7 +1988,9 @@ export class MessagesClient implements IMessagesClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   createMessage(createMessageDto: CreateMessageDto): Observable<MessageDto> {
@@ -2437,7 +2451,9 @@ export class NotificationClient implements INotificationClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   addNotification(
@@ -2842,7 +2858,9 @@ export class StatisticsClient implements IStatisticsClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   getStatisticsForUser(userId: number): Observable<UserStatisticsDto> {
@@ -3313,7 +3331,9 @@ export class TravelClient implements ITravelClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   getAllTravels(
@@ -3931,7 +3951,9 @@ export class UsersClient implements IUsersClient {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:5001';
+    this.baseUrl =
+      baseUrl ??
+      'https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net';
   }
 
   getUsers(
