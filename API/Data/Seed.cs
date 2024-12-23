@@ -80,5 +80,4 @@ public class Seed
         }
         await context.SaveChangesAsync();
     }
-
 }

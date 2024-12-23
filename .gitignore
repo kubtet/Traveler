@@ -488,3 +488,5 @@ client/ssl/localhost.pem
 
 # Database
 API/traveler.db
+API/Data/Seed.cs
+API/Data/JSONs
