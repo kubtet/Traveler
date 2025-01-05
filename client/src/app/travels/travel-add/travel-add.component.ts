@@ -122,7 +122,6 @@ export class TravelAddComponent implements OnInit {
     const controls = this.form.controls;
     const createTravelDto: CreateTravelDto = new CreateTravelDto({
       cities: controls.travelCities.value?.toString(),
-      countryId: controls.travelCountry.value?.id,
       countryIso2Code: controls.travelCountry.value?.code,
       countryName: controls.travelCountry.value?.name,
       description: controls.travelDescription.value,

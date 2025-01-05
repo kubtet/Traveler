@@ -9,7 +9,6 @@ namespace API.Entities
         public required DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public required DateTime CreatedAt { get; set; }
-        public int CountryId { get; set; }
         public required string CountryIso2Code { get; set; }
         public required string CountryName { get; set; }
         public string? Cities { get; set; }
