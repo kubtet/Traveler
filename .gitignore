@@ -485,8 +485,5 @@ $RECYCLE.BIN/
 API/appsettings.json
 client/ssl/localhost-key.pem
 client/ssl/localhost.pem
-
-# Database
-API/traveler.db
-API/Data/Seed.cs
-API/Data/JSONs
+API/Data/JSONs/*
+*.Seed.cs
