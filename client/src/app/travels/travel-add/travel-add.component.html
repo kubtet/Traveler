@@ -146,7 +146,11 @@
             <app-button
               [style]="{ width: '100%' }"
               class="flex-1"
-              [disabled]="form.invalid || uploadedImages.length === 0"
+              [disabled]="
+                form.invalid ||
+                uploadedImages.length === 0 ||
+                (isLoading | async)
+              "
               label="Publish"
               icon="pi pi-check"
               (onClick)="createTravel()"
