@@ -11,6 +11,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { PaginatorModule } from 'primeng/paginator';
 import { TagModule } from 'primeng/tag';
 import { NavbarNotificationService } from '../services/navbar-notification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notifications',
@@ -30,6 +31,7 @@ import { NavbarNotificationService } from '../services/navbar-notification.servi
 export class NotificationsComponent implements OnInit, OnDestroy {
   private navbarNotificationService = inject(NavbarNotificationService);
   private notificationClient = inject(NotificationClient);
+  private router = inject(Router);
   protected isLoading = new BehaviorSubject(false);
   protected pageNumber: number = 1;
   protected pageSize: number = 5;
@@ -55,6 +57,10 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     );
     this.notifications = listOfNotifications;
     this.isLoading.next(false);
+  }
+
+  protected navigateToUserProfile(userId: number) {
+    this.router.navigateByUrl('/user-profile/' + userId);
   }
 
   protected async onPageChange(event: any) {

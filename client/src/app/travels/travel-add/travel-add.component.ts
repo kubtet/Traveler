@@ -122,7 +122,6 @@ export class TravelAddComponent implements OnInit {
     const controls = this.form.controls;
     const createTravelDto: CreateTravelDto = new CreateTravelDto({
       cities: controls.travelCities.value?.toString(),
-      countryId: controls.travelCountry.value?.id,
       countryIso2Code: controls.travelCountry.value?.code,
       countryName: controls.travelCountry.value?.name,
       description: controls.travelDescription.value,
@@ -148,23 +147,39 @@ export class TravelAddComponent implements OnInit {
 
   protected async onImageUpload(event: UploadEvent) {
     this.isLoading.next(true);
-    const totalImages = this.uploadedImages.length + event.files.length;
 
-    if (totalImages > this.maxImages) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Image Limit Exceeded',
-        detail: `You can only upload up to ${this.maxImages} images.`,
-      });
+    try {
+      // Limit the total number of images
+      const remainingSlots = this.maxImages - this.uploadedImages.length;
+      if (remainingSlots <= 0) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Image Limit Exceeded',
+          detail: `You can only upload up to ${this.maxImages} images.`,
+        });
+        return;
+      }
 
-      event.files.splice(this.maxImages - this.uploadedImages.length);
-    }
+      const validFiles = event.files.slice(0, remainingSlots);
 
-    if (event?.files?.length > 0) {
-      const uploadPromises = event.files.map(async (file) => {
+      if (validFiles.length < event.files.length) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Image Limit Exceeded',
+          detail: `Only ${remainingSlots} images were added.`,
+        });
+      }
+
+      const uploadPromises = validFiles.map(async (file) => {
         if (file.name.toLowerCase().endsWith('.heic')) {
-          file = await this.photoService.convertHeicToJpeg(file);
+          const convertedFile = await this.photoService.convertHeicToJpeg(file);
+          if (convertedFile) {
+            file = convertedFile;
+          } else {
+            return;
+          }
         }
+
         const fileParam: FileParameter = {
           data: file,
           fileName: file.name,
@@ -173,8 +188,16 @@ export class TravelAddComponent implements OnInit {
       });
 
       await Promise.all(uploadPromises);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Upload Failed',
+        detail: 'An error occurred during the upload process.',
+      });
+    } finally {
+      this.isLoading.next(false);
     }
-    this.isLoading.next(false);
   }
 
   protected clearForm() {

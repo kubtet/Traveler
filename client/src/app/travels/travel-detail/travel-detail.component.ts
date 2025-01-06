@@ -101,7 +101,7 @@ export class TravelDetailComponent implements OnInit {
     this.likedBy = await firstValueFrom(
       this.likeService.getUsersWhoLikedTravel(this.travelId)
     );
-    if (this.isLiked) {
+    if (this.isLiked && !this.isOwnPost) {
       const addNotificationDto = new AddNotificationDto({
         notifiedUserId: this.travel.userId,
         travelTitle: this.travel.title,

@@ -12,9 +12,10 @@
                     ? '../../assets/defaultProfilePicture.jfif'
                     : notification.notifierProfilePictureUrl
                 "
-                styleClass="profile-picture"
-                size="normal"
+                styleClass="cursor-pointer"
+                size="large"
                 shape="circle"
+                (click)="navigateToUserProfile(notification.notifierId)"
               />
             </td>
             <td style="min-width: 30rem">

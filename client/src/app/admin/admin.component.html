@@ -47,9 +47,10 @@
                     ? '../../assets/defaultProfilePicture.jfif'
                     : user.profilePhotoUrl
                 "
-                styleClass="profile-picture"
-                size="normal"
+                styleClass="cursor-pointer"
+                size="large"
                 shape="circle"
+                (click)="navigateToUserProfile(user.id)"
               />
               <span class="ml-1 vertical-align-middle">
                 {{ user.username }}

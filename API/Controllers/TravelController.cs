@@ -127,26 +127,37 @@ public class TravelController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoServ
             return BadRequest("No travel found.");
         }
 
-        foreach (var image in images)
+        var uploadTasks = images.Select(async image =>
         {
             var result = await photoService.AddPhotoAsync(image, TypeOfPhoto.Travel);
             if (result.Error != null)
             {
-                return BadRequest(result.Error.Message);
+                throw new Exception(result.Error.Message);
             }
 
-            var photo = new Photo
+            return new Photo
             {
                 Url = result.SecureUrl.AbsoluteUri,
                 PublicId = result.PublicId
             };
+        });
 
-            travel.Photos.Add(photo);
-        }
-
-        if (await unitOfWork.Complete())
+        try
         {
-            return NoContent();
+            var photos = await Task.WhenAll(uploadTasks);
+            foreach (var photo in photos)
+            {
+                travel.Photos.Add(photo);
+            }
+
+            if (await unitOfWork.Complete())
+            {
+                return NoContent();
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error: {ex.Message}");
         }
 
         return BadRequest("Error adding photo to the travel...");

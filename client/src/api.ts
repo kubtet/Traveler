@@ -29,7 +29,7 @@ export class AccountClient implements IAccountClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     register(registerDto: RegisterDto): Observable<UserDto> {
@@ -203,7 +203,7 @@ export class AdminClient implements IAdminClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     getUsersWithRoles(): Observable<FileResponse> {
@@ -333,7 +333,7 @@ export class BuggyClient implements IBuggyClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     getAuth(): Observable<string> {
@@ -544,7 +544,7 @@ export class CountryClient implements ICountryClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     getAllCountries(): Observable<Country[]> {
@@ -678,7 +678,7 @@ export class FollowsClient implements IFollowsClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     toggleFollow(targetUserId: number): Observable<FileResponse> {
@@ -1024,7 +1024,7 @@ export class LikesClient implements ILikesClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     toggleLikeTravel(targetTravelId: number): Observable<FileResponse> {
@@ -1261,7 +1261,7 @@ export class MessagesClient implements IMessagesClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     createMessage(createMessageDto: CreateMessageDto): Observable<MessageDto> {
@@ -1556,7 +1556,7 @@ export class NotificationClient implements INotificationClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     addNotification(addNotificationDto: AddNotificationDto): Observable<FileResponse> {
@@ -1796,7 +1796,7 @@ export class StatisticsClient implements IStatisticsClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     getStatisticsForUser(userId: number): Observable<UserStatisticsDto> {
@@ -2086,7 +2086,7 @@ export class TravelClient implements ITravelClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     getAllTravels(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto> {
@@ -2454,7 +2454,7 @@ export class UsersClient implements IUsersClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
+        this.baseUrl = baseUrl ?? "https://localhost:5001";
     }
 
     getUsers(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMemberDto> {
@@ -3283,7 +3283,6 @@ export class Travel implements ITravel {
     startDate?: Date;
     endDate?: Date | undefined;
     createdAt?: Date;
-    countryId?: number;
     countryIso2Code?: string;
     countryName?: string;
     cities?: string | undefined;
@@ -3309,7 +3308,6 @@ export class Travel implements ITravel {
             this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
-            this.countryId = _data["countryId"];
             this.countryIso2Code = _data["countryIso2Code"];
             this.countryName = _data["countryName"];
             this.cities = _data["cities"];
@@ -3343,7 +3341,6 @@ export class Travel implements ITravel {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
-        data["countryId"] = this.countryId;
         data["countryIso2Code"] = this.countryIso2Code;
         data["countryName"] = this.countryName;
         data["cities"] = this.cities;
@@ -3370,7 +3367,6 @@ export interface ITravel {
     startDate?: Date;
     endDate?: Date | undefined;
     createdAt?: Date;
-    countryId?: number;
     countryIso2Code?: string;
     countryName?: string;
     cities?: string | undefined;
@@ -3486,8 +3482,6 @@ export class Message implements IMessage {
     content?: string;
     dateRead?: Date | undefined;
     messageSent?: Date;
-    senderDeleted?: boolean;
-    recipientDeleted?: boolean;
     senderId?: number;
     sender?: User;
     recipientId?: number;
@@ -3510,8 +3504,6 @@ export class Message implements IMessage {
             this.content = _data["content"];
             this.dateRead = _data["dateRead"] ? new Date(_data["dateRead"].toString()) : <any>undefined;
             this.messageSent = _data["messageSent"] ? new Date(_data["messageSent"].toString()) : <any>undefined;
-            this.senderDeleted = _data["senderDeleted"];
-            this.recipientDeleted = _data["recipientDeleted"];
             this.senderId = _data["senderId"];
             this.sender = _data["sender"] ? User.fromJS(_data["sender"]) : <any>undefined;
             this.recipientId = _data["recipientId"];
@@ -3534,8 +3526,6 @@ export class Message implements IMessage {
         data["content"] = this.content;
         data["dateRead"] = this.dateRead ? this.dateRead.toISOString() : <any>undefined;
         data["messageSent"] = this.messageSent ? this.messageSent.toISOString() : <any>undefined;
-        data["senderDeleted"] = this.senderDeleted;
-        data["recipientDeleted"] = this.recipientDeleted;
         data["senderId"] = this.senderId;
         data["sender"] = this.sender ? this.sender.toJSON() : <any>undefined;
         data["recipientId"] = this.recipientId;
@@ -3551,8 +3541,6 @@ export interface IMessage {
     content?: string;
     dateRead?: Date | undefined;
     messageSent?: Date;
-    senderDeleted?: boolean;
-    recipientDeleted?: boolean;
     senderId?: number;
     sender?: User;
     recipientId?: number;
@@ -4651,7 +4639,6 @@ export class TravelDetailDto implements ITravelDetailDto {
     dateOfBirth?: Date;
     cities?: string | undefined;
     countryName?: string;
-    countryId?: number;
     countryIso2Code?: string;
     photoUrls?: string[] | undefined;
 
@@ -4678,7 +4665,6 @@ export class TravelDetailDto implements ITravelDetailDto {
             this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
             this.cities = _data["cities"];
             this.countryName = _data["countryName"];
-            this.countryId = _data["countryId"];
             this.countryIso2Code = _data["countryIso2Code"];
             if (Array.isArray(_data["photoUrls"])) {
                 this.photoUrls = [] as any;
@@ -4709,7 +4695,6 @@ export class TravelDetailDto implements ITravelDetailDto {
         data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
         data["cities"] = this.cities;
         data["countryName"] = this.countryName;
-        data["countryId"] = this.countryId;
         data["countryIso2Code"] = this.countryIso2Code;
         if (Array.isArray(this.photoUrls)) {
             data["photoUrls"] = [];
@@ -4733,7 +4718,6 @@ export interface ITravelDetailDto {
     dateOfBirth?: Date;
     cities?: string | undefined;
     countryName?: string;
-    countryId?: number;
     countryIso2Code?: string;
     photoUrls?: string[] | undefined;
 }
@@ -4741,7 +4725,6 @@ export interface ITravelDetailDto {
 export class CreateTravelDto implements ICreateTravelDto {
     cities?: string | undefined;
     countryName?: string;
-    countryId?: number;
     countryIso2Code?: string;
     description?: string | undefined;
     endDate?: Date | undefined;
@@ -4762,7 +4745,6 @@ export class CreateTravelDto implements ICreateTravelDto {
         if (_data) {
             this.cities = _data["cities"];
             this.countryName = _data["countryName"];
-            this.countryId = _data["countryId"];
             this.countryIso2Code = _data["countryIso2Code"];
             this.description = _data["description"];
             this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
@@ -4783,7 +4765,6 @@ export class CreateTravelDto implements ICreateTravelDto {
         data = typeof data === 'object' ? data : {};
         data["cities"] = this.cities;
         data["countryName"] = this.countryName;
-        data["countryId"] = this.countryId;
         data["countryIso2Code"] = this.countryIso2Code;
         data["description"] = this.description;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -4797,7 +4778,6 @@ export class CreateTravelDto implements ICreateTravelDto {
 export interface ICreateTravelDto {
     cities?: string | undefined;
     countryName?: string;
-    countryId?: number;
     countryIso2Code?: string;
     description?: string | undefined;
     endDate?: Date | undefined;

@@ -16,7 +16,7 @@ export class PhotoService {
     });
   }
 
-  public async convertHeicToJpeg(heicFile: File) {
+  public async convertHeicToJpeg(heicFile: File): Promise<File | null> {
     try {
       const result = await heic2any({
         blob: heicFile,
@@ -26,13 +26,9 @@ export class PhotoService {
 
       const jpegBlob = Array.isArray(result) ? result[0] : result;
 
-      const convertedFile = new File(
-        [jpegBlob],
-        heicFile.name.replace(/\.heic$/i, '.jpg'),
-        { type: 'image/jpeg' }
-      );
-
-      return convertedFile;
+      return new File([jpegBlob], heicFile.name.replace(/\.heic$/i, '.jpg'), {
+        type: 'image/jpeg',
+      });
     } catch (error) {
       console.error('Error converting HEIC to JPEG:', error);
       return null;
