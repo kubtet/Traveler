@@ -29,7 +29,7 @@ export class AccountClient implements IAccountClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     register(registerDto: RegisterDto): Observable<UserDto> {
@@ -203,7 +203,7 @@ export class AdminClient implements IAdminClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     getUsersWithRoles(): Observable<FileResponse> {
@@ -333,7 +333,7 @@ export class BuggyClient implements IBuggyClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     getAuth(): Observable<string> {
@@ -544,7 +544,7 @@ export class CountryClient implements ICountryClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     getAllCountries(): Observable<Country[]> {
@@ -678,7 +678,7 @@ export class FollowsClient implements IFollowsClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     toggleFollow(targetUserId: number): Observable<FileResponse> {
@@ -1024,7 +1024,7 @@ export class LikesClient implements ILikesClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     toggleLikeTravel(targetTravelId: number): Observable<FileResponse> {
@@ -1261,7 +1261,7 @@ export class MessagesClient implements IMessagesClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     createMessage(createMessageDto: CreateMessageDto): Observable<MessageDto> {
@@ -1556,7 +1556,7 @@ export class NotificationClient implements INotificationClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     addNotification(addNotificationDto: AddNotificationDto): Observable<FileResponse> {
@@ -1796,7 +1796,7 @@ export class StatisticsClient implements IStatisticsClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     getStatisticsForUser(userId: number): Observable<UserStatisticsDto> {
@@ -2086,7 +2086,7 @@ export class TravelClient implements ITravelClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     getAllTravels(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfTravelDto> {
@@ -2454,7 +2454,7 @@ export class UsersClient implements IUsersClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:5001";
+        this.baseUrl = baseUrl ?? "https://traveler-ccg7ath2fkgpb0eh.polandcentral-01.azurewebsites.net";
     }
 
     getUsers(username?: string | null | undefined, currentUserId?: number | null | undefined, userId?: number | null | undefined, pageNumber?: number | undefined, pageSize?: number | undefined): Observable<PaginatedResponseOfMemberDto> {
