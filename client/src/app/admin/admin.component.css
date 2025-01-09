@@ -2,6 +2,50 @@ p-avatar {
   vertical-align: middle;
 }
 
+.card {
+  max-width: 100%;
+}
+
+@media (max-width: 456px) {
+  * {
+    font-size: 0.6rem;
+  }
+  .card .p-table th {
+    min-width: 3rem; /* Zmniejszenie minimalnej szerokości */
+  }
+}
+
 ::ng-deep .p-paginator {
   border: none;
+}
+
+dynamic-column {
+  width: auto;
+  text-align: left; /* Wyrównanie tekstu do lewej */
+}
+
+@media (min-width: 768px) {
+  * {
+    font-size: 1rem;
+  }
+
+  dynamic-column {
+    min-width: 10rem;
+  }
+}
+
+@media (max-width: 768px) {
+  * {
+    font-size: 0.8rem;
+  }
+}
+
+/* Na bardzo małych ekranach */
+@media (max-width: 576px) {
+  * {
+    font-size: 0.6rem;
+  }
+  .dynamic-column {
+    width: 100%;
+  }
 }

@@ -89,3 +89,39 @@
   padding-top: 0rem;
   margin-top: -3.5rem;
 }
+
+@media (max-width: 768px) {
+
+  .card-header {
+    flex-direction: column;
+  }
+  .followers-info {
+    flex-direction: row;
+  }
+
+
+  .username {
+    font-size: 1rem;
+  }
+
+  .followers-info {
+    flex-direction: column; /* Układ pionowy */
+    gap: 0.5rem;
+  }
+
+  .spinner-buttom{
+    position: absolute;
+    top: 8rem;
+    right: 0;
+    
+
+  }
+
+  .tabs {
+    font-size: 0.9rem; /* Zmniejszenie fontu tabów */
+  }
+
+  .main-part {
+    padding: 0 0.5rem; /* Dodanie marginesów dla głównej sekcji */
+  }
+}

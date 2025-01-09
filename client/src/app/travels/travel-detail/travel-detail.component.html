@@ -6,9 +6,7 @@
   <!-- Section Intro -->
   <div class="flex justify-content-between align-items-center">
     <!-- Author and profile in a single line -->
-    <div
-      class="text-3xl text-900 mt-4 md:mt-0 text-center md:text-left font-semibold md:pr-4"
-    >
+    <div class="title">
       {{ travel?.title }}
     </div>
 
@@ -66,7 +64,7 @@
     <div class="left-side-layout">
       <div class="">
         <!-- Description with regular font size -->
-        <p class="description text-lg line-height-3 text-900 mt-3 pt-6">
+        <p class="description">
           {{ travel ? travel.description : "" }}
         </p>
         <div class="likes-section">
@@ -115,7 +113,12 @@
         [showThumbnails]="false"
         [showIndicators]="true"
         [showIndicatorsOnItem]="true"
-        [containerStyle]="{ 'max-width': '500px', 'margin-top': '2em' }"
+        [containerStyle]="{
+          'max-width': '500px',
+          'margin-top': '2em',
+          'margin-left': '-2rem',
+          'margin-right': 'auto'
+        }"
       >
         <ng-template pTemplate="item" let-item>
           <img
