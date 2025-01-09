@@ -29,6 +29,19 @@
 
 /* one column with bigger screens */
 @media (max-width: 768px) {
+  span {
+    font-size: 1rem;
+  }
+  .two-column-layout {
+    flex-direction: column;
+  }
+  .two-column-layout .left-column,
+  .two-column-layout .right-column {
+    flex: 0 0 100%;
+  }
+}
+
+@media (max-width: 568px) {
   .two-column-layout {
     flex-direction: column;
   }
@@ -98,4 +111,89 @@
 .img-full-screen-custom {
   width: 100%;
   display: block;
+}
+
+/* Domyślny styl (dla większych ekranów) */
+.description {
+  font-size: 1.25rem; /* Rozmiar czcionki dla desktopów */
+  line-height: 2rem; /* Wysokość linii */
+  margin-top: 1rem; /* Górny margines */
+  padding-top: 1.5rem; /* Górny odstęp wewnętrzny */
+}
+
+/* Średnie ekrany (np. tablety) */
+@media (max-width: 1024px) {
+  .description {
+    font-size: 1rem; /* Zmniejszenie czcionki */
+    line-height: 1.75rem; /* Mniejsza wysokość linii */
+    margin-top: 0.75rem; /* Mniejszy margines */
+    padding-top: 1rem; /* Mniejszy padding */
+  }
+}
+
+/* Małe ekrany (np. smartfony) */
+@media (max-width: 768px) {
+  .description {
+    font-size: 0.975rem; /* Jeszcze mniejsza czcionka */
+    line-height: 1.5rem; /* Dopasowanie wysokości linii */
+    margin-top: 0.5rem; /* Minimalny margines */
+    padding-top: 0.75rem; /* Minimalny padding */
+  }
+}
+
+/* Bardzo małe ekrany (np. małe smartfony) */
+@media (max-width: 576px) {
+  span {
+    font-size: 0.75rem; /* Minimalny rozmiar czcionki */
+    padding-top: 0.1rem; /* Minimalny padding */
+    padding-bottom: 0.1rem; /* Minimalny padding */
+  }
+
+  .description {
+    max-width: 80%;
+    font-size: 0.75rem; /* Minimalny rozmiar czcionki */
+    line-height: 1.25rem; /* Minimalna wysokość linii */
+    margin-top: 0.25rem; /* Minimalny margines */
+    padding-top: 0.5rem; /* Minimalny padding */
+  }
+}
+
+/* Domyślny styl dla dużych ekranów */
+.title {
+  font-size: 2rem; /* Rozmiar tekstu */
+  font-weight: 600; /* Grubość tekstu */
+
+  margin-top: 1rem; /* Górny margines */
+  text-align: center; /* Wyrównanie tekstu */
+  padding-right: 0; /* Brak odstępu wewnętrznego po prawej */
+}
+
+/* Styl dla średnich ekranów  */
+@media (max-width: 1024px) {
+  .title {
+    font-size: 1.75rem;
+    margin-top: 0.5rem;
+    text-align: left;
+    padding-right: 1rem;
+  }
+}
+
+/* Styl dla małych ekranów  */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+    text-align: center;
+    padding-right: 0;
+  }
+}
+
+/* Styl dla bardzo małych ekranów  */
+@media (max-width: 576px) {
+  .title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    margin-top: 0;
+    text-align: left;
+  }
 }
