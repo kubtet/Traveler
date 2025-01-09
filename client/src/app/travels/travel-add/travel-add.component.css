@@ -5,7 +5,7 @@
 }
 
 .wrapper {
-  width: 19rem;
+  width: 69rem;
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
@@ -30,6 +30,14 @@ p-chip {
     flex-direction: column;
     gap: 1rem;
   }
+  
+.wrapper {
+  width: 19rem;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+}
 }
 
 
