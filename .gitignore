@@ -487,3 +487,31 @@ client/ssl/localhost-key.pem
 client/ssl/localhost.pem
 API/Data/JSONs/*
 *.Seed.cs
+
+
+# Traveler - local configuration and secrets
+API/appsettings.Development.json
+API/appsettings.Local.json
+API/secrets.json
+
+# Angular build and cache
+client/dist/
+client/.angular/
+client/coverage/
+
+# Environment files
+.env.*
+!.env.example
+
+# Docker local configuration
+docker-compose.override.yml
+
+# Private keys and certificates
+*.key
+*.pfx
+*.publishsettings
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
