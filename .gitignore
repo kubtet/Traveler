@@ -504,7 +504,7 @@ client/coverage/
 !.env.example
 
 # Docker local configuration
-docker-compose.override.yml
+docker-compose.yml
 
 # Private keys and certificates
 *.key
