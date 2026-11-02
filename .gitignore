@@ -515,3 +515,4 @@ docker-compose.yml
 *.db
 *.sqlite
 *.sqlite3
+client/ssl/localhost.pem
